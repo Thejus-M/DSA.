@@ -603,9 +603,8 @@
         }
 
         .nav-footer a:hover {
-            border-color: #2A5D9C;
-            /* Using Accent Color match */
-            color: #2A5D9C;
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .page-footer {
@@ -817,6 +816,11 @@ class Solution:
                         </div>
                     </div>
                 </section>
+
+                <div
+                    style="text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-sub); margin: 60px 0;">
+                    — END —
+                </div>
 
                 <div class="nav-footer">
                     <a href="time-based-key-value-store.html">← Previous Problem</a>
