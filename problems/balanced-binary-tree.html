@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balanced Binary Tree | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+    <!-- Prism.js for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'EB Garamond', Georgia, serif;
+            line-height: 1.6;
+            font-size: 21px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* STRICT DESIGN SYSTEM */
+        /* STRICT DESIGN SYSTEM */
+        /* Global variables imported from variables.css */
+
+        /* Unified Fixed Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 40px;
+            background: var(--bg-card);
+            z-index: 500;
+            border-bottom: 0px solid transparent;
+        }
+
+        .header-brand {
+            width: 240px;
+            font-family: var(--font-pixel);
+            font-size: 16px;
+            color: var(--accent);
+            letter-spacing: 0;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .header-tagline {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.3;
+            flex: 1;
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-number {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .progress-tick-top {
+            width: 32px;
+            height: 1px;
+            background: #ccc;
+        }
+
+        /* Page Layout */
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 240px 1fr 60px;
+            padding-top: 60px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 240px;
+            height: calc(100vh - 60px);
+            padding: 10px 20px 20px 40px;
+            overflow-y: auto;
+            background: var(--bg-card);
+            z-index: 100;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section-title {
+            font-family: var(--font-mono-sys);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            margin-bottom: 14px;
+        }
+
+        .sidebar-list {
+            list-style: none;
+        }
+
+        .sidebar-list li {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            color: var(--text-main);
+            padding: 4px 0;
+            line-height: 1.4;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .sidebar-list li::before {
+            content: "+";
+            color: #ccc;
+            font-size: 11px;
+            flex-shrink: 0;
+            width: 8px;
+        }
+
+        .sidebar-list li.active::before {
+            color: var(--accent);
+            content: "→";
+        }
+
+        .sidebar-list li a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .sidebar-list li a:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-list li.active a {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        /* Ruler Style Vertical Scale */
+        .ruler-scale {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 60px;
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 16px 20px 0;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .ruler-tick {
+            height: 1px;
+            background: #e0e0e0;
+            width: 8px;
+            transition: background 0.15s, width 0.15s;
+        }
+
+        .ruler-tick.major {
+            width: 16px;
+            background: #ccc;
+        }
+
+        .ruler-tick.active {
+            background: #666;
+            width: 8px;
+        }
+
+        .main-content {
+            grid-column: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .article-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 40px 100px;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .article-meta {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            color: var(--accent) !important;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .article-title {
+            font-family: var(--font-mono-sys);
+            font-size: 3.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--text-main) !important;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--accent) !important;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .tag {
+            font-family: var(--font-mono-sys);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            background: var(--bg-card);
+        }
+
+        .tag.medium {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .divider {
+            width: 44px;
+            height: 1px;
+            background: #1a1a1a;
+            margin: 40px auto;
+        }
+
+        .content-section {
+            margin-bottom: 44px;
+        }
+
+        .content-section h2 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+
+        .content-section p {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            max-width: 65ch;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 24px;
+        }
+
+        .content-section ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-family: var(--font-serif);
+            color: var(--text-sub);
+        }
+
+        .content-section ul li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .content-section code {
+            font-family: var(--font-mono-code);
+            font-size: 0.85em;
+            background: transparent;
+            padding: 0 4px;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .code-block-wrapper {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding: 4px 12px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #f5f5f5;
+            color: #000;
+        }
+
+        .code-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        pre {
+            background: var(--bg-body);
+            color: var(--text-main);
+            padding: 24px;
+            overflow-x: auto;
+            font-family: var(--font-mono-code);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            border: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+        }
+
+        /* Syntax Highlighting */
+        code[class*="language-"],
+        pre[class*="language-"] {
+            color: var(--text-main);
+            text-shadow: none;
+            font-family: var(--font-mono-code);
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            word-spacing: normal;
+            word-break: normal;
+            line-height: 1.6;
+        }
+
+        .token.comment {
+            color: var(--text-sub);
+            font-style: italic;
+        }
+
+        .token.class-name,
+        .token.function {
+            color: var(--text-code);
+            font-weight: bold;
+        }
+
+        .token.keyword {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .token.string {
+            color: var(--text-main);
+        }
+
+        /* Terminal Card */
+        .terminal-card {
+            border: 1px solid var(--border);
+            margin-bottom: 40px;
+            background: var(--bg-card);
+            border-radius: 4px;
+        }
+
+        .terminal-row {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            padding: 24px 30px;
+        }
+
+        .terminal-row:last-child {
+            border-bottom: none;
+        }
+
+        .terminal-label {
+            font-family: var(--font-mono-sys);
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 80px;
+            flex-shrink: 0;
+            padding-top: 4px;
+            user-select: none;
+        }
+
+        .terminal-content {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .terminal-content.serif {
+            font-family: var(--font-serif);
+        }
+
+        .terminal-content.mono {
+            font-family: var(--font-mono-sys);
+            font-size: 0.95rem;
+        }
+
+        .section-divider {
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 60px 0;
+            pointer-events: none;
+            width: 100%;
+        }
+
+        .section-divider::before {
+            content: ":⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮   ";
+            display: block;
+            width: 100%;
+            font-family: var(--font-mono-sys);
+            font-size: 12px;
+            text-align: center;
+            color: var(--text-sub);
+            letter-spacing: -2px;
+            opacity: 0.5;
+        }
+
+        /* Demo Card Styles */
+        .demo-feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 0 rgba(42, 93, 156, 0.1);
+        }
+
+        .demo-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.1s;
+            letter-spacing: 1px;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Tree Viz Styles */
+        .tree-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .tree-node {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            font-family: var(--font-mono-code);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .tree-node.balanced {
+            border-color: var(--viz-balanced-border);
+            background: var(--viz-balanced-bg);
+            color: var(--viz-balanced-text);
+        }
+
+        .tree-node.unbalanced {
+            border-color: var(--viz-unbalanced-border);
+            background: var(--viz-unbalanced-bg);
+            color: var(--viz-unbalanced-text);
+        }
+
+        .tree-link {
+            position: absolute;
+            height: 2px;
+            background: var(--viz-link);
+            transform-origin: 0 0;
+            z-index: 1;
+        }
+
+        .node-label {
+            position: absolute;
+            font-size: 10px;
+            font-family: var(--font-mono-sys);
+            background: var(--bg-card);
+            padding: 2px 4px;
+            border: 1px solid var(--border-sub);
+            border-radius: 4px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Footer & Responsive Styles */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-nav);
+            margin-top: 60px;
+        }
+
+        .nav-footer a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            text-decoration: none;
+            padding: 12px 20px;
+            border: 1px solid var(--border-sub);
+        }
+
+        .nav-footer a:hover {
+            border-color: #2A5D9C;
+            /* Using Accent Color match */
+            color: #2A5D9C;
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 60px 0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            line-height: 2;
+        }
+
+        @media (max-width: 1000px) {
+            .page-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar,
+            .ruler-scale {
+                display: none;
+            }
+
+            .header {
+                padding: 0 20px;
+            }
+
+            .article-container {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header-mount"></div>
+
+    <div class="ruler-scale" id="ruler-scale"></div>
+
+    <div class="page-wrapper">
+        <aside class="sidebar" id="sidebar-mount">
+            <!-- Sidebar injected by layout.js -->
+        </aside>
+
+        <main class="main-content">
+            <div class="article-container">
+                <header class="article-header">
+                    <div class="article-meta">DSA LEARNING</div>
+                    <h1 class="article-title">Balanced Binary Tree.</h1>
+                    <div class="tags">
+                        <span class="tag">Easy</span>
+                        <span class="tag">Tree</span>
+                        <span class="tag">DFS</span>
+                        <span class="tag">Recursion</span>
+                    </div>
+                </header>
+
+                <div class="divider"></div>
+
+                <div class="terminal-card">
+                    <div class="terminal-row">
+                        <span class="terminal-label">PROB:</span>
+                        <div class="terminal-content serif">
+                            <p style="margin-top: 0;">Given a binary tree, determine if it is height-balanced.</p>
+                            <p style="margin-bottom: 0;">For this problem, a height-balanced binary tree is defined as a
+                                binary tree in which the left and right subtrees of every node differ in height by no
+                                more than 1.</p>
+                        </div>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">CONST:</span>
+                        <div class="terminal-content mono">
+                            <ul>
+                                <li>The number of nodes in the tree is in the range [0, 5000].</li>
+                                <li>-10^4 <= Node.val <=10^4</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="terminal-row">
+                        <span class="terminal-label">EG:</span>
+                        <div class="terminal-content mono">
+                            <div style="margin-bottom: 24px;">
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
+                                <div style="margin-bottom: 8px;">root = [3,9,20,null,null,15,7]</div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
+                                <div style="margin-bottom: 8px;">true</div>
+                            </div>
+                            <div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
+                                <div style="margin-bottom: 8px;">root = [1,2,2,3,3,null,null,4,4]</div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
+                                <div style="margin-bottom: 8px;">false</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="content-section">
+                    <h2>Intuition</h2>
+                    <p>A binary tree is balanced if the height of its left and right subtrees differ by at most 1, AND
+                        both the left and right subtrees are themselves balanced.</p>
+                    <p>This naturally suggests a recursive approach (Depth First Search).</p>
+                    <p>We can write a helper function that returns two values: the height of the tree, and a boolean
+                        indicating if it is balanced. We compute this bottom-up.</p>
+                </section>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <section class="content-section">
+                    <h2>Solution: Bottom-Up Recursive DFS</h2>
+                    <div class="code-block-wrapper">
+                        <span class="code-label">Python Solution</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                        <pre><code class="language-python">from typing import Optional
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Solution:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
+        def fun(root):
+            if not root:
+                return 0, True
+            
+            l, l_bool = fun(root.left)
+            r, r_bool = fun(root.right)
+            
+            # Height is max of left/right + 1
+            # Balanced if difference <= 1 AND subtrees are balanced
+            return max(l, r) + 1, (abs(r - l) <= 1) and l_bool and r_bool
+            
+        return fun(root)[1]</code></pre>
+                    </div>
+                </section>
+
+                <div class="complexity-card">
+                    <h3>Complexity Analysis</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr;">
+                        <div style="padding: 24px; border-right: 1px solid var(--border);">
+                            <div class="terminal-label" style="width: auto; margin-bottom: 8px;">Time Complexity</div>
+                            <div style="font-family: var(--font-mono-code); font-size: 1.1rem;">O(n)</div>
+                            <div
+                                style="font-family: var(--font-serif); font-size: 0.95rem; font-style: italic; color: var(--text-sub); margin-top: 6px;">
+                                We visit every node once.</div>
+                        </div>
+                        <div style="padding: 24px;">
+                            <div class="terminal-label" style="width: auto; margin-bottom: 8px;">Space Complexity</div>
+                            <div style="font-family: var(--font-mono-code); font-size: 1.1rem;">O(n)</div>
+                            <div
+                                style="font-family: var(--font-serif); font-size: 0.95rem; font-style: italic; color: var(--text-sub); margin-top: 6px;">
+                                In the worst case (skewed tree), the recursion stack depth is O(n).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <section class="content-section" style="margin-top: 60px;">
+                    <h2>Interactive Visualization</h2>
+                    <p style="margin-bottom: 20px;">Watch the recursive DFS check the height of each node from the
+                        bottom up.</p>
+
+                    <div class="blueprint-container"
+                        style="border: 1px solid var(--accent); background-color: var(--bg-body); background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 20px 20px; box-shadow: 4px 4px 0 rgba(42, 93, 156, 0.1);">
+
+                        <!-- Top Control Bar -->
+                        <div class="tree-controls-bar"
+                            style="padding: 16px; border-bottom: 1px solid var(--accent); background: var(--bg-card); display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+                            <!-- Input Group -->
+                            <div class="tree-input-group"
+                                style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 250px;">
+                                <label class="terminal-label" style="width: auto; margin:0; padding:0;">TREE:</label>
+                                <input type="text" id="tree-input" value="3,9,20,null,null,15,7"
+                                    style="flex: 1; padding: 6px; font-family: var(--font-mono-code); font-size: 13px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); outline: none;">
+                                <button class="demo-btn" id="build-btn"
+                                    style="border-color: var(--border);">BUILD</button>
+                            </div>
+                            <!-- Play Controls -->
+                            <div class="tree-play-controls" style="display: flex; gap: 8px;">
+                                <button class="demo-btn" id="btn-play">PLAY</button>
+                                <button class="demo-btn" id="btn-pause" style="display: none;">PAUSE</button>
+                                <button class="demo-btn" id="btn-prev">PREV</button>
+                                <button class="demo-btn" id="btn-next">NEXT</button>
+                                <button class="demo-btn" id="btn-reset">RESET</button>
+                            </div>
+                        </div>
+
+                        <!-- Status Bar -->
+                        <div
+                            style="padding: 8px 16px; border-bottom: 1px dashed var(--accent); background: var(--bg-card); display: flex; justify-content: space-between; font-family: var(--font-mono-sys); font-size: 11px;">
+                            <div style="display:flex; gap: 8px; align-items: center;">
+                                <span style="color: var(--text-sub);">STATUS:</span>
+                                <span id="status-text" style="color: var(--accent); font-weight: bold;">Ready to start
+                                    DFS...</span>
+                            </div>
+                            <div style="display:flex; gap: 8px; align-items: center;">
+                                <span style="color: var(--text-sub);">STEP:</span>
+                                <span id="step-count">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Canvas -->
+                        <div class="tree-container" id="tree-viz"
+                            style="border: none; background: transparent; height: 380px;">
+                        </div>
+                    </div>
+                </section>
+
+                <div class="nav-footer">
+                    <a href="time-based-key-value-store.html">← Previous Problem</a>
+                    <a href="#">Next Problem (Coming Soon) →</a>
+                </div>
+
+                <div id="footer-mount"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                const originalText = button.innerText;
+                button.innerText = 'COPIED!';
+                setTimeout(() => button.innerText = originalText, 2000);
+            });
+        }
+
+        // Ruler Script
+        const scaleContainer = document.getElementById('ruler-scale');
+        for (let i = 0; i < 60; i++) {
+            const tick = document.createElement('div');
+            tick.className = 'ruler-tick';
+            if (i % 5 === 0) tick.classList.add('major');
+            scaleContainer.appendChild(tick);
+        }
+
+        window.addEventListener('scroll', () => {
+            const progress = document.documentElement.scrollHeight - window.innerHeight > 0
+                ? window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)
+                : 0;
+            document.getElementById('progress-number').textContent = progress.toFixed(2);
+            const activeIndex = Math.floor(progress * 60);
+            document.querySelectorAll('.ruler-tick').forEach((tick, i) => tick.classList.toggle('active', i <= activeIndex));
+        });
+
+        // --- TREE VIZ LOGIC (Step-by-Step) ---
+        class TreeNode {
+            constructor(val, id) {
+                this.val = val;
+                this.id = id;
+                this.left = null;
+                this.right = null;
+                this.x = 0;
+                this.y = 0;
+                this.height = -1; // Unknown
+                this.isBalanced = null; // Unknown
+                this.state = 'idle'; // idle, visiting, recursing, returning, checked
+            }
+        }
+
+        class BalancedBinaryTreeDemo {
+            constructor() {
+                this.root = null;
+                this.steps = [];
+                this.currentStep = 0;
+                this.isPlaying = false;
+                this.playInterval = null;
+                this.nodeMap = new Map();
+
+                // UI Elements
+                this.container = document.getElementById('tree-viz');
+                this.statusText = document.getElementById('status-text');
+                this.stepCount = document.getElementById('step-count');
+
+                // Resize listener
+                window.addEventListener('resize', () => {
+                    this.render();
+                });
+
+                this.attachEventListeners();
+                this.buildFromInput();
+            }
+
+            attachEventListeners() {
+                document.getElementById('build-btn').addEventListener('click', () => {
+                    this.pause();
+                    this.buildFromInput();
+                });
+                document.getElementById('btn-play').addEventListener('click', () => this.play());
+                document.getElementById('btn-pause').addEventListener('click', () => this.pause());
+                document.getElementById('btn-next').addEventListener('click', () => {
+                    this.pause();
+                    this.nextStep();
+                });
+                document.getElementById('btn-prev').addEventListener('click', () => {
+                    this.pause();
+                    this.prevStep();
+                });
+                document.getElementById('btn-reset').addEventListener('click', () => {
+                    this.pause();
+                    this.reset();
+                });
+            }
+
+            buildFromInput() {
+                const input = document.getElementById('tree-input').value;
+                const arr = input.split(',').map(x => {
+                    const t = x.trim();
+                    if (t === 'null' || t === 'None' || t === '') return null;
+                    return parseInt(t);
+                });
+
+                this.nodeMap.clear();
+                this.root = this.buildTree(arr);
+                this.calculateLayout();
+                this.generateSteps();
+                this.reset();
+            }
+
+            buildTree(arr) {
+                if (!arr.length || arr[0] === null) return null;
+                let idCounter = 0;
+                const root = new TreeNode(arr[0], idCounter++);
+                this.nodeMap.set(root.id, root);
+                const queue = [root];
+                let i = 1;
+
+                while (i < arr.length) {
+                    const curr = queue.shift();
+
+                    if (i < arr.length && arr[i] !== null) {
+                        curr.left = new TreeNode(arr[i], idCounter++);
+                        this.nodeMap.set(curr.left.id, curr.left);
+                        queue.push(curr.left);
+                    }
+                    i++;
+
+                    if (i < arr.length && arr[i] !== null) {
+                        curr.right = new TreeNode(arr[i], idCounter++);
+                        this.nodeMap.set(curr.right.id, curr.right);
+                        queue.push(curr.right);
+                    }
+                    i++;
+                }
+                return root;
+            }
+
+            calculateLayout() {
+                if (!this.root) return;
+                const w = this.container.offsetWidth;
+
+                const setCoords = (n, d, x, s) => {
+                    if (!n) return;
+                    n.x = x;
+                    n.y = d * 60 + 50;
+                    setCoords(n.left, d + 1, x - s, s / 2);
+                    setCoords(n.right, d + 1, x + s, s / 2);
+                };
+                setCoords(this.root, 0, w / 2, w / 4);
+            }
+
+            generateSteps() {
+                this.steps = [];
+                // Initial State
+                this.steps.push({
+                    type: 'INIT',
+                    msg: 'Tree built. Ready to run DFS.',
+                    highlights: [],
+                    heights: {} // Map id -> height
+                });
+
+                const dfs = (node) => {
+                    if (!node) {
+                        return { h: 0, bal: true };
+                    }
+
+                    // Visit Node
+                    this.steps.push({
+                        type: 'VISIT',
+                        msg: `Visiting Node ${node.val}. Checking Left Subtree...`,
+                        highlights: [node.id],
+                        focusId: node.id
+                    });
+
+                    // Left
+                    const left = dfs(node.left);
+
+                    this.steps.push({
+                        type: 'VISIT_RIGHT',
+                        msg: `Node ${node.val}: Left height is ${left.h}. Checking Right Subtree...`,
+                        highlights: [node.id],
+                        focusId: node.id
+                    });
+
+                    // Right
+                    const right = dfs(node.right);
+
+                    // Check
+                    const height = Math.max(left.h, right.h) + 1;
+                    const isBal = (Math.abs(left.h - right.h) <= 1) && left.bal && right.bal;
+
+                    this.steps.push({
+                        type: 'CALC',
+                        msg: `Node ${node.val}: Left H=${left.h}, Right H=${right.h}. Diff=${Math.abs(left.h - right.h)}. ${isBal ? 'Balanced' : 'Unbalanced'}.`,
+                        highlights: [node.id],
+                        focusId: node.id,
+                        updateNode: { id: node.id, h: height, bal: isBal }
+                    });
+
+                    return { h: height, bal: isBal };
+                };
+
+                dfs(this.root);
+
+                this.steps.push({
+                    type: 'DONE',
+                    msg: 'DFS Complete.',
+                    highlights: []
+                });
+            }
+
+            reset() {
+                this.currentStep = 0;
+                this.nodeMap.forEach(n => {
+                    n.height = -1;
+                    n.isBalanced = null;
+                    n.state = 'idle';
+                });
+                this.render();
+                this.updateUI();
+            }
+
+            play() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                document.getElementById('btn-play').style.display = 'none';
+                document.getElementById('btn-pause').style.display = 'inline-block';
+                this.playInterval = setInterval(() => {
+                    if (this.currentStep < this.steps.length - 1) {
+                        this.nextStep();
+                    } else {
+                        this.pause();
+                    }
+                }, 1000); // 1 second per step
+            }
+
+            pause() {
+                this.isPlaying = false;
+                clearInterval(this.playInterval);
+                document.getElementById('btn-play').style.display = 'inline-block';
+                document.getElementById('btn-pause').style.display = 'none';
+            }
+
+            nextStep() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    this.applyStep(this.currentStep);
+                }
+            }
+
+            prevStep() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    // Re-apply logic requires re-simulation or snap shot. 
+                    // For simplicity, we reset and fast-forward
+                    const target = this.currentStep;
+                    this.reset(); // Resets currentStep to 0
+                    this.currentStep = 0;
+                    while (this.currentStep < target) {
+                        this.currentStep++;
+                        this.applyStep(this.currentStep, false); // Don't render every intermediate frame
+                    }
+                    this.render();
+                    this.updateUI();
+                }
+            }
+
+            applyStep(index, doRender = true) {
+                const step = this.steps[index];
+
+                // Update Node State if needed
+                if (step.updateNode) {
+                    const n = this.nodeMap.get(step.updateNode.id);
+                    if (n) {
+                        n.height = step.updateNode.h;
+                        n.isBalanced = step.updateNode.bal;
+                    }
+                }
+
+                if (doRender) {
+                    this.render();
+                    this.updateUI();
+                }
+            }
+
+            updateUI() {
+                const step = this.steps[this.currentStep];
+                this.statusText.textContent = step ? step.msg : '';
+                this.stepCount.textContent = this.currentStep;
+            }
+
+            render() {
+                // Dynamic Layout Update
+                this.calculateLayout();
+
+                this.container.innerHTML = '';
+                if (!this.root) return;
+
+                const step = this.steps[this.currentStep];
+                const activeIds = step ? (step.highlights || []) : [];
+
+                // Draw Links
+                const drawLink = (n) => {
+                    if (!n) return;
+                    if (n.left) {
+                        this.renderLink(n, n.left);
+                        drawLink(n.left);
+                    }
+                    if (n.right) {
+                        this.renderLink(n, n.right);
+                        drawLink(n.right);
+                    }
+                };
+                drawLink(this.root);
+
+                // Draw Nodes
+                this.nodeMap.forEach(n => {
+                    const el = document.createElement('div');
+                    let className = 'tree-node';
+
+                    // Determine Style based on state
+                    if (activeIds.includes(n.id)) {
+                        el.style.borderColor = 'var(--accent)';
+                        el.style.backgroundColor = '#dbeafe'; // Blue highlight
+                        el.style.boxShadow = '0 0 0 3px rgba(42, 93, 156, 0.3)';
+                    } else if (n.isBalanced === true) {
+                        el.classList.add('balanced');
+                    } else if (n.isBalanced === false) {
+                        el.classList.add('unbalanced');
+                    }
+
+                    el.className = className + (n.isBalanced === true ? ' balanced' : '') + (n.isBalanced === false ? ' unbalanced' : '');
+
+                    // Override colors if active
+                    if (activeIds.includes(n.id)) {
+                        el.style.borderColor = 'var(--accent)';
+                        el.style.color = 'var(--accent)';
+                    }
+
+                    el.style.left = (n.x - 20) + 'px';
+                    el.style.top = (n.y - 20) + 'px';
+                    el.textContent = n.val;
+
+                    // Decoration: Vector Anchors
+                    const anchors = ['tl', 'tr', 'bl', 'br'];
+                    anchors.forEach(pos => {
+                        const anc = document.createElement('div');
+                        anc.className = `vector-anchor ${pos}`; // Reusing CSS from other page if possible, else define inline
+                        // Basic anchor style override
+                        anc.style.position = 'absolute';
+                        anc.style.width = '4px';
+                        anc.style.height = '4px';
+                        anc.style.background = 'var(--bg-card)';
+                        anc.style.border = '1px solid var(--accent)';
+                        if (pos.includes('t')) anc.style.top = '-2px'; else anc.style.bottom = '-2px';
+                        if (pos.includes('l')) anc.style.left = '-2px'; else anc.style.right = '-2px';
+                        el.appendChild(anc);
+                    });
+
+                    // Height Label
+                    if (n.height !== -1) {
+                        const lbl = document.createElement('div');
+                        lbl.className = 'node-label';
+                        lbl.style.left = (n.x + 24) + 'px';
+                        lbl.style.top = (n.y - 12) + 'px';
+                        lbl.innerHTML = `H:${n.height}`;
+                        this.container.appendChild(lbl);
+                    }
+
+                    this.container.appendChild(el);
+                });
+            }
+
+            renderLink(p, c) {
+                const line = document.createElement('div');
+                line.className = 'tree-link';
+                const len = Math.sqrt((c.x - p.x) ** 2 + (c.y - p.y) ** 2);
+                const angle = Math.atan2(c.y - p.y, c.x - p.x) * 180 / Math.PI;
+                line.style.width = len + 'px';
+                line.style.left = p.x + 'px';
+                line.style.top = p.y + 'px';
+                line.style.transform = `rotate(${angle}deg)`;
+                this.container.appendChild(line);
+            }
+        }
+
+        // Init
+        new BalancedBinaryTreeDemo();
+
+    </script>
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/layout.js"></script>
+</body>
+
+</html>

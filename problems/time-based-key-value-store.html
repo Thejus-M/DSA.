@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Based Key-Value Store | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+    <!-- Prism.js for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'EB Garamond', Georgia, serif;
+            line-height: 1.6;
+            font-size: 21px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* STRICT DESIGN SYSTEM */
+        /* STRICT DESIGN SYSTEM */
+        /* Global variables imported from variables.css */
+
+        /* Unified Fixed Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 40px;
+            background: var(--bg-card);
+            z-index: 500;
+            border-bottom: 0px solid transparent;
+        }
+
+        .header-brand {
+            width: 240px;
+            font-family: var(--font-pixel);
+            /* Pixel font */
+            font-size: 16px;
+            /* Larger pixel font */
+            color: var(--accent);
+            letter-spacing: 0;
+            text-transform: uppercase;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .header-tagline {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.3;
+            flex: 1;
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .header-nav {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding-left: 0;
+            color: var(--text-sub);
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-arrow {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding: 0 2px;
+        }
+
+        .nav-arrow:hover {
+            color: var(--text-main);
+        }
+
+        .breadcrumb-path {
+            color: var(--text-sub);
+        }
+
+        .breadcrumb-current {
+            color: var(--text-main);
+            font-weight: 400;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-number {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .progress-tick-top {
+            width: 32px;
+            height: 1px;
+            background: #ccc;
+        }
+
+        /* Page Layout */
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 240px 1fr 60px;
+            padding-top: 60px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 240px;
+            height: calc(100vh - 60px);
+            padding: 10px 20px 20px 40px;
+            overflow-y: auto;
+            background: var(--bg-card);
+            z-index: 100;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section-title {
+            font-family: var(--font-mono-sys);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            /* Removed padding-left per user request */
+        }
+
+        .sidebar-list {
+            list-style: none;
+        }
+
+        .sidebar-list li {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            color: var(--text-main);
+            padding: 4px 0;
+            line-height: 1.4;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .sidebar-list li::before {
+            content: "+";
+            color: #ccc;
+            font-size: 11px;
+            flex-shrink: 0;
+            width: 8px;
+            /* Fixed width for alignment */
+        }
+
+        .sidebar-list li.active::before {
+            color: var(--accent);
+            content: "→";
+            /* User requested arrow for active item */
+        }
+
+        .sidebar-list li a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .sidebar-list li a:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-list li.active a {
+            color: var(--accent);
+            font-style: italic;
+            /* Editorial touch */
+        }
+
+        /* Ruler Style Vertical Scale */
+        .ruler-scale {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 60px;
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 16px 20px 0;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .ruler-tick {
+            height: 1px;
+            background: #e0e0e0;
+            width: 8px;
+            transition: background 0.15s, width 0.15s;
+        }
+
+        .ruler-tick.major {
+            width: 16px;
+            background: #ccc;
+        }
+
+        .ruler-tick.active {
+            background: #666;
+            width: 8px;
+        }
+
+        .ruler-tick.major.active {
+            width: 16px;
+            background: #444;
+        }
+
+        .main-content {
+            grid-column: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Center everything */
+        }
+
+        .article-container {
+            width: 100%;
+            max-width: 1000px;
+            /* Widened content area */
+            margin: 0 auto;
+            padding: 60px 40px 100px;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .article-meta {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+        }
+
+        .article-title {
+            font-family: var(--font-mono-sys);
+            /* Tech header style */
+            font-size: 3.5rem;
+            /* Larger title */
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--text-main) !important;
+            /* Force Black Title */
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .article-subtitle {
+            font-family: var(--font-mono-code);
+            /* Changed to mono for tech spec feel */
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.5;
+            border-left: 1px solid var(--accent);
+            padding-left: 16px;
+            text-align: left;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--accent) !important;
+            /* Force Blue headings */
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .article-title-large {
+            font-family: var(--font-mono-sys);
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 40px;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: var(--text-main) !important;
+            /* Black Title per user request */
+        }
+
+        .article-meta {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            color: var(--accent) !important;
+            /* Blue Tagline */
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .demo-title {
+            color: var(--accent) !important;
+            border-color: var(--accent) !important;
+        }
+
+        .tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .tag {
+            font-family: var(--font-mono-sys);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            background: var(--bg-card);
+            border-radius: 0;
+            /* Strict square alignment */
+        }
+
+        .tag.medium {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .divider {
+            width: 44px;
+            height: 1px;
+            background: #1a1a1a;
+            margin: 40px auto;
+        }
+
+        .content-section {
+            margin-bottom: 44px;
+        }
+
+        .content-section h2 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+
+        .content-section p {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            text-align: left;
+            /* Removed justify for better readability on screens */
+            max-width: 65ch;
+            /* Optimal reading length */
+        }
+
+        .content-section ul {
+            list-style: none;
+            /* Custom markers */
+            padding-left: 0;
+            margin-bottom: 24px;
+        }
+
+        .content-section ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-family: var(--font-serif);
+            color: var(--text-sub);
+        }
+
+        .content-section ul li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .content-section code {
+            font-family: var(--font-mono-code);
+            font-size: 0.85em;
+            background: transparent;
+            padding: 0 4px;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            /* Outline style */
+        }
+
+        .example-box {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            /* Technical accent */
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .example-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .example-box code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .example-box p {
+            margin: 0;
+            font-family: 'EB Garamond', serif;
+            font-size: 0.98rem;
+            color: var(--text-sub);
+        }
+
+        .code-block-wrapper {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding: 4px 12px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #f5f5f5;
+            color: #000;
+        }
+
+        .code-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        pre {
+            background: var(--bg-body);
+            color: var(--text-main);
+            padding: 24px;
+            overflow-x: auto;
+            font-family: var(--font-mono-code);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            border: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+        }
+
+        /* Minimal Syntax Highlighting Theme */
+        code[class*="language-"],
+        pre[class*="language-"] {
+            color: var(--text-main);
+            text-shadow: none;
+            font-family: var(--font-mono-code);
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            word-spacing: normal;
+            word-break: normal;
+            line-height: 1.6;
+        }
+
+        /* Token Colors - Minimalist/Technical */
+        .token.comment,
+        .token.prolog,
+        .token.doctype,
+        .token.cdata {
+            color: var(--text-sub);
+            font-style: italic;
+        }
+
+        .token.punctuation {
+            color: var(--text-sub);
+        }
+
+        .token.namespace {
+            opacity: .7;
+        }
+
+        .token.property,
+        .token.tag,
+        .token.boolean,
+        .token.number,
+        .token.constant,
+        .token.symbol,
+        .token.deleted {
+            color: var(--text-main);
+        }
+
+        .token.selector,
+        .token.attr-name,
+        .token.string,
+        .token.char,
+        .token.builtin,
+        .token.inserted {
+            color: var(--text-main);
+            /* Minimal grey for strings */
+        }
+
+        .token.operator,
+        .token.entity,
+        .token.url,
+        .language-css .token.string,
+        .style .token.string {
+            color: var(--text-sub);
+        }
+
+        .token.atrule,
+        .token.attr-value,
+        .token.keyword {
+            color: var(--accent);
+            /* Tech Blue for keywords */
+            font-weight: bold;
+        }
+
+        .token.function,
+        .token.class-name {
+            color: var(--text-code);
+            /* Dark for functions */
+            font-weight: bold;
+        }
+
+        .token.regex,
+        .token.important,
+        .token.variable {
+            color: var(--text-sub);
+        }
+
+        .complexity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0;
+            /* Removing padding to use internal grid */
+            margin-bottom: 48px;
+        }
+
+        .complexity-card h3 {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-main);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            margin: 0;
+            background: var(--bg-body);
+            /* Subtle header bg */
+        }
+
+        .complexity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .complexity-item {
+            padding: 24px;
+            border-right: 1px solid var(--border);
+        }
+
+        .complexity-item:last-child {
+            border-right: none;
+        }
+
+        .complexity-label {
+            font-family: var(--font-mono-sys);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .complexity-value {
+            font-family: var(--font-mono-code);
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text-main);
+        }
+
+        .complexity-note {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .constraints-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .constraints-list li {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            padding: 5px 0;
+        }
+
+        .related-section {
+            border-top: 1px solid #e5e5e5;
+            padding-top: 18px;
+            margin-top: 26px;
+        }
+
+        .related-section h4 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+
+        .related-link {
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .related-link:hover {
+            text-decoration: underline;
+        }
+
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-nav);
+            margin-top: 60px;
+        }
+
+        .nav-footer a {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            text-decoration: none;
+            padding: 12px 20px;
+            border: 1px solid var(--border-sub);
+        }
+
+        .nav-footer a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 60px 0;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            line-height: 2;
+        }
+
+        @media (max-width: 1000px) {
+            .page-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar,
+            .ruler-scale {
+                display: none;
+            }
+
+            .header-brand {
+                width: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* STRICT DEMO STYLES - BLUEPRINT THEME */
+        .demo-feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 0 rgba(42, 93, 156, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .demo-feature-card.column {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .array-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            overflow-x: auto;
+            margin: 20px 0;
+            padding: 40px 0;
+            font-family: var(--font-mono-code);
+            /* Grid background shows through here */
+        }
+
+        .array-cell {
+            width: 44px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(42, 93, 156, 0.25);
+            /* Vector Blue Fill */
+            border: 2px solid var(--accent);
+            /* Solid Vector Stroke */
+            font-weight: 700;
+            font-size: 0.9rem;
+            position: relative;
+            transition: all 0.2s ease;
+            color: var(--accent);
+            box-shadow: none;
+            /* Flat vector look */
+        }
+
+        /* Control Points / Anchors */
+        .vector-anchor {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            /* Circle anchors */
+            z-index: 3;
+        }
+
+        .vector-anchor.tl {
+            top: -4px;
+            left: -4px;
+        }
+
+        .vector-anchor.tr {
+            top: -4px;
+            right: -4px;
+        }
+
+        .vector-anchor.bl {
+            bottom: -4px;
+            left: -4px;
+        }
+
+        .vector-anchor.br {
+            bottom: -4px;
+            right: -4px;
+        }
+
+        .array-cell.left,
+        .array-cell.right {
+            opacity: 0.3;
+            border-style: dashed;
+            background: var(--bg-card);
+            border-width: 1px;
+        }
+
+        /* Hide anchors on inactive cells to reduce noise */
+        .array-cell.left .vector-anchor,
+        .array-cell.right .vector-anchor {
+            display: none;
+        }
+
+        .array-cell.mid {
+            background: rgba(42, 93, 156, 0.1);
+            border: 2px solid var(--accent);
+            font-weight: 700;
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0 rgba(42, 93, 156, 0.15);
+            z-index: 2;
+        }
+
+        .array-cell.found {
+            background-color: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 4px 4px 0 rgba(42, 93, 156, 0.4);
+            font-weight: 700;
+        }
+
+        /* White anchors on found blue bg */
+        .array-cell.found .vector-anchor {
+            border-color: #fff;
+        }
+
+        .array-index {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--accent);
+            font-family: var(--font-mono-sys);
+            opacity: 0.7;
+        }
+
+        .pointer-label {
+            position: absolute;
+            bottom: -24px;
+            top: auto;
+            font-size: 0.65rem;
+            font-weight: 400;
+            padding: 0;
+            background: transparent;
+            color: var(--accent);
+            font-family: var(--font-mono-sys);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .pointer-label.mid::before {
+            height: 12px;
+            opacity: 1;
+        }
+
+        /* NEW REFERENCE MATCH STYLES */
+        .demo-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border);
+            margin-bottom: 20px;
+        }
+
+        .status-panel {
+            border-left: 3px solid var(--accent);
+            padding-left: 16px;
+            flex: 1;
+        }
+
+        .status-label {
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        .status-text {
+            font-family: var(--font-mono-code);
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .step-display {
+            border: 1px solid var(--border-sub);
+            padding: 10px 20px;
+            text-align: right;
+            background: var(--bg-body);
+            min-width: 100px;
+        }
+
+        .step-label {
+            font-family: var(--font-mono-sys);
+            font-size: 9px;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .step-value {
+            font-family: var(--font-mono-code);
+            font-size: 20px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .demo-btn {
+            background: var(--bg-card);
+            border: 1px solid #ddd;
+            font-family: var(--font-mono-sys);
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 10px 24px;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.1s;
+            letter-spacing: 1px;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .demo-btn.primary {
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .section-divider {
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 60px 0;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .section-divider::before {
+            /* Decorative breaker pattern: :⋮:⋮ repeating */
+            content: ":⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮   ";
+            display: block;
+            width: 100%;
+            font-family: var(--font-mono-sys);
+            font-size: 12px;
+            line-height: 1;
+            text-align: center;
+            color: var(--text-sub);
+            white-space: nowrap;
+            letter-spacing: -2px;
+            opacity: 0.5;
+        }
+
+        /* Terminal Card Design */
+        .terminal-card {
+            border: 1px solid var(--border);
+            /* Strict border matching image */
+            margin-bottom: 40px;
+            background: var(--bg-card);
+            border-radius: 4px;
+            /* Slight radius per image */
+        }
+
+        .terminal-row {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            padding: 24px 30px;
+        }
+
+        .terminal-row:last-child {
+            border-bottom: none;
+        }
+
+        .terminal-label {
+            font-family: var(--font-mono-sys);
+            color: var(--text-sub);
+            /* #888 as per plan */
+            font-size: 12px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 80px;
+            /* Fixed width for alignment */
+            flex-shrink: 0;
+            padding-top: 4px;
+            /* Align with text baseline */
+            user-select: none;
+        }
+
+        .terminal-content {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .terminal-content.serif {
+            font-family: var(--font-serif);
+        }
+
+        .terminal-content.mono {
+            font-family: var(--font-mono-sys);
+            font-size: 0.95rem;
+        }
+
+        .terminal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .terminal-content li {
+            position: relative;
+            padding-left: 0;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Unified Header -->
+    <div id="header-mount"></div>
+    <div class="header-status">
+        <span class="progress-number" id="progress-number">0.00</span>
+        <div class="progress-tick-top"></div>
+    </div>
+    </header>
+
+    <!-- Vertical Ruler Scale -->
+    <div class="ruler-scale" id="ruler-scale">
+        <!-- Ticks generated by script -->
+    </div>
+
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar-mount">
+            <!-- Sidebar injected by layout.js -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="article-container">
+                <header class="article-header">
+                    <div class="article-meta">DSA LEARNING</div>
+                    <h1 class="article-title">Time Based Key-Value Store.</h1>
+                    <div class="tags">
+                        <span class="tag medium">Medium</span>
+                        <span class="tag">Hash Map</span>
+                        <span class="tag">Binary Search</span>
+                        <span class="tag">Design</span>
+                    </div>
+                </header>
+
+                <div class="divider"></div>
+
+                <!-- Problem Statement & Constraints (Terminal Card Style) -->
+                <div class="terminal-card">
+                    <div class="terminal-row">
+                        <span class="terminal-label">PROB:</span>
+                        <div class="terminal-content serif">
+                            <p style="margin-top: 0;">Design a time-based key-value data structure that can store
+                                multiple values for the same key at different time stamps and retrieve the key's value
+                                at a certain timestamp.</p>
+                            <p>Implement the <code>TimeMap</code> class:</p>
+                            <ul style="list-style: disc; padding-left: 20px; color: var(--text-sub);">
+                                <li><code>TimeMap()</code> Initializes the object of the data structure.</li>
+                                <li><code>void set(String key, String value, int timestamp)</code> Stores the key
+                                    <code>key</code> with the value <code>value</code> at the given time
+                                    <code>timestamp</code>.
+                                </li>
+                                <li><code>String get(String key, int timestamp)</code> Returns a value such that
+                                    <code>set</code> was called previously, with
+                                    <code>timestamp_prev <= timestamp</code>. If there are multiple such values, it
+                                    returns the value associated with the largest <code>timestamp_prev</code>. If there
+                                    are no values, it returns <code>""</code>.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="terminal-row">
+                        <span class="terminal-label">CONST:</span>
+                        <div class="terminal-content mono">
+                            <ul>
+                                <li>1 <= key.length, value.length <=100</li>
+                                <li>key and value consist of lowercase English letters and digits.</li>
+                                <li>1 <= timestamp <=10^7</li>
+                                <li>All the timestamps <code>timestamp</code> of <code>set</code> are strictly
+                                    increasing.</li>
+                                <li>At most 2 * 10^5 calls will be made to <code>set</code> and <code>get</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="terminal-row">
+                        <span class="terminal-label">EG:</span>
+                        <div class="terminal-content mono">
+                            <!-- Example 1 -->
+                            <div style="margin-bottom: 24px;">
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
+                                <div style="margin-bottom: 8px;">["TimeMap", "set", "get", "get", "set", "get",
+                                    "get"]<br>[[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4],
+                                    ["foo", 4], ["foo", 5]]</div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
+                                <div style="margin-bottom: 8px;">[null, null, "bar", "bar", null, "bar2", "bar2"]</div>
+                                <div style="color: var(--text-sub); font-size: 0.85rem;">
+                                    // Explanation:<br>
+                                    TimeMap timeMap = new TimeMap();<br>
+                                    timeMap.set("foo", "bar", 1); // store the key "foo" and value "bar" along with
+                                    timestamp = 1.<br>
+                                    timeMap.get("foo", 1); // return "bar"<br>
+                                    timeMap.get("foo", 3); // return "bar", since there is no value corresponding to foo
+                                    at timestamp 3 and timestamp 2, then the only value is at timestamp 1 is "bar".<br>
+                                    timeMap.set("foo", "bar2", 4); // store the key "foo" and value "bar2" along with
+                                    timestamp = 4.<br>
+                                    timeMap.get("foo", 4); // return "bar2"<br>
+                                    timeMap.get("foo", 5); // return "bar2"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Intuition -->
+                <section class="content-section">
+                    <h2>Intuition</h2>
+                    <p>
+                        We need to store values associated with a key and a timestamp. A Hash Map is suitable for
+                        mapping keys to values.
+                    </p>
+                    <p>
+                        Since we need to retrieve values based on timestamps, and the timestamps in <code>set</code> are
+                        strictly increasing, we can store the values for each key as a list of pairs
+                        <code>[value, timestamp]</code>. This list will naturally be sorted by timestamp.
+                    </p>
+                    <p>
+                        For the <code>get</code> operation, we need to find the largest timestamp less than or equal to
+                        the requested timestamp. Since the list is sorted, we can use Binary Search to find this
+                        efficiently.
+                    </p>
+                </section>
+
+
+
+                <div class="section-divider" aria-hidden="true"></div>
+                <!-- Solution -->
+                <section class="content-section">
+                    <h2>Solution: HASH MAP + BINARY SEARCH</h2>
+
+                    <div class="code-block-wrapper">
+                        <span class="code-label">Python Solution</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                        <pre><code class="language-python">from collections import defaultdict
+
+class TimeMap:
+
+    def __init__(self):
+        # Dictionary to store key -> list of [value, timestamp]
+        self.s = defaultdict(list)
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        # Append to the list. Since timestamps are increasing, the list remains sorted.
+        self.s[key].append([value, timestamp])
+
+    def get(self, key: str, timestamp: int) -> str:
+        res = ""
+        arr = self.s.get(key, [])
+
+        # Binary Search to find the largest timestamp <= given timestamp
+        left, right = 0, len(arr) - 1
+        while left <= right:
+            m = (left + right) // 2
+            if arr[m][1] == timestamp:
+                return arr[m][0]
+            elif arr[m][1] < timestamp:
+                res = arr[m][0] # Candidate answer
+                left = m + 1
+            else:
+                right = m - 1
+        return res</code></pre>
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- Complexity Analysis -->
+                <div class="complexity-card">
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-item">
+                            <div class="complexity-label">Time Complexity</div>
+                            <div class="complexity-value">O(1) set, O(log n) get</div>
+                            <div class="complexity-note">Set is constant time (append). Get is binary search.</div>
+                        </div>
+                        <div class="complexity-item">
+                            <div class="complexity-label">Space Complexity</div>
+                            <div class="complexity-value">O(n)</div>
+                            <div class="complexity-note">To store all key-value-timestamp entries.</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="section-divider" aria-hidden="true"></div>
+                <!-- Interactive Demo (Placeholder for uniformity, could be expanded) -->
+                <section class="content-section"
+                    style="margin-top: 60px; padding-top: 40px; border-top: 1px solid #e5e5e5; opacity: 0.5;">
+                    <h2>Interactive Visualization</h2>
+                    <p style="margin-bottom: 30px;">(Visualization coming soon for Key-Value Store)</p>
+                </section>
+
+
+                <div
+                    style="text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-sub); margin: 60px 0;">
+                    — END —
+                </div>
+
+                <div class="nav-footer">
+                    <a href="search-in-rotated-sorted-array.html">← Previous Problem</a>
+                    <a href="#">Next Problem →</a>
+                </div>
+
+                <div id="footer-mount"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const code = codeBlock.innerText;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerText;
+                button.innerText = 'COPIED!';
+
+                setTimeout(() => {
+                    button.innerText = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // Generate Ticks (Technical Ruler Style)
+        const scaleContainer = document.getElementById('ruler-scale');
+        const numTicks = 60;
+        for (let i = 0; i < numTicks; i++) {
+            const tick = document.createElement('div');
+            tick.className = 'ruler-tick';
+            if (i % 5 === 0) tick.classList.add('major');
+            scaleContainer.appendChild(tick);
+        }
+
+        function updateProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+
+            // Update Number
+            document.getElementById('progress-number').textContent = progress.toFixed(2);
+
+            // Update Ticks
+            const ticks = document.querySelectorAll('.ruler-tick');
+            const activeIndex = Math.floor(progress * numTicks);
+            ticks.forEach((tick, i) => {
+                tick.classList.toggle('active', i <= activeIndex);
+            });
+        }
+
+        window.addEventListener('scroll', updateProgress);
+        window.addEventListener('resize', updateProgress);
+        updateProgress();
+    </script>
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/layout.js"></script>
+</body>
+
+</html>

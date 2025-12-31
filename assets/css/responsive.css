@@ -1,0 +1,217 @@
+/* Global Responsive Styles */
+
+/* Base responsiveness for Code and Tables - Apply Always or specifically for smaller screens */
+pre,
+.code-block-wrapper,
+.terminal-content {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Tablet & Smaller Desktop (< 1024px) */
+@media (max-width: 1024px) {
+    .page-wrapper {
+        grid-template-columns: 200px 1fr 0px;
+        /* Shrink sidebar, hide ruler column */
+    }
+
+    .sidebar {
+        width: 200px;
+    }
+
+    .ruler-scale {
+        display: none;
+    }
+
+    /* Adjust Index Page Grid if present */
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Ensure content doesn't force scroll */
+    .article-container {
+        width: 100%;
+        overflow-x: hidden;
+        /* Prevent container itself from pushing out */
+    }
+}
+
+/* Mobile & Small Tablet Stack (< 900px - Increased from 768px) */
+/* User reported issues at 798px, so stacking earlier is safer */
+@media (max-width: 900px) {
+
+    /* Global Typography Scale */
+    body {
+        font-size: 18px;
+    }
+
+    h1,
+    .article-title,
+    .hero-title {
+        font-size: 2rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Layout Stack - Switch to single column */
+    /* Layout Stack - Switch to single column */
+    .page-wrapper {
+        display: block;
+        padding-top: 0;
+    }
+
+    /* Header */
+    .header {
+        position: relative;
+        padding: 0 16px;
+        justify-content: space-between;
+        width: 100%;
+        height: auto;
+    }
+
+    /* Table of Contents (Index Page) - Fix squashed titles */
+    .problem-list li {
+        flex-direction: row !important;
+        /* Keep aligned next to each other */
+        flex-wrap: wrap;
+        /* Allow wrapping if needed */
+        align-items: baseline !important;
+        gap: 8px;
+        padding-bottom: 8px;
+    }
+
+    .problem-list li .entry-leader {
+        display: none;
+        /* Hide leader */
+    }
+
+    .problem-list li .entry-value {
+        font-size: 9px;
+        /* Very small */
+        padding: 2px 6px;
+        margin-top: 0;
+        align-self: center;
+        opacity: 0.8;
+    }
+
+    /* Hide badge on very small screens */
+    @media (max-width: 380px) {
+        .problem-list li .entry-value {
+            display: none !important;
+        }
+    }
+
+    .header-tagline,
+    .header-status {
+        display: none;
+    }
+
+    .brand-pixel {
+        font-size: 14px;
+    }
+
+    /* Sidebar: Top Scrollable Menu */
+    .sidebar {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
+        border-bottom: 1px solid var(--border);
+        padding: 10px 20px;
+        z-index: 10;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-section {
+        margin-bottom: 15px;
+    }
+
+    /* Index Page Tweaks */
+    .container {
+        padding: 80px 20px 60px;
+        max-width: 100%;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 0;
+    }
+
+    .article-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    /* Demo Controls Stack */
+    .demo-feature-card,
+    .demo-controls,
+    .terminal-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .demo-feature-card>div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .demo-btn {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .terminal-label {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    /* Tree Demo Specifics */
+    .tree-controls-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    .tree-input-group {
+        min-width: 0 !important;
+        width: 100% !important;
+        flex-wrap: wrap;
+    }
+
+    .tree-play-controls {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Adjust input fields in demos */
+    input[type="text"] {
+        width: 100%;
+    }
+
+    /* Index Page Tweaks */
+    .container {
+        padding: 20px 20px 60px !important;
+        /* Force override for Index */
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

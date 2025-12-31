@@ -1,0 +1,212 @@
+:root {
+  /* --- DESIGN SYSTEM & VARIABLES --- */
+
+  /* Primary Palette (Legacy/Shared) */
+  --blue: #2A5D9C;
+  /* Updated to match user accent */
+  --blue-dim: rgba(42, 93, 156, 0.3);
+
+  /* Light Theme (Default) */
+  --accent: #2A5D9C;
+  --accent-hover: #1e4575;
+  --accent-soft: rgba(42, 93, 156, 0.12);
+  /* Derived from accent */
+
+  --bg-body: #ffffff;
+  --bg-card: #ffffff;
+  --bg-code: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
+
+  --text-main: #111111;
+  --text-sub: #666666;
+  --text-code: #111111;
+
+  --border: #E5E5E5;
+  --border-sub: #e0e0e0;
+  --border-nav: #f0f0f0;
+
+  /* Visualization Colors */
+  --viz-balanced-bg: #eafaf1;
+  --viz-balanced-text: #27ae60;
+  --viz-balanced-border: #27ae60;
+
+  --viz-unbalanced-bg: #fdedec;
+  --viz-unbalanced-text: #c0392b;
+  --viz-unbalanced-border: #c0392b;
+
+  --viz-active-bg: #dbeafe;
+  --viz-active-border: #2A5D9C;
+  --viz-active-text: #2A5D9C;
+
+  --viz-node-bg: #ffffff;
+  --viz-link: #ccc;
+
+  /* Blueprint Grid Pattern */
+  --grid-line: #e0ecf8;
+
+  /* Legacy Mappings for compatibility with existing base/components */
+  --bg: var(--bg-body);
+  --text-strong: var(--text-main);
+  --text-muted: var(--text-sub);
+  --border-subtle: var(--border);
+
+  /* Typography */
+  --font-heading: 'EB Garamond', serif;
+  --font-body: 'EB Garamond', serif;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'EB Garamond', serif;
+  --tech: 'Share Tech Mono', monospace;
+
+  /* Specific Problem Page Fonts */
+  --font-serif: var(--serif);
+  --font-mono-sys: var(--tech);
+  --font-mono-code: var(--mono);
+  --font-pixel: 'Press Start 2P', cursive;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Radii */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease-out;
+  --transition-normal: 0.25s ease-out;
+}
+
+/* Dark Mode - System Preference OR Manual Toggle */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Default to User's Dark Palette if system prefers dark */
+    --accent: #5682B1;
+    --accent-hover: #739EC9;
+    --accent-soft: rgba(86, 130, 177, 0.2);
+
+    --bg-body: #000000;
+    --bg-card: #000000;
+    --bg-code: #0a0e14;
+    /* Extremely dark blue-black for code distinction */
+    --bg-sidebar: #000000;
+    --bg-header: #000000;
+
+    --text-main: #739EC9;
+    /* Light Blue Text */
+    --text-sub: #5682B1;
+    /* Darker Blue Text */
+    --text-code: #739EC9;
+
+    --border: #5682B1;
+    --border-sub: #3d5e80;
+    --border-nav: #1a2a3a;
+
+    /* Visualization Colors */
+    --viz-balanced-bg: #05140a;
+    --viz-balanced-text: #5682B1;
+    --viz-balanced-border: #5682B1;
+
+    --viz-unbalanced-bg: #1a0505;
+    --viz-unbalanced-text: #739EC9;
+    --viz-unbalanced-border: #739EC9;
+
+    --viz-active-bg: #0d1a26;
+    --viz-active-border: #739EC9;
+    --viz-active-text: #739EC9;
+
+    --viz-node-bg: #000000;
+    --viz-link: #5682B1;
+
+    --grid-line: #142030;
+
+    /* Legacy Mappings */
+    --bg: var(--bg-body);
+    --text-strong: var(--text-main);
+    --text-muted: var(--text-sub);
+    --border-subtle: var(--border);
+  }
+}
+
+/* Specific Override for Button Toggle */
+/* Specific Override for Button Toggle */
+[data-theme="dark"] {
+  --accent: #5682B1;
+  --accent-hover: #739EC9;
+  --accent-soft: rgba(86, 130, 177, 0.2);
+
+  --bg-body: #000000;
+  --bg-card: #000000;
+  --bg-code: #0a0e14;
+  --bg-sidebar: #000000;
+  --bg-header: #000000;
+
+  --text-main: #739EC9;
+  --text-sub: #5682B1;
+  --text-code: #739EC9;
+
+  --border: #5682B1;
+  --border-sub: #3d5e80;
+  --border-nav: #1a2a3a;
+
+  /* Visualization */
+  --viz-balanced-bg: #000000;
+  --viz-balanced-text: #4ade80;
+  --viz-balanced-border: #4ade80;
+
+  --viz-unbalanced-bg: #000000;
+  --viz-unbalanced-text: #ef4444;
+  --viz-unbalanced-border: #ef4444;
+
+  --viz-active-bg: #0d1a26;
+  --viz-active-border: #739EC9;
+  --viz-active-text: #739EC9;
+
+  --viz-node-bg: #000000;
+  --viz-link: #5682B1;
+
+  --grid-line: #142030;
+
+  /* Legacy */
+  --bg: var(--bg-body);
+  --text-strong: var(--text-main);
+  --text-muted: var(--text-sub);
+  --border-subtle: var(--border);
+}
+
+[data-theme="light"] {
+  /* Enforce light variables if manually selected even if system is dark */
+  --accent: #2A5D9C;
+  --bg-body: #ffffff;
+  --bg-card: #ffffff;
+  --bg-code: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
+  --text-main: #111111;
+  --text-sub: #666666;
+  --border: #E5E5E5;
+  --grid-line: #e0ecf8;
+
+  /* Visualization Colors (Force Light Mode) */
+  --viz-balanced-bg: #eafaf1;
+  --viz-balanced-text: #27ae60;
+  --viz-balanced-border: #27ae60;
+
+  --viz-unbalanced-bg: #fdedec;
+  --viz-unbalanced-text: #c0392b;
+  --viz-unbalanced-border: #c0392b;
+
+  --viz-active-bg: #dbeafe;
+  --viz-active-border: #2A5D9C;
+  --viz-active-text: #2A5D9C;
+
+  --viz-node-bg: #ffffff;
+  --viz-link: #ccc;
+}
