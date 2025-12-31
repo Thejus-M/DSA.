@@ -476,16 +476,20 @@
         }
 
         .section-divider::before {
+            /* Decorative breaker pattern: :⋮:⋮ repeating */
             content: ":⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮   ";
             display: block;
             width: 100%;
             font-family: var(--font-mono-sys);
             font-size: 12px;
+            line-height: 1;
             text-align: center;
             color: var(--text-sub);
+            white-space: nowrap;
             letter-spacing: -2px;
             opacity: 0.5;
         }
+
 
         /* Demo Card Styles */
         .demo-feature-card {
