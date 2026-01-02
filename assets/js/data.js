@@ -1,6 +1,6 @@
 const DSA_DATA = {
     metadata: {
-        title: "DSA",
+        title: "DSA.",
         tagline: "UNDERSTAND DATA STRUCTURES,<br />ONE PROBLEM AT A TIME.",
         footerText: "| DSA LEARNING |<br />A REFERENCE MANUAL FOR PEOPLE WHO DESIGN AND BUILD ALGORITHMS.<br />© 2025 DSA • [ SECTION 001 ]"
     },
