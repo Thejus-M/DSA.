@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
-  /* Adjusted to match Tarun page buttons */
+  /* Adjusted to match Thejus page buttons */
   border-radius: var(--radius-sm);
   /* Changed to small radius */
   font-weight: 500;
@@ -111,7 +111,7 @@ pre {
 }
 
 /* --------------------
-   TARUN-LIKE CUSTOMIZATIONS
+   Thejus-LIKE CUSTOMIZATIONS
    (Brand / hero / diagram tweaks)
    -------------------- */
 
@@ -193,6 +193,7 @@ pre {
   margin: 24px 0;
   pointer-events: none;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .section-divider::before {

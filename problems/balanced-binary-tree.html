@@ -532,18 +532,22 @@
             margin: 60px 0;
             pointer-events: none;
             width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         .section-divider::before {
             content: ":⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮    :⋮:⋮   ";
-            display: block;
-            width: 100%;
+            display: inline-block;
+            max-width: 100%;
             font-family: var(--font-mono-sys);
             font-size: 12px;
             text-align: center;
             color: var(--text-sub);
             letter-spacing: -2px;
             opacity: 0.5;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         /* Demo Card Styles */
