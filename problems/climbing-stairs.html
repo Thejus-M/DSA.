@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/problems.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climbing Stairs | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <style>
+        /* Demo Input Styling - Adaptive */
+        .demo-input {
+            background: #1a1a2e;
+            color: #4fc1ff;
+            border: 2px solid #2A5D9C;
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        /* Light Theme Input Override */
+        html[data-theme="light"] .demo-input {
+            background: #ffffff;
+            color: #1e3a5f;
+            border: 2px solid #cbd5e1;
+        }
+
+        .demo-input:focus {
+            outline: none;
+            border-color: #51cf66;
+            box-shadow: 0 0 8px rgba(81, 207, 102, 0.3);
+        }
+
+        html[data-theme="light"] .demo-input:focus {
+            border-color: #2A5D9C;
+            box-shadow: 0 0 8px rgba(42, 93, 156, 0.2);
+        }
+
+        /* Demo Button */
+        .demo-btn {
+            background: transparent;
+            border: 2px solid #2A5D9C;
+            color: #2A5D9C;
+            padding: 8px 24px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 12px;
+        }
+
+        .demo-btn:hover {
+            background: #2A5D9C;
+            color: #fff;
+        }
+
+        html[data-theme="light"] .demo-btn {
+            border-color: #1e3a5f;
+            color: #1e3a5f;
+        }
+
+        html[data-theme="light"] .demo-btn:hover {
+            background: #1e3a5f;
+            color: #fff;
+        }
+
+        .demo-result {
+            background: #1a1a2e;
+            border: 2px solid #2A5D9C;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Light Theme Result Override */
+        html[data-theme="light"] .demo-result {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+        }
+
+        .result-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            color: #51cf66;
+            font-weight: bold;
+        }
+
+        html[data-theme="light"] .result-value {
+             color: #1e40af; /* Dark blue for result value in light mode */
+        }
+
+        #demo-canvas {
+            background: #1a1a2e; /* Dark background for dark mode */
+            display: block;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        html[data-theme="light"] #demo-canvas {
+            background: #f8fafc; /* Light gray for light mode */
+        }
+
+        /* Phase Sections */
+        .phase-section {
+            margin: 50px 0;
+            background: rgba(42, 93, 156, 0.03);
+            border: 1px solid rgba(42, 93, 156, 0.1);
+            padding: 20px;
+            padding-bottom: 0;
+        }
+
+        .phase-title {
+            font-family: var(--font-mono-sys);
+            font-size: 14px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .phase-description {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .phase-canvas-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .phase-canvas {
+            width: 100%;
+            height: 400px;
+            background: var(--bg-body);
+            display: block;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px),
+                repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px);
+            border-bottom: 1px solid rgba(42, 93, 156, 0.2);
+        }
+
+        .phase-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(42, 93, 156, 0.3);
+            border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .phase-canvas-wrapper:hover .phase-controls {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Mobile: Always show controls if hover is not available */
+        @media (hover: none) {
+            .phase-controls {
+                opacity: 1 !important;
+                transform: translateX(-50%) translateY(0) !important;
+                pointer-events: auto !important;
+            }
+        }
+
+        /* Light Theme Override */
+        html[data-theme="light"] .phase-controls {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .phase-controls button {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 4px 10px;
+            font-family: var(--font-mono-sys);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 32px;
+            border-radius: 12px;
+        }
+
+        /* Light Theme Button Override */
+        html[data-theme="light"] .phase-controls button {
+             border-color: #2A5D9C;
+             color: #2A5D9C;
+        }
+
+        .phase-controls button:hover {
+            background: var(--accent);
+            color: var(--bg-body);
+            transform: scale(1.05);
+        }
+
+        html[data-theme="light"] .phase-controls button:hover {
+            background: #2A5D9C;
+            color: #fff;
+        }
+
+        .phase-controls button.active {
+            background: rgba(42, 93, 156, 0.3);
+            font-weight: bold;
+        }
+
+        html[data-theme="light"] .phase-controls button.active {
+            background: rgba(42, 93, 156, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .phase-canvas {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Unified Header -->
+    <div id="header-mount"></div>
+    <div class="header-status">
+        <span class="progress-number" id="progress-number">0.00</span>
+        <div class="progress-tick-top"></div>
+    </div>
+    </header>
+
+    <!-- Vertical Ruler Scale -->
+    <div class="ruler-scale" id="ruler-scale"></div>
+
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar-mount"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="article-container">
+                <header class="article-header">
+                    <div class="article-meta">DSA LEARNING</div>
+                    <h1 class="article-title">Climbing Stairs</h1>
+                    <div class="tags">
+                        <span class="tag">Easy</span>
+                        <span class="tag">Dynamic Programming</span>
+                        <span class="tag">Fibonacci</span>
+                    </div>
+                </header>
+
+                <div class="divider"></div>
+
+                <!-- Problem Statement -->
+                <div class="terminal-card">
+                    <div class="terminal-row">
+                        <span class="terminal-label">PROB:</span>
+                        <div class="terminal-content serif">
+                            <p style="margin-top: 0;">You are climbing a staircase. It takes <code>n</code> steps to
+                                reach the top.</p>
+                            <p>Each time you can either climb <code>1</code> or <code>2</code> steps. In how many
+                                distinct ways can you climb to the top?</p>
+                        </div>
+                    </div>
+
+                    <div class="terminal-row">
+                        <span class="terminal-label">CONST:</span>
+                        <div class="terminal-content mono">
+                            <ul style="list-style: disc; padding-left: 20px;">
+                                <li>1 <= n <=45</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="terminal-row">
+                        <span class="terminal-label">EG:</span>
+                        <div class="terminal-content mono">
+                            <div style="margin-bottom: 24px;">
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
+                                <div style="margin-bottom: 8px;">n = 2</div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
+                                <div style="margin-bottom: 8px;">2</div>
+                                <div style="color: var(--text-sub); font-size: 0.85rem;">
+                                    Explanation: There are two ways to climb to the top.<br>
+                                    1. 1 step + 1 step<br>
+                                    2. 2 steps
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
+                                <div style="margin-bottom: 8px;">n = 3</div>
+                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
+                                <div style="margin-bottom: 8px;">3</div>
+                                <div style="color: var(--text-sub); font-size: 0.85rem;">
+                                    Explanation: There are three ways to climb to the top.<br>
+                                    1. 1 step + 1 step + 1 step<br>
+                                    2. 1 step + 2 steps<br>
+                                    3. 2 steps + 1 step
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <!-- Intuition with 4 Auto-Looping Phases -->
+                <section class="content-section">
+                    <h2>Intuition</h2>
+                    <p>
+                        Let's break down the solution into four key phases to understand how we arrive at the optimal
+                        approach.
+                    </p>
+
+                    <!-- Phase 1: Brute Force -->
+                    <div class="phase-section">
+                        <h3 class="phase-title">Phase 1: Brute Force Approach</h3>
+                        <p class="phase-description">
+                            First, let's visualize how to solve this recursively. We build stairs from 0 to 4, and for
+                            each step,
+                            we explore all possible paths by taking either 1 or 2 steps at a time. The recursive tree
+                            shows how the
+                            problem breaks down into smaller subproblems.
+                        </p>
+                        <div class="phase-canvas-wrapper">
+                            <canvas id="phase1-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                            <div class="phase-controls">
+                                <button onclick="restartPhase(1)">↺</button>
+                                <button onclick="setSpeed(1, 0.5)">0.5x</button>
+                                <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
+                                <button onclick="setSpeed(1, 1)" class="active">1x</button>
+                                <button onclick="setSpeed(1, 2)">2x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2: Repetition -->
+                    <div class="phase-section">
+                        <h3 class="phase-title">Phase 2: Identifying Repetition</h3>
+                        <p class="phase-description">
+                            Notice how certain values (like 2, 3, and 1) appear multiple times in our recursive tree.
+                            These repeated
+                            calculations waste time! The glowing magenta nodes highlight where we're solving the same
+                            subproblem over and over.
+                            This is the key insight that leads us to memoization.
+                        </p>
+                        <div class="phase-canvas-wrapper">
+                            <canvas id="phase2-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                            <div class="phase-controls">
+                                <button onclick="restartPhase(2)">↺</button>
+                                <button onclick="setSpeed(2, 0.5)">0.5x</button>
+                                <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
+                                <button onclick="setSpeed(2, 1)" class="active">1x</button>
+                                <button onclick="setSpeed(2, 2)">2x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3: Memoization -->
+                    <div class="phase-section">
+                        <h3 class="phase-title">Phase 3: Memoization → Linear Time</h3>
+                        <p class="phase-description">
+                            Instead of recalculating, we store each result in a table. Watch as we build the table from
+                            left to right,
+                            computing each value only once by adding the previous two values. This transforms our
+                            exponential algorithm
+                            into a linear O(n) solution with just a single pass through the array.
+                        </p>
+                        <div class="phase-canvas-wrapper">
+                            <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                            <div class="phase-controls">
+                                <button onclick="restartPhase(3)">↺</button>
+                                <button onclick="setSpeed(3, 0.5)">0.5x</button>
+                                <button id="play-btn-3" onclick="togglePhase(3)">❚❚</button>
+                                <button onclick="setSpeed(3, 1)" class="active">1x</button>
+                                <button onclick="setSpeed(3, 2)">2x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 4: Fibonacci -->
+                    <div class="phase-section">
+                        <h3 class="phase-title">Phase 4: The Fibonacci Connection</h3>
+                        <p class="phase-description">
+                            The pattern we discovered is the famous Fibonacci sequence! Each number is the sum of the
+                            previous two:
+                            F(n) = F(n-1) + F(n-2). This makes perfect sense: to reach step n, we can come from step n-1
+                            (take 1 step)
+                            or from step n-2 (take 2 steps). The number of ways to climb n stairs is exactly the (n+1)th
+                            Fibonacci number.
+                        </p>
+                        <div class="phase-canvas-wrapper">
+                            <canvas id="phase4-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                            <div class="phase-controls">
+                                <button onclick="restartPhase(4)">↺</button>
+                                <button onclick="setSpeed(4, 0.5)">0.5x</button>
+                                <button id="play-btn-4" onclick="togglePhase(4)">❚❚</button>
+                                <button onclick="setSpeed(4, 1)" class="active">1x</button>
+                                <button onclick="setSpeed(4, 2)">2x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>
+                        By recognizing this as a Fibonacci sequence, we can optimize further to O(1) space by only
+                        keeping track
+                        of the last two values instead of the entire array.
+                    </p>
+                </section>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <!-- Solution -->
+                <section class="content-section">
+                    <h2>Solution: Dynamic Programming</h2>
+                    <div class="code-block-wrapper">
+                        <span class="code-label">Python Solution</span>
+                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                        <pre><code class="language-python">def climbStairs(n):
+    if n <= 1:
+        return 1
+    
+    prev2, prev1 = 1, 1
+    
+    for i in range(2, n + 1):
+        current = prev1 + prev2
+        prev2, prev1 = prev1, current
+    
+    return prev1</code></pre>
+                    </div>
+                </section>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <!-- Complexity Analysis -->
+                <div class="complexity-card">
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-item">
+                            <div class="complexity-label">Time Complexity</div>
+                            <div class="complexity-value">O(n)</div>
+                            <div class="complexity-note">Single pass through n steps.</div>
+                        </div>
+                        <div class="complexity-item">
+                            <div class="complexity-label">Space Complexity</div>
+                            <div class="complexity-value">O(1)</div>
+                            <div class="complexity-note">Only storing two previous values.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider" aria-hidden="true"></div>
+
+                <!-- Interactive Demo -->
+                <section class="content-section">
+                    <h2>Interactive Demo</h2>
+                    <p>Try it yourself! Enter a number of stairs (1-20) and see how the solution grows.</p>
+
+                    <div class="demo-container">
+                        <div class="demo-input-group">
+                            <label for="stairs-input" class="demo-label">Number of Stairs (n):</label>
+                            <input type="number" id="stairs-input" class="demo-input" min="1" max="20" value="5">
+                            <button class="demo-btn" onclick="visualizeStairs()">Visualize</button>
+                        </div>
+
+                        <div class="demo-output">
+                            <div class="demo-result" id="demo-result">
+                                <span class="result-label">WAYS TO CLIMB:</span>
+                                <span class="result-value" id="result-value">8</span>
+                            </div>
+                            <canvas id="demo-canvas" width="900" height="450"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <div
+                    style="text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-sub); margin: 60px 0;">
+                    — END —
+                </div>
+
+                <div class="nav-footer">
+                    <a href="time-based-key-value-store.html">← Previous Problem</a>
+                    <a href="#">Next Problem →</a>
+                </div>
+
+                <div id="footer-mount"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/problems.js"></script>
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/layout.js"></script>
+
+    <script>
+        // ===============================================
+        // PHASE ANIMATION CONTROLS
+        // ===============================================
+
+        // ===============================================
+        // PHASE ANIMATION CONTROLS
+        // ===============================================
+
+        function getThemeColors() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            return {
+                isLight,
+                fill: isLight ? '#ffffff' : '#1a1a2e',
+                stroke: '#2A5D9C',
+                text: isLight ? '#133e6e' : '#4fc1ff', // Darker blue for text in light mode
+                title: '#2A5D9C',
+                highlight: '#51cf66',
+                highlightText: isLight ? '#fff' : '#000',
+                warning: '#ff00d4'
+            };
+        }
+
+        function drawGrid(ctx, width, height) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(42, 93, 156, 0.15)'; // Low opacity steel blue
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let x = 0; x <= width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = 0; y <= height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        const phases = {
+            1: { playing: true, frame: 0, speed: 1 },
+            2: { playing: true, frame: 0, speed: 1 },
+            3: { playing: true, frame: 0, speed: 1 },
+            4: { playing: true, frame: 0, speed: 1 }
+        };
+
+        function togglePhase(id) {
+            phases[id].playing = !phases[id].playing;
+            const btn = document.getElementById(`play-btn-${id}`);
+            if (btn) btn.textContent = phases[id].playing ? '❚❚' : '▶';
+        }
+
+        function restartPhase(id) {
+            phases[id].frame = 0;
+            phases[id].playing = true;
+            const btn = document.getElementById(`play-btn-${id}`);
+            if (btn) btn.textContent = '❚❚';
+        }
+
+        function setSpeed(id, speed) {
+            phases[id].speed = speed;
+            // Find container relative to play button to be safe
+            const playBtn = document.getElementById(`play-btn-${id}`);
+            if (playBtn) {
+                const buttons = playBtn.parentNode.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    const text = btn.textContent;
+                    if (text === speed + 'x' || (speed === 1 && text === '1x')) {
+                        btn.classList.add('active');
+                    } else if (text.includes('x')) {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // ===============================================
+        // PHASE 1: BRUTE FORCE - STAIRS + TREE
+        // ===============================================
+
+        const phase1Canvas = document.getElementById('phase1-canvas');
+        const phase1Ctx = phase1Canvas.getContext('2d');
+
+        function animatePhase1() {
+            if (phases[1].playing) {
+                phases[1].frame += phases[1].speed;
+                phase1Ctx.clearRect(0, 0, phase1Canvas.width, phase1Canvas.height);
+                const colors = getThemeColors();
+
+                const progress = (phases[1].frame % 360) / 360; // 6 second loop
+
+                // Draw stairs (animated build)
+                const stairsShown = Math.min(4, Math.floor(progress * 5));
+
+                // Title
+                phase1Ctx.fillStyle = colors.title;
+                phase1Ctx.font = '12px "Share Tech Mono"';
+                phase1Ctx.textAlign = 'left';
+                phase1Ctx.fillText("GOAL: CALCULATE WAYS(4)", 20, 30);
+
+                phase1Ctx.save();
+                phase1Ctx.translate(20, 0); // Slight offset
+                for (let i = 0; i <= stairsShown; i++) {
+                    const x = 50 + i * 45;
+                    const y = 320 - i * 35;
+                    const height = 35;
+                    const width = 40;
+
+                    // Stair with tech colors
+                    phase1Ctx.fillStyle = i === 4 ? colors.highlight : colors.fill;
+                    phase1Ctx.fillRect(x, y, width, height);
+                    phase1Ctx.strokeStyle = colors.stroke;
+                    phase1Ctx.lineWidth = 2;
+                    phase1Ctx.strokeRect(x, y, width, height);
+
+                    // Number
+                    phase1Ctx.fillStyle = i === 4 ? colors.highlightText : colors.text;
+                    phase1Ctx.font = 'bold 16px "JetBrains Mono"';
+                    phase1Ctx.textAlign = 'center';
+                    phase1Ctx.fillText(i, x + width / 2, y + height / 2 + 6);
+
+                    // Goal Label
+                    if (i === 4) {
+                        phase1Ctx.fillStyle = colors.highlight;
+                        phase1Ctx.font = '10px "Share Tech Mono"';
+                        phase1Ctx.fillText("TARGET", x + width / 2, y - 8);
+                    }
+                }
+                phase1Ctx.restore();
+
+                // Tree Visualization (Right side)
+                const centerX = 520;
+                const nodeRadius = 22; // Slightly larger for f(n)
+
+                function node(x, y, val) {
+                    phase1Ctx.fillStyle = colors.fill;
+                    phase1Ctx.beginPath();
+                    phase1Ctx.arc(x, y, nodeRadius, 0, Math.PI * 2);
+                    phase1Ctx.fill();
+                    phase1Ctx.lineWidth = 2;
+                    phase1Ctx.strokeStyle = colors.stroke;
+                    phase1Ctx.stroke();
+
+                    phase1Ctx.fillStyle = colors.text;
+                    phase1Ctx.font = '13px "JetBrains Mono"';
+                    phase1Ctx.textAlign = 'center';
+                    phase1Ctx.textBaseline = 'middle';
+                    phase1Ctx.fillText(`f(${val})`, x, y);
+
+                    // Show return value for base cases
+                    if ((val === 1 || val === 0) && progress > 0.8) {
+                        phase1Ctx.fillStyle = colors.highlight;
+                        phase1Ctx.font = '10px "Share Tech Mono"';
+                        phase1Ctx.fillText("= 1", x + 30, y);
+                    }
+                }
+
+                function edge(x1, y1, x2, y2) {
+                    phase1Ctx.beginPath();
+                    phase1Ctx.moveTo(x1, y1 + nodeRadius);
+                    phase1Ctx.lineTo(x2, y2 - nodeRadius);
+                    phase1Ctx.strokeStyle = colors.stroke;
+                    phase1Ctx.lineWidth = 1.5;
+                    phase1Ctx.stroke();
+                }
+
+                // Draw Tree (Hardcoded layout for n=4)
+                // Root f(4)
+                if (progress > 0.1) node(centerX, 80, 4);
+
+                // Level 1: f(3), f(2)
+                if (progress > 0.2) { edge(centerX, 80, centerX - 60, 150); node(centerX - 60, 150, 3); }
+                if (progress > 0.3) { edge(centerX, 80, centerX + 100, 150); node(centerX + 100, 150, 2); }
+
+                // Level 2 (Left): f(2), f(1) from f(3)
+                if (progress > 0.4) { edge(centerX - 60, 150, centerX - 120, 220); node(centerX - 120, 220, 2); }
+                if (progress > 0.5) { edge(centerX - 60, 150, centerX - 10, 220); node(centerX - 10, 220, 1); }
+
+                // Level 3 (Left): f(1), f(0) from f(2) left
+                if (progress > 0.6) { edge(centerX - 120, 220, centerX - 160, 290); node(centerX - 160, 290, 1); }
+                if (progress > 0.7) { edge(centerX - 120, 220, centerX - 80, 290); node(centerX - 80, 290, 0); }
+
+                // Level 2 (Right): f(1), f(0) from f(2) right call
+                // Show appearing later
+                if (progress > 0.8) {
+                    edge(centerX + 100, 150, centerX + 60, 220); node(centerX + 60, 220, 1);
+                    edge(centerX + 100, 150, centerX + 140, 220); node(centerX + 140, 220, 0);
+                }
+            }
+            requestAnimationFrame(animatePhase1);
+        }
+
+        // ===============================================
+        // PHASE 2: IDENTIFYING REPETITION
+        // ===============================================
+
+        const phase2Canvas = document.getElementById('phase2-canvas');
+        const phase2Ctx = phase2Canvas.getContext('2d');
+
+        function animatePhase2() {
+            if (phases[2].playing) {
+                phases[2].frame += phases[2].speed;
+                phase2Ctx.clearRect(0, 0, phase2Canvas.width, phase2Canvas.height);
+                const colors = getThemeColors();
+
+                // Tech Grid Background
+                drawGrid(phase2Ctx, phase2Canvas.width, phase2Canvas.height);
+
+                const loopDuration = 120; // 4 seconds
+                const progress = (phases[2].frame % loopDuration) / loopDuration;
+
+                // Pulse effect for repeated nodes
+                const pulse = (Math.sin(progress * Math.PI * 4) + 1) / 2 * 0.5 + 0.3;
+
+                // Draw Recursion Tree with Overlap
+                const centerX = 400;
+                const startY = 50;
+                const nodeRadius = 22;
+
+                function node(x, y, val, isRepeated) {
+                    phase2Ctx.globalAlpha = isRepeated ? pulse + 0.2 : 1;
+                    phase2Ctx.fillStyle = isRepeated ? colors.warning : colors.fill;
+
+                    phase2Ctx.beginPath();
+                    phase2Ctx.arc(x, y, nodeRadius, 0, Math.PI * 2);
+                    phase2Ctx.fill();
+
+                    phase2Ctx.lineWidth = isRepeated ? 3 : 2;
+                    phase2Ctx.strokeStyle = isRepeated ? colors.warning : colors.stroke;
+                    phase2Ctx.stroke();
+                    phase2Ctx.globalAlpha = 1;
+
+                    phase2Ctx.fillStyle = isRepeated ? '#fff' : colors.text;
+                    phase2Ctx.font = 'bold 14px "JetBrains Mono"';
+                    phase2Ctx.textAlign = 'center';
+                    phase2Ctx.textBaseline = 'middle';
+                    phase2Ctx.fillText(`f(${val})`, x, y);
+                }
+
+                function edge(x1, y1, x2, y2) {
+                    phase2Ctx.beginPath();
+                    phase2Ctx.moveTo(x1, y1 + nodeRadius);
+                    phase2Ctx.lineTo(x2, y2 - nodeRadius);
+                    phase2Ctx.strokeStyle = colors.stroke;
+                    phase2Ctx.stroke();
+                }
+
+                // Tree Structure
+                // Root f(5)
+                node(centerX, startY, 5, false);
+
+                // Level 1: f(4), f(3)
+                edge(centerX, startY, centerX - 100, startY + 70);
+                edge(centerX, startY, centerX + 100, startY + 70);
+                node(centerX - 100, startY + 70, 4, false);
+                node(centerX + 100, startY + 70, 3, true); // f(3) repeated
+
+                // Level 2 (Left): f(3), f(2)
+                edge(centerX - 100, startY + 70, centerX - 160, startY + 140);
+                edge(centerX - 100, startY + 70, centerX - 40, startY + 140);
+                node(centerX - 160, startY + 140, 3, true); // f(3) repeated
+                node(centerX - 40, startY + 140, 2, true); // f(2) repeated
+
+                // Label
+                phase2Ctx.fillStyle = colors.warning;
+                phase2Ctx.font = '13px "Share Tech Mono"';
+                phase2Ctx.textAlign = 'center';
+                phase2Ctx.fillText('REPEATED SUB-PROBLEMS DETECTED', 400, 350);
+            }
+            requestAnimationFrame(animatePhase2);
+        }
+
+        // ===============================================
+        // PHASE 3: MEMOIZATION
+        // ===============================================
+
+        const phase3Canvas = document.getElementById('phase3-canvas');
+        const phase3Ctx = phase3Canvas.getContext('2d');
+
+        function animatePhase3() {
+            if (phases[3].playing) {
+                phases[3].frame += phases[3].speed;
+                phase3Ctx.clearRect(0, 0, phase3Canvas.width, phase3Canvas.height);
+                const colors = getThemeColors();
+
+                const loopDuration = 480; // 8 seconds loop
+                const progress = (phases[3].frame % loopDuration) / loopDuration;
+
+                // Title
+                phase3Ctx.fillStyle = colors.title;
+                phase3Ctx.font = '12px "Share Tech Mono"';
+                phase3Ctx.textAlign = 'left';
+                phase3Ctx.fillText('DYNAMIC PROGRAMMING TABLE', 100, 40);
+
+                const startX = 100;
+                const startY = 80;
+                const cellWidth = 70;
+                const cellHeight = 70;
+                const gap = 15;
+                const cells = [0, 1, 2, 3, 4, 5, 6];
+                const fib = [1, 1, 2, 3, 5, 8, 13];
+
+                const cellsComputed = Math.floor(progress * (cells.length + 2));
+
+                for (let i = 0; i < cells.length; i++) {
+                    const x = startX + i * (cellWidth + gap);
+                    const isActive = i <= cellsComputed;
+                    const isFocus = i === cellsComputed;
+
+                    if (isActive) {
+                        // Box
+                        phase3Ctx.fillStyle = colors.fill;
+                        phase3Ctx.fillRect(x, startY, cellWidth, cellHeight);
+                        phase3Ctx.strokeStyle = isFocus ? colors.highlight : colors.stroke;
+                        phase3Ctx.lineWidth = isFocus ? 3 : 2;
+                        phase3Ctx.strokeRect(x, startY, cellWidth, cellHeight);
+
+                        // Value
+                        phase3Ctx.fillStyle = isFocus ? colors.highlight : (colors.isLight ? colors.text : '#4fc1ff');
+                        phase3Ctx.font = 'bold 20px "JetBrains Mono"';
+                        phase3Ctx.textAlign = 'center';
+                        phase3Ctx.textBaseline = 'middle';
+                        phase3Ctx.fillText(fib[i], x + cellWidth / 2, startY + cellHeight / 2);
+
+                        // Index
+                        phase3Ctx.fillStyle = '#666';
+                        phase3Ctx.font = '12px "Share Tech Mono"';
+                        phase3Ctx.fillText(i, x + cellWidth / 2, startY + cellHeight + 20);
+
+                        // Formula
+                        if (isActive && i >= 2 && i < 6) {
+                            phase3Ctx.fillStyle = colors.isLight ? colors.text : '#4fc1ff';
+                            phase3Ctx.font = '10px "Share Tech Mono"';
+                            phase3Ctx.fillText(`${fib[i - 1]} + ${fib[i - 2]}`, x + cellWidth / 2, startY - 10);
+                        }
+                    } else {
+                        // Empty placeholder
+                        phase3Ctx.strokeStyle = 'rgba(42, 93, 156, 0.3)';
+                        phase3Ctx.lineWidth = 1;
+                        phase3Ctx.strokeRect(x, startY, cellWidth, cellHeight);
+                    }
+                }
+
+                // Complexity info
+                if (progress > 0.7) {
+                    phase3Ctx.fillStyle = colors.highlight;
+                    phase3Ctx.font = 'bold 14px "Share Tech Mono"';
+                    phase3Ctx.textAlign = 'left';
+                    phase3Ctx.fillText('TIME: O(N) - LINEAR!', 100, 210);
+                    phase3Ctx.fillText('SPACE: O(1) - CONSTANT!', 100, 235);
+
+                    // Arrow
+                    phase3Ctx.strokeStyle = colors.highlight;
+                    phase3Ctx.lineWidth = 2;
+                    phase3Ctx.beginPath();
+                    phase3Ctx.moveTo(100, 260);
+                    phase3Ctx.lineTo(600, 260);
+                    phase3Ctx.stroke();
+                    phase3Ctx.beginPath();
+                    phase3Ctx.moveTo(600, 260);
+                    phase3Ctx.lineTo(590, 255);
+                    phase3Ctx.lineTo(590, 265);
+                    phase3Ctx.closePath();
+                    phase3Ctx.fillStyle = colors.highlight;
+                    phase3Ctx.fill();
+
+                    phase3Ctx.fillText('SINGLE PASS →', 310, 285);
+                }
+            }
+            requestAnimationFrame(animatePhase3);
+        }
+
+        // ===============================================
+        // PHASE 4: FIBONACCI CONNECTION
+        // ===============================================
+
+        const phase4Canvas = document.getElementById('phase4-canvas');
+        const phase4Ctx = phase4Canvas.getContext('2d');
+
+        function animatePhase4() {
+            if (phases[4].playing) {
+                phases[4].frame += phases[4].speed;
+                phase4Ctx.clearRect(0, 0, phase4Canvas.width, phase4Canvas.height);
+                const colors = getThemeColors();
+
+                const loopDuration = 360; // 6 seconds
+                const progress = (phases[4].frame % loopDuration) / loopDuration;
+
+                // Title
+                phase4Ctx.fillStyle = colors.title;
+                phase4Ctx.font = '13px "Share Tech Mono"';
+                phase4Ctx.textAlign = 'left';
+                phase4Ctx.fillText('FIBONACCI SEQUENCE', 80, 40);
+
+                const sequence = [1, 1, 2, 3, 5, 8, 13, 21];
+                const shown = Math.min(8, Math.floor(progress * 10));
+
+                const boxSize = 55;
+                const gap = 15;
+                const startX = 90;
+                const startY = 80;
+
+                for (let i = 0; i < shown; i++) {
+                    const x = startX + i * (boxSize + gap);
+
+                    // Box with tech colors
+                    phase4Ctx.fillStyle = colors.fill;
+                    phase4Ctx.fillRect(x, startY, boxSize, boxSize);
+                    phase4Ctx.strokeStyle = colors.stroke;
+                    phase4Ctx.lineWidth = 2;
+                    phase4Ctx.strokeRect(x, startY, boxSize, boxSize);
+
+                    // Number
+                    phase4Ctx.fillStyle = colors.highlight;
+                    phase4Ctx.font = 'bold 18px "JetBrains Mono"';
+                    phase4Ctx.textAlign = 'center';
+                    phase4Ctx.fillText(sequence[i], x + boxSize / 2, startY + boxSize / 2 + 6);
+
+                    // Index
+                    phase4Ctx.fillStyle = '#666';
+                    phase4Ctx.font = '10px "Share Tech Mono"';
+                    phase4Ctx.fillText(i, x + boxSize / 2, startY + boxSize + 16);
+
+                    // Formula
+                    if (i >= 2 && progress > 0.3) {
+                        phase4Ctx.fillStyle = colors.title;
+                        phase4Ctx.font = '9px "Share Tech Mono"';
+                        phase4Ctx.fillText(`${sequence[i - 1]}+${sequence[i - 2]}`, x + boxSize / 2, startY - 25);
+
+                        // Draw Arcs with "Step" labels
+                        phase4Ctx.beginPath();
+                        phase4Ctx.moveTo(x - gap - boxSize / 2, startY + boxSize);
+                        phase4Ctx.quadraticCurveTo(x - gap / 2, startY + boxSize + 20, x + boxSize / 2, startY + boxSize);
+                        phase4Ctx.strokeStyle = colors.highlight;
+                        phase4Ctx.stroke();
+                        phase4Ctx.fillStyle = colors.highlight;
+                        phase4Ctx.fillText("1 STEP", x - gap / 2, startY + boxSize + 25);
+
+                        if (i > 1) {
+                            const arcColor = colors.isLight ? colors.text : '#4fc1ff';
+                            phase4Ctx.beginPath();
+                            phase4Ctx.moveTo(x - gap - gap - boxSize - boxSize / 2, startY + boxSize);
+                            phase4Ctx.quadraticCurveTo(x - boxSize, startY + boxSize + 35, x + boxSize / 2, startY + boxSize);
+                            phase4Ctx.strokeStyle = arcColor;
+                            phase4Ctx.stroke();
+                            phase4Ctx.fillStyle = arcColor;
+                            phase4Ctx.fillText("2 STEPS", x - boxSize, startY + boxSize + 40);
+                        }
+                    }
+                }
+
+                // Pattern
+                if (progress > 0.5) {
+                    phase4Ctx.fillStyle = colors.title;
+                    phase4Ctx.font = 'bold 15px "Share Tech Mono"';
+                    phase4Ctx.textAlign = 'center';
+                    phase4Ctx.fillText('F(N) = F(N-1) + F(N-2)', 400, 200);
+
+                    phase4Ctx.font = '13px "Share Tech Mono"';
+                    phase4Ctx.fillText('STAIRS(N) = FIB(N+1)', 400, 235);
+                }
+
+                // Final insight
+                if (progress > 0.75) {
+                    phase4Ctx.fillStyle = colors.isLight ? '#d97706' : '#ffcc00';
+                    phase4Ctx.font = 'bold 12px "Share Tech Mono"';
+                    phase4Ctx.fillText('WHY? FROM N-1 (1 STEP) OR N-2 (2 STEPS)', 400, 280);
+                }
+            }
+            requestAnimationFrame(animatePhase4);
+        }
+
+        // Start all animations
+        animatePhase1();
+        animatePhase2();
+        animatePhase3();
+        animatePhase4();
+
+        // ===============================================
+        // INTERACTIVE DEMO (RECURSIVE TRACE)
+        // ===============================================
+
+        let demoAnimationId = null;
+
+        function visualizeStairs() {
+            // Cancel any existing animation
+            if (demoAnimationId) {
+                cancelAnimationFrame(demoAnimationId);
+            }
+
+            const input = document.getElementById('stairs-input');
+            let n = parseInt(input.value);
+
+            // Strict validation with bounds
+            if (isNaN(n) || n < 1) {
+                n = 1;
+                input.value = 1;
+            } else if (n > 20) {
+                n = 20;
+                input.value = 20;
+            }
+
+            // Calculate Fibonacci values for all steps
+            const ways = [1, 1];
+            for (let i = 2; i <= n; i++) {
+                ways[i] = ways[i - 1] + ways[i - 2];
+            }
+
+            // Update result text after animation
+            document.getElementById('result-value').textContent = "..."; // Placeholder
+
+            const canvas = document.getElementById('demo-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Helper to get fresh colors for the current frame
+            function getFreshDemoColors() {
+                const colors = getThemeColors();
+                const isLight = colors.isLight;
+                return {
+                    isLight: isLight,
+                    fill: isLight ? '#ffffff' : '#1a1a2e', // White boxes in light mode
+                    stroke: isLight ? '#1e3a5f' : '#2A5D9C', // Dark blue border
+                    text: isLight ? '#1e3a5f' : '#4fc1ff', // Dark blue text in light mode
+                    title: isLight ? '#1e40af' : '#2A5D9C', // Darker blue for titles
+                    highlight: '#51cf66', // Green stays the same
+                    highlightText: isLight ? '#ffffff' : '#000', // White on green in light mode
+                    dimText: isLight ? '#64748b' : '#888', // Slate gray
+                    warning: '#ff00d4'
+                };
+            }
+
+            // Current colors state - updated every frame
+            let demoColors = getFreshDemoColors();
+
+            // Dimensions
+            const padding = 60;
+            const availableWidth = canvas.width - (padding * 2);
+            const availableHeight = canvas.height - 100;
+            const stepWidth = Math.min(60, availableWidth / (n + 1));
+            const stepHeight = Math.min(40, availableHeight / (n + 2));
+            const horizontalGap = Math.min(10, (availableWidth - (stepWidth * (n + 1))) / n);
+            const verticalRise = Math.min(30, (availableHeight - stepHeight) / n);
+            const startX = padding;
+            const startY = canvas.height - padding - stepHeight;
+
+            // Animation State
+            let phase = 'SCAN_DOWN'; // 'SCAN_DOWN' (N -> 0) or 'SOLVE_UP' (0 -> N)
+            let scanStep = n;
+            let solveStep = 0; // Starts at 0, 1 (base cases) then 2..N
+            let frameCount = 0;
+
+            const FRAMES_SCAN = 12;  // Fast scan down
+            const FRAMES_SOLVE = 25; // Visible solve up
+
+            function drawStep(i, type = 'normal', progress = 1) {
+                const x = startX + i * (stepWidth + horizontalGap);
+                const y = startY - i * verticalRise;
+
+                // Colors from current state
+                let color = demoColors.fill;
+                let borderColor = demoColors.stroke;
+                let textColor = demoColors.text;
+                let valueColor = demoColors.title;
+
+                // Opacity for "dimmed" future steps
+                ctx.globalAlpha = 0.5;
+
+                if (type === 'scan_target') {
+                    ctx.globalAlpha = 1;
+                    borderColor = '#ff6b6b'; // Scanning: Red/Alert
+                    textColor = '#ff6b6b';
+                } else if (type === 'scan_dependency') {
+                    ctx.globalAlpha = 0.8;
+                    borderColor = demoColors.isLight ? '#d97706' : '#ffcc00'; // Dependency: Yellow/Gold
+                } else if (type === 'solved') {
+                    ctx.globalAlpha = 1;
+                    // Fully solved state
+                    color = demoColors.fill;
+                    borderColor = demoColors.stroke;
+                    textColor = demoColors.dimText;
+                } else if (type === 'solving') {
+                    ctx.globalAlpha = 1;
+                    borderColor = demoColors.highlight; // Active Solving: Green
+                    textColor = demoColors.highlight;
+                    valueColor = demoColors.highlight;
+                } else if (type === 'final') {
+                    ctx.globalAlpha = 1;
+                    color = demoColors.highlight;
+                    borderColor = demoColors.highlight;
+                    textColor = demoColors.highlightText;
+                    valueColor = demoColors.title; // Text inside bubble
+                }
+
+                // Draw Box
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, stepWidth, stepHeight);
+
+                ctx.lineWidth = (type === 'solving' || type === 'scan_target') ? 3 : 2;
+                ctx.strokeStyle = borderColor;
+                ctx.strokeRect(x, y, stepWidth, stepHeight);
+
+                // Step Number
+                ctx.fillStyle = textColor;
+                ctx.font = `bold ${Math.min(16, stepWidth / 3)}px "JetBrains Mono"`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i, x + stepWidth / 2, y + stepHeight / 2);
+
+                // Value Bubble (Only if solved)
+                let showValue = false;
+                let valAnimScale = 1;
+
+                if (phase === 'SOLVE_UP' && i <= solveStep) {
+                    showValue = true;
+                    if (i === solveStep) valAnimScale = Math.min(1, progress * 4); // fast pop in
+                }
+
+                // Base cases (0 and 1) are visually "known" once we hit bottom of scan
+                if (phase === 'SCAN_DOWN' && i <= 1 && scanStep <= 1) showValue = true;
+
+                if (showValue) {
+                    const val = ways[i];
+                    const valText = val > 9999 ? `${(val / 1000).toFixed(0)}k` : val.toString();
+
+                    ctx.save();
+                    ctx.translate(x + stepWidth / 2, y - 15);
+                    ctx.scale(valAnimScale, valAnimScale);
+                    
+                    // Bubble Value Color
+                    if (i === n && phase === 'SOLVE_UP' && solveStep === n) {
+                         ctx.fillStyle = demoColors.title; 
+                    } else {
+                         ctx.fillStyle = demoColors.isLight ? demoColors.text : '#4fc1ff'; 
+                    }
+
+                    ctx.font = `${Math.min(12, stepWidth / 4)}px "Share Tech Mono"`;
+                    ctx.fillText(valText, 0, 0);
+                    ctx.restore();
+                }
+
+                ctx.globalAlpha = 1;
+
+                // DEPENDENCY LINES (Red for Scan, Green for Solve)
+                if (type === 'scan_target' && i >= 2) {
+                    // Draw lines DOWN to i-1 and i-2
+                    drawCurve(i, i - 1, '#ff6b6b', progress, true, "1 step");
+                    drawCurve(i, i - 2, '#ff6b6b', progress, true, "2 steps");
+                }
+
+                if (type === 'solving' && i >= 2) {
+                    // Draw lines UP from i-1 and i-2
+                    const c1 = demoColors.highlight;
+                    const c2 = demoColors.isLight ? demoColors.text : '#4fc1ff';
+                    drawCurve(i - 1, i, c1, 1, false, "1 Step"); 
+                    drawCurve(i - 2, i, c2, 1, false, "2 Steps");
+                }
+            }
+
+            function drawCurve(fromIdx, toIdx, color, progress, dashed, label) {
+                // fromIdx is strictly the source of the line visual
+                const fromX = startX + fromIdx * (stepWidth + horizontalGap) + stepWidth / 2;
+                const fromY = startY - fromIdx * verticalRise - (dashed ? 0 : 25); // Adjust anchor
+
+                const toX = startX + toIdx * (stepWidth + horizontalGap) + stepWidth / 2;
+                const toY = startY - toIdx * verticalRise - (dashed ? 25 : 0);
+
+                // Midpoint control
+                const midX = (fromX + toX) / 2;
+                const midY = Math.min(fromY, toY) - 40; // Higher arc for labels
+
+                ctx.beginPath();
+                ctx.moveTo(fromX, fromY);
+                ctx.quadraticCurveTo(midX, midY, toX, toY);
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                if (dashed) ctx.setLineDash([4, 4]);
+                else ctx.setLineDash([]);
+
+                // Opacity fade in
+                ctx.globalAlpha = progress;
+                ctx.stroke();
+
+                // Label
+                if (label && progress > 0.5) {
+                    ctx.fillStyle = color;
+                    ctx.font = '10px "Share Tech Mono"';
+                    ctx.textAlign = 'center';
+                    // Place label near peak of curve
+                    ctx.fillText(label, midX, midY - 5);
+                }
+
+                ctx.globalAlpha = 1;
+                ctx.setLineDash([]);
+            }
+
+            function animate() {
+                // UPDATE COLORS ON EVERY FRAME
+                demoColors = getFreshDemoColors();
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Title Status
+                ctx.fillStyle = demoColors.title;
+                ctx.font = '13px "Share Tech Mono"';
+                ctx.textAlign = 'left';
+                let status = "";
+                if (phase === 'SCAN_DOWN') status = `ANALYZING STEP ${scanStep}: HOW TO REACH STAIR ${scanStep}?`;
+                if (phase === 'SCAN_DOWN' && scanStep <= 1) status = "BASE CASES: 0 & 1 (Start)";
+                if (phase === 'SOLVE_UP') status = `CLIMBING: COMBINE WAYS FROM -1 Step & -2 Steps`;
+                if (solveStep === n && phase === 'SOLVE_UP' && frameCount > FRAMES_SOLVE) status = `SOLVED: ${ways[n]} WAYS TO CLIMB ${n} STAIRS`;
+                ctx.fillText(status, padding, 30);
+
+                // Render logic
+                for (let i = 0; i <= n; i++) {
+                    let type = 'normal';
+                    let progress = 0;
+
+                    if (phase === 'SCAN_DOWN') {
+                        if (i === scanStep) {
+                            type = 'scan_target';
+                            progress = frameCount / FRAMES_SCAN;
+                        } else if (i === scanStep - 1 || i === scanStep - 2) {
+                            type = 'scan_dependency';
+                        }
+                    } else { // SOLVE_UP
+                        if (i < solveStep) type = 'solved';
+                        if (i === solveStep) {
+                            type = 'solving';
+                            progress = frameCount / FRAMES_SOLVE;
+                        }
+                        if (i === n && solveStep === n && frameCount > FRAMES_SOLVE) type = 'final';
+                    }
+
+                    drawStep(i, type, progress);
+                }
+
+                // Advance State
+                frameCount++;
+
+                if (phase === 'SCAN_DOWN') {
+                    if (frameCount > FRAMES_SCAN) {
+                        if (scanStep > 1) {
+                            scanStep--;
+                            frameCount = 0;
+                        } else {
+                            // Switch to solve phase
+                            phase = 'SOLVE_UP';
+                            solveStep = 2; // Start solving from 2 (0,1 known)
+                            frameCount = 0;
+                        }
+                    }
+                } else if (phase === 'SOLVE_UP') {
+                    if (frameCount > FRAMES_SOLVE) {
+                        if (solveStep < n) {
+                            solveStep++;
+                            frameCount = 0;
+                        } else {
+                            // Done, show final result text
+                            document.getElementById('result-value').textContent = ways[n].toLocaleString();
+                        }
+                    }
+                }
+
+                demoAnimationId = requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Initialize demo (run once)
+        visualizeStairs();
+
+        // Allow Enter key to trigger visualization
+        document.getElementById('stairs-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                visualizeStairs();
+            }
+        });
+    </script>
+</body>
+
+</html>

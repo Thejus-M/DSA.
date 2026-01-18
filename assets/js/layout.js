@@ -73,9 +73,13 @@ class LayoutManager {
         // Square-ish button styling to match design language
         const btnStyle = "background:transparent; border:1px solid var(--border); color:var(--text-sub); cursor:pointer; padding:6px; line-height:0; display:flex; align-items:center; justify-content:center; position: relative; z-index: 2147483647; pointer-events: auto;";
 
+        // Hamburger button (hidden by default, shown on mobile via CSS)
+        const hamburgerBtn = `<button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Navigation" style="display:none;">☰</button>`;
+
         if (this.isProblemPage) {
             mount.className = 'header';
             mount.innerHTML = `
+                ${hamburgerBtn}
                 <a href="${homeLink}" class="header-brand" style="text-decoration: none;">${this.data.metadata.title}</a>
                 <div class="header-tagline">
                     <span>UNDERSTAND DATA STRUCTURES,</span>
@@ -99,22 +103,80 @@ class LayoutManager {
              `;
         }
 
-        // Programmatically attach listener to ensure it works
-        // Using setTimeout to ensure DOM is updated (though innerHTML is sync, the browser might need a tick or just to be safe)
+        // Attach listeners after DOM update
         setTimeout(() => {
-            const btn = document.getElementById('theme-toggle');
-            if (btn) {
-                btn.onclick = (e) => {
+            // Theme toggle
+            const themeBtn = document.getElementById('theme-toggle');
+            if (themeBtn) {
+                themeBtn.onclick = (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Theme Toggle Clicked');
                     this.toggleTheme();
                 };
-                console.log('Theme Toggle Listener Attached');
-            } else {
-                console.error('Theme Toggle Button Not Found');
+            }
+
+            // Sidebar toggle (hamburger)
+            const sidebarBtn = document.getElementById('sidebar-toggle');
+            if (sidebarBtn) {
+                sidebarBtn.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggleSidebar();
+                };
             }
         }, 0);
+    }
+
+    toggleSidebar() {
+        const sidebar = document.getElementById('sidebar-mount');
+        if (!sidebar) return;
+
+        const isOpen = sidebar.classList.contains('sidebar-open');
+
+        if (isOpen) {
+            this.closeSidebar();
+        } else {
+            this.openSidebar();
+        }
+    }
+
+    openSidebar() {
+        const sidebar = document.getElementById('sidebar-mount');
+        if (!sidebar) return;
+
+        // Create backdrop if it doesn't exist
+        let backdrop = document.getElementById('sidebar-backdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'sidebar-backdrop';
+            backdrop.className = 'sidebar-backdrop';
+            backdrop.onclick = () => this.closeSidebar();
+            document.body.appendChild(backdrop);
+        }
+
+        // Add close button to sidebar if not present
+        if (!sidebar.querySelector('.sidebar-close')) {
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'sidebar-close';
+            closeBtn.innerHTML = '✕';
+            closeBtn.setAttribute('aria-label', 'Close Navigation');
+            closeBtn.onclick = () => this.closeSidebar();
+            sidebar.insertBefore(closeBtn, sidebar.firstChild);
+        }
+
+        // Open
+        sidebar.classList.add('sidebar-open');
+        backdrop.classList.add('visible');
+        document.body.style.overflow = 'hidden'; // Prevent scroll
+    }
+
+    closeSidebar() {
+        const sidebar = document.getElementById('sidebar-mount');
+        const backdrop = document.getElementById('sidebar-backdrop');
+
+        if (sidebar) sidebar.classList.remove('sidebar-open');
+        if (backdrop) backdrop.classList.remove('visible');
+        document.body.style.overflow = ''; // Restore scroll
     }
 
 

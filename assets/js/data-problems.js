@@ -22,5 +22,13 @@ const problems = [
     difficulty: "medium",
     tags: ["hash-map", "binary-search", "design"],
     summary: "Design a time-based key-value data structure that can store multiple values for the same key at different time stamps."
+  },
+  {
+    id: 70,
+    title: "Climbing Stairs",
+    slug: "climbing-stairs",
+    difficulty: "easy",
+    tags: ["dynamic-programming", "math", "fibonacci"],
+    summary: "Calculate the number of distinct ways to climb to the top of a staircase with n steps."
   }
 ];

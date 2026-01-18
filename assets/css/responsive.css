@@ -1,11 +1,35 @@
 /* Global Responsive Styles */
 
+/* Hide sidebar close button on desktop by default */
+.sidebar-close {
+    display: none;
+}
+
 /* Base responsiveness for Code and Tables - Apply Always or specifically for smaller screens */
 pre,
 .code-block-wrapper,
 .terminal-content {
     max-width: 100%;
     overflow-x: auto;
+}
+
+/* Smoother Transition for Tablets (1024px - 1100px) */
+@media (max-width: 1100px) {
+    .page-wrapper {
+        grid-template-columns: 220px 1fr 0px;
+    }
+    
+    .sidebar {
+        width: 220px;
+    }
+    
+    .ruler-scale {
+        display: none;
+    }
+    
+    .article-container {
+        padding: 40px 30px;
+    }
 }
 
 /* Tablet & Smaller Desktop (< 1024px) */
@@ -43,6 +67,7 @@ pre,
     /* Global Typography Scale */
     body {
         font-size: 18px;
+        overflow-x: hidden; /* Prevent horizontal scroll drift */
     }
 
     h1,
@@ -68,7 +93,16 @@ pre,
         padding: 0 16px;
         justify-content: space-between;
         width: 100%;
-        height: auto;
+        height: 60px;
+    }
+
+    /* Center the branding absolutely */
+    .header-brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        width: auto;
     }
 
     /* Table of Contents (Index Page) - Fix squashed titles */
@@ -112,20 +146,7 @@ pre,
         font-size: 14px;
     }
 
-    /* Sidebar: Top Scrollable Menu */
-    .sidebar {
-        position: relative;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        max-height: 200px;
-        overflow-y: auto;
-        border-bottom: 1px solid var(--border);
-        padding: 10px 20px;
-        z-index: 10;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
+    /* Sidebar is now controlled by JS toggle - see MOBILE SIDEBAR TOGGLE section below */
 
     .sidebar-section {
         margin-bottom: 15px;
@@ -213,5 +234,155 @@ pre,
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
+    }
+
+    /* ========================================
+       MOBILE SIDEBAR TOGGLE (Hamburger Menu)
+       ======================================== */
+
+    /* Hide sidebar by default on mobile */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -280px; /* Hidden off-screen */
+        width: 280px !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        background: var(--bg-card);
+        z-index: 1000;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+        border-bottom: none;
+        border-right: 1px solid var(--border);
+        padding-top: 60px !important; /* Space for close button */
+        overflow-y: auto;
+    }
+
+    /* Sidebar visible state - Force override with high specificity */
+    .sidebar.sidebar-open {
+        left: 0 !important;
+        z-index: 2000 !important; /* Ensure it's above backdrop (999) and everything else */
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+        display: block !important;
+    }
+
+    /* Hamburger Button - Tech Style */
+    .sidebar-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--accent);
+        font-size: 20px;
+        cursor: pointer;
+        font-family: var(--font-mono-sys);
+        margin-right: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background: var(--accent);
+        color: var(--bg-body);
+        border-color: var(--accent);
+    }
+
+    /* Close Button inside Sidebar */
+    .sidebar-close {
+        display: flex; /* Override global display: none on mobile */
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-sub);
+        font-size: 18px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-close:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--bg-body);
+    }
+
+    /* Backdrop Overlay */
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2px);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-backdrop.visible {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Sidebar Header */
+    .sidebar-header {
+        padding: 0 20px 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 16px;
+        font-family: var(--font-mono-sys);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-sub);
+    }
+}
+
+/* ========================================
+   RESPONSIVE CANVAS HANDLING
+   ======================================== */
+@media (max-width: 700px) {
+    /* Allow horizontal scroll for complex visualizations */
+    .phase-canvas-wrapper,
+    .demo-output,
+    .code-block-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent canvases from squashing too much */
+    .phase-canvas,
+    #demo-canvas {
+        min-width: 600px !important;
+        width: 600px !important;
+    }
+
+    /* Make phase description text smaller */
+    .phase-description {
+        font-size: 14px;
+    }
+
+    /* Stack demo input controls */
+    .demo-input-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .demo-input-group label {
+        margin-bottom: 4px;
+    }
+
+    .demo-btn {
+        margin-left: 0 !important;
+        width: 100%;
     }
 }

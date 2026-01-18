@@ -732,22 +732,3 @@ pre[class*="language-"] {
     color: var(--text-sub);
     line-height: 1;
 }
-
-@media (max-width: 1000px) {
-    .page-wrapper {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar,
-    .ruler-scale {
-        display: none;
-    }
-
-    .header {
-        padding: 0 20px;
-    }
-
-    .article-container {
-        padding: 40px 20px;
-    }
-}

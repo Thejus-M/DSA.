@@ -43,6 +43,17 @@ const DSA_DATA = {
                     difficultyClass: "easy"
                 }
             ]
+        },
+        {
+            title: "4. DYNAMIC PROGRAMMING",
+            problems: [
+                {
+                    title: "Climbing Stairs",
+                    url: "problems/climbing-stairs.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                }
+            ]
         }
     ]
 };
