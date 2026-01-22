@@ -29,6 +29,8 @@ pre,
     
     .article-container {
         padding: 40px 30px;
+        max-width: 850px; /* Constrain width for readability */
+        margin: 0 auto;
     }
 
     /* Prevent Title Overflow on Tablet */
@@ -65,10 +67,12 @@ pre,
     }
 
     /* Ensure content doesn't force scroll */
+    /* Ensure content doesn't force scroll */
     .article-container {
         width: 100%;
+        max-width: 750px; /* Further constrain on smaller desktop/tablet */
         overflow-x: hidden;
-        /* Prevent container itself from pushing out */
+        margin: 0 auto;
     }
 }
 
@@ -96,7 +100,7 @@ pre,
     /* Layout Stack - Switch to single column */
     .page-wrapper {
         display: block;
-        padding-top: 0;
+        padding-top: 60px; /* Restore padding for fixed header */
     }
 
     /* Header */
@@ -192,7 +196,8 @@ pre,
 
     .article-container {
         padding: 20px;
-        max-width: 100%;
+        max-width: 650px; /* Optimized reading width for mobile */
+        margin: 0 auto;
     }
 
     /* Demo Controls Stack */
