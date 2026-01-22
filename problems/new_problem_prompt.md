@@ -12,6 +12,14 @@ Create a new DSA problem page with the following specifications:
   - Code: 'JetBrains Mono' (monospace)
   - Pixel art logo: 'Press Start 2P'
 
+### **Mobile Responsiveness**
+
+- **Automatic Handling**: Include `responsive.css` - handles sidebar toggle, layout stacking, and canvas scrolling
+- **Header Alignment**: Brand/Logo is absolutely centered on mobile; Hamburger (L) and Theme (R) are spaced
+- **Sidebar UX**: Slide-in overlay with themed close button (no red/alert colors)
+- **Tablet Smoothing**: Layout adapts gracefully between 900px-1100px (reduced padding, smaller sidebar)
+- **Canvas Animations**: On small screens (< 700px), canvases maintain min-width of 600px with horizontal scroll
+
 ---
 
 ## **File Structure & Organization**
@@ -31,6 +39,7 @@ Create a new DSA problem page with the following specifications:
     <script src="../assets/js/theme-init.js"></script>
     <link rel="stylesheet" href="../assets/css/variables.css" />
     <link rel="stylesheet" href="../assets/css/problems.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>[Problem Name] | DSA</title>
