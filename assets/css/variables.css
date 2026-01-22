@@ -7,24 +7,31 @@
   --blue-dim: rgba(42, 93, 156, 0.3);
 
   /* Light Theme (Default) */
+  /* Light Theme (Paper-Like) */
   --accent: #2A5D9C;
   --accent-hover: #1e4575;
   --accent-soft: rgba(42, 93, 156, 0.12);
-  /* Derived from accent */
+  --accent-bright: #2A5D9C;
+  --accent-glow: rgba(42, 93, 156, 0.3);
+  
+  /* Warm "Old Paper" Background */
+  --bg-body: #E2DFD6; 
+  --bg-card: #E2DFD6;
+  --bg-card-elevated: #EBE8DF; 
+  --bg-code: #EBE8DF; /* Matching elevated card for code blocks */
+  --bg-sidebar: #E2DFD6;
+  --bg-header: #E2DFD6;
 
-  --bg-body: #ffffff;
-  --bg-card: #ffffff;
-  --bg-code: #ffffff;
-  --bg-sidebar: #ffffff;
-  --bg-header: #ffffff;
+  /* Charcoal Text (Softer than black) */
+  --text-main: #262626;
+  --text-sub: #545454;
+  --text-code: #262626;
 
-  --text-main: #111111;
-  --text-sub: #666666;
-  --text-code: #111111;
-
-  --border: #E5E5E5;
-  --border-sub: #e0e0e0;
-  --border-nav: #f0f0f0;
+  /* Organic Border Colors */
+  --border: #CFCBC2;
+  --border-sub: #D9D6CD;
+  --border-nav: #D9D6CD;
+  --grid-line: #D4D1C9;
 
   /* Visualization Colors */
   --viz-balanced-bg: #eafaf1;
@@ -35,15 +42,12 @@
   --viz-unbalanced-text: #c0392b;
   --viz-unbalanced-border: #c0392b;
 
-  --viz-active-bg: #dbeafe;
+  --viz-active-bg: rgba(42, 93, 156, 0.1);
   --viz-active-border: #2A5D9C;
   --viz-active-text: #2A5D9C;
 
-  --viz-node-bg: #ffffff;
+  --viz-node-bg: #E2DFD6;
   --viz-link: #ccc;
-
-  /* Blueprint Grid Pattern */
-  --grid-line: #e0ecf8;
 
   /* Legacy Mappings for compatibility with existing base/components */
   --bg: var(--bg-body);
@@ -88,26 +92,30 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Default to User's Dark Palette if system prefers dark */
+    /* Dark Theme (Terminal Style) */
     --accent: #5682B1;
     --accent-hover: #739EC9;
     --accent-soft: rgba(86, 130, 177, 0.2);
+    --accent-bright: #739EC9;
+    --accent-glow: rgba(86, 130, 177, 0.3);
 
-    --bg-body: #000000;
-    --bg-card: #000000;
-    --bg-code: #0a0e14;
-    /* Extremely dark blue-black for code distinction */
+    /* Pure Black Background */
+    --bg-body: #000000; 
+    --bg-card: #000000; 
+    --bg-card-elevated: #0f0f0f;
+    --bg-code: #0f0f0f;
     --bg-sidebar: #000000;
     --bg-header: #000000;
 
-    --text-main: #739EC9;
-    /* Light Blue Text */
-    --text-sub: #5682B1;
-    /* Darker Blue Text */
-    --text-code: #739EC9;
+    /* Terminal Blue Text */
+    --text-main: #6BA4D9; 
+    --text-sub: #4A7091;
+    --text-code: #6BA4D9;
 
-    --border: #5682B1;
-    --border-sub: #3d5e80;
-    --border-nav: #1a2a3a;
+    --border: #4A7091;
+    --border-sub: #333333;
+    --border-nav: #111111;
+    --grid-line: #111111;
 
     /* Visualization Colors */
     --viz-balanced-bg: #05140a;
@@ -125,8 +133,6 @@
     --viz-node-bg: #000000;
     --viz-link: #5682B1;
 
-    --grid-line: #142030;
-
     /* Legacy Mappings */
     --bg: var(--bg-body);
     --text-strong: var(--text-main);
@@ -138,23 +144,30 @@
 /* Specific Override for Button Toggle */
 /* Specific Override for Button Toggle */
 [data-theme="dark"] {
+  /* Dark Theme (Terminal Style) */
   --accent: #5682B1;
   --accent-hover: #739EC9;
   --accent-soft: rgba(86, 130, 177, 0.2);
+  --accent-bright: #739EC9;
+  --accent-glow: rgba(86, 130, 177, 0.3);
 
-  --bg-body: #000000;
-  --bg-card: #000000;
-  --bg-code: #0a0e14;
+  /* Pure Black Background */
+  --bg-body: #000000; 
+  --bg-card: #000000; 
+  --bg-card-elevated: #0f0f0f;
+  --bg-code: #0f0f0f;
   --bg-sidebar: #000000;
   --bg-header: #000000;
 
-  --text-main: #739EC9;
-  --text-sub: #5682B1;
-  --text-code: #739EC9;
+  /* Terminal Blue Text */
+  --text-main: #6BA4D9; 
+  --text-sub: #4A7091;
+  --text-code: #6BA4D9;
 
-  --border: #5682B1;
-  --border-sub: #3d5e80;
-  --border-nav: #1a2a3a;
+  --border: #4A7091;
+  --border-sub: #333333;
+  --border-nav: #111111;
+  --grid-line: #111111;
 
   /* Visualization */
   --viz-balanced-bg: #000000;
@@ -172,8 +185,6 @@
   --viz-node-bg: #000000;
   --viz-link: #5682B1;
 
-  --grid-line: #142030;
-
   /* Legacy */
   --bg: var(--bg-body);
   --text-strong: var(--text-main);
@@ -183,16 +194,28 @@
 
 [data-theme="light"] {
   /* Enforce light variables if manually selected even if system is dark */
+  /* Light Theme (Paper-Like) */
   --accent: #2A5D9C;
-  --bg-body: #ffffff;
-  --bg-card: #ffffff;
-  --bg-code: #ffffff;
-  --bg-sidebar: #ffffff;
-  --bg-header: #ffffff;
-  --text-main: #111111;
-  --text-sub: #666666;
-  --border: #E5E5E5;
-  --grid-line: #e0ecf8;
+  --accent-hover: #1e4575;
+  --accent-soft: rgba(42, 93, 156, 0.12);
+  --accent-bright: #2A5D9C;
+  --accent-glow: rgba(42, 93, 156, 0.3);
+  
+  --bg-body: #E2DFD6; 
+  --bg-card: #E2DFD6;
+  --bg-card-elevated: #EBE8DF; 
+  --bg-code: #EBE8DF;
+  --bg-sidebar: #E2DFD6;
+  --bg-header: #E2DFD6;
+
+  --text-main: #262626;
+  --text-sub: #545454;
+  --text-code: #262626;
+  
+  --border: #CFCBC2;
+  --border-sub: #D9D6CD;
+  --border-nav: #D9D6CD;
+  --grid-line: #D4D1C9;
 
   /* Visualization Colors (Force Light Mode) */
   --viz-balanced-bg: #eafaf1;
@@ -203,10 +226,10 @@
   --viz-unbalanced-text: #c0392b;
   --viz-unbalanced-border: #c0392b;
 
-  --viz-active-bg: #dbeafe;
+  --viz-active-bg: rgba(42, 93, 156, 0.1);
   --viz-active-border: #2A5D9C;
   --viz-active-text: #2A5D9C;
 
-  --viz-node-bg: #ffffff;
+  --viz-node-bg: #E2DFD6;
   --viz-link: #ccc;
 }
