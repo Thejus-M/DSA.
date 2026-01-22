@@ -163,7 +163,7 @@ class LayoutManager {
         if (!sidebar.querySelector('.sidebar-close')) {
             const closeBtn = document.createElement('button');
             closeBtn.className = 'sidebar-close';
-            closeBtn.innerHTML = '✕';
+            closeBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
             closeBtn.setAttribute('aria-label', 'Close Navigation');
             closeBtn.onclick = () => this.closeSidebar();
             sidebar.insertBefore(closeBtn, sidebar.firstChild);
@@ -171,17 +171,29 @@ class LayoutManager {
 
         // Open
         sidebar.classList.add('sidebar-open');
+        sidebar.classList.remove('sidebar-expanded'); // Start in half-state
         backdrop.classList.add('visible');
         document.body.style.overflow = 'hidden'; // Prevent scroll
+
+        // Hide FAB
+        const fab = document.getElementById('mobile-fab');
+        if (fab) fab.classList.add('hidden-by-sheet');
     }
 
     closeSidebar() {
         const sidebar = document.getElementById('sidebar-mount');
         const backdrop = document.getElementById('sidebar-backdrop');
 
-        if (sidebar) sidebar.classList.remove('sidebar-open');
+        if (sidebar) {
+            sidebar.classList.remove('sidebar-open');
+            sidebar.classList.remove('sidebar-expanded');
+        }
         if (backdrop) backdrop.classList.remove('visible');
         document.body.style.overflow = ''; // Restore scroll
+
+        // Show FAB
+        const fab = document.getElementById('mobile-fab');
+        if (fab) fab.classList.remove('hidden-by-sheet');
     }
 
 
@@ -256,7 +268,13 @@ class LayoutManager {
         const mount = document.getElementById('sidebar-mount');
         if (!mount) return;
 
-        let html = '';
+        // Initialize with Mobile Header (Hidden on Desktop)
+        let html = `
+            <div class="sidebar-mobile-header">
+                <div class="sidebar-mobile-subtitle">// SYSTEM_NAVIGATION</div>
+                <div class="sidebar-mobile-title brand-pixel" style="font-family: var(--font-pixel);">DSA.</div>
+            </div>
+        `;
         const currentPath = window.location.pathname;
 
         this.data.categories.forEach(cat => {
@@ -302,6 +320,32 @@ class LayoutManager {
         });
 
         mount.innerHTML = html;
+        this.attachSwipeListeners(mount);
+    }
+
+    attachSwipeListeners(sidebar) {
+        let touchStartY = 0;
+        
+        sidebar.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        sidebar.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const deltaY = touchEndY - touchStartY;
+            const scrollTop = sidebar.scrollTop;
+            
+            // Swipe UP (Expand) -> Delta is NEGATIVE (> 50px drag)
+            if (deltaY < -50) {
+               sidebar.classList.add('sidebar-expanded');
+            }
+            
+            // Swipe DOWN (Close) -> Delta is POSITIVE (> 50px drag)
+            // Only close if at the very top of the scrollable area
+            if (deltaY > 50 && scrollTop <= 0) {
+                this.closeSidebar();
+            }
+        }, { passive: true });
     }
 
     injectResponsiveCSS() {
@@ -321,6 +365,38 @@ class LayoutManager {
         }
     }
 
+    renderMobileFAB() {
+        // Inject FAB button (Icon: Hamburger)
+        const fab = document.createElement('button');
+        fab.id = 'mobile-fab';
+        fab.className = 'mobile-fab';
+        fab.setAttribute('aria-label', 'Open Menu');
+        // Hamburger SVG Icon (centered, stroke-width 2)
+        fab.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
+        document.body.appendChild(fab);
+
+        // Click Handler -> Open Bottom Sheet
+        fab.onclick = (e) => {
+            e.stopPropagation();
+            this.toggleSidebar();
+        };
+
+        // Scroll Logic: Hide on scroll, Show on stop
+        let scrollTimer = null;
+        window.addEventListener('scroll', () => {
+             // 1. Hide immediately upon ANY scroll event
+             fab.classList.add('fab-hidden');
+
+             // 2. Clear previous timer
+             if (scrollTimer) clearTimeout(scrollTimer);
+
+             // 3. Show after user stops scrolling for exactly 300ms
+             scrollTimer = setTimeout(() => {
+                 fab.classList.remove('fab-hidden');
+             }, 300);
+        }, { passive: true });
+    }
+
     init() {
         this.injectThemeCSS();
         this.injectResponsiveCSS();
@@ -329,6 +405,7 @@ class LayoutManager {
         this.renderTableOfContents();
         this.renderFooter();
         this.renderSidebar();
+        this.renderMobileFAB(); // Init Mobile FAB
     }
 
     initTheme() {

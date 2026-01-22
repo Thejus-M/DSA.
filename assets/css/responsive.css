@@ -325,21 +325,25 @@ pre,
     }
 
     /* Close Button inside Sidebar */
+    /* Close Button inside Sidebar */
     .sidebar-close {
         display: flex; /* Override global display: none on mobile */
         position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 36px;
-        height: 36px;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-sub);
-        font-size: 18px;
+        top: 16px;
+        right: 16px;
+        width: 40px; /* Slightly larger squircle */
+        height: 40px;
+        background: var(--bg-card); /* Ensure solid bg */
+        border: 1px solid var(--accent); /* Accent border */
+        border-radius: 8px; /* Squircle radius */
+        color: var(--accent); /* Accent icon color */
+        font-size: 0; /* Hide text if any, we use SVG */
         cursor: pointer;
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Subtle shadow */
     }
 
     .sidebar-close:hover {
@@ -512,4 +516,222 @@ pre,
 /* Ensure Brand Size is 20px base (overriding components.css 24px), allowing it to shrink on mobile */
 .brand-pixel {
     font-size: 20px;
+}
+
+/* ==========================================================================
+   MOBILE FAB & BOTTOM SHEET
+   ========================================================================== */
+
+/* 1. Mobile FAB (Floating Action Button) */
+.mobile-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    border-radius: 8px; /* Squircle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    /* Slow, premium transitions */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    opacity: 1;
+    transform: scale(1);
+    color: var(--accent);
+}
+
+/* Hide on Desktop */
+@media (min-width: 1025px) {
+    .mobile-fab {
+        display: none !important;
+    }
+}
+
+/* Hidden State (on scroll) */
+.mobile-fab.fab-hidden {
+    opacity: 0;
+    transform: scale(0.85);
+    pointer-events: none; 
+}
+
+/* 2. Bottom Sheet Logic (Transforms Sidebar on Mobile) */
+@media (max-width: 1024px) {
+    /* Override Sidebar default fixed-left behavior to be a Bottom Sheet */
+    .sidebar {
+        top: auto !important;
+        bottom: -100% !important; /* Hidden below screen */
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 85vh !important;
+        border-right: none !important;
+        border-top: 1px solid var(--accent) !important;
+        border-radius: 16px 16px 0 0; /* Rounded top */
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
+        padding-top: 20px !important;
+    }
+
+    .sidebar.sidebar-open {
+        bottom: 0 !important;
+        left: 0 !important; /* Ensure it stays anchored */
+    }
+
+    /* Adjust sidebar close button position for bottom sheet */
+    .sidebar-close {
+        top: 16px !important;
+        right: 16px !important;
+    }
+}
+
+/* ==========================================================================
+   MOBILE MENU / BOTTOM SHEET REFINEMENTS (Design Polish)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Larger, Spaced Out List Items */
+    .sidebar-section {
+        margin-bottom: 30px;
+    }
+
+    .sidebar-section-title {
+        font-size: 0.7rem;
+        opacity: 0.6;
+        margin-bottom: 16px;
+        padding-left: 2px;
+    }
+
+    .sidebar-list li {
+        padding: 12px 0; /* Generous vertical spacing */
+        font-size: 1.1rem; /* Larger, readable text */
+        color: var(--text-sub); /* Default nicely dimmed */
+        transition: color 0.2s ease;
+    }
+
+    .sidebar-list li a {
+        transition: padding-left 0.2s ease;
+    }
+
+    .sidebar-list li.active {
+        color: var(--accent) !important;
+        font-weight: 500;
+        /* highlight active item */
+    }
+
+    /* Refine Indicators (+ / ->) */
+    .sidebar-list li::before {
+        font-size: 12px;
+        margin-right: 16px; /* More space between icon and text */
+        opacity: 0.8;
+        display: inline-block;
+        width: 12px; /* Fixed width alignment */
+    }
+}
+
+/* ==========================================================================
+   SIDEBAR MOBILE HEADER (In-Sheet Branding)
+   ========================================================================== */
+
+.sidebar-mobile-header {
+    display: none; /* Hidden on Desktop */
+}
+
+@media (max-width: 1024px) {
+    .sidebar-mobile-header {
+        display: block;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-sub); /* Subtle separator line */
+        margin-bottom: 24px;
+        /* Sidebar has internal padding, this flows within it */
+    }
+
+    .sidebar-mobile-subtitle {
+        font-family: var(--font-mono-sys);
+        font-size: 10px;
+        color: var(--text-sub);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+        opacity: 0.8;
+    }
+
+    .sidebar-mobile-title {
+        font-size: 32px;
+        color: var(--text-main);
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+}
+
+/* ==========================================================================
+   BOTTOM SHEET UPDATES (Drag Handle, Heights)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Drag Handle (Line on Top) */
+    .sidebar::before {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin: 0 auto 20px auto; /* Center horizontally, spacing below */
+        /* Note: Sidebar padding-top is 20px, so this acts as visual grab bar */
+    }
+
+    /* Initial Open State - Half Height */
+    .sidebar.sidebar-open {
+        height: 50vh !important;
+        /* Ensure transition allows height change */
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    /* Expanded State - 90% Height */
+    .sidebar.sidebar-open.expanded {
+        height: 90vh !important;
+    }
+}
+
+/* ==========================================================================
+   BOTTOM SHEET INTERACTIONS (Swipe, Expansion)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Base State: 50% Height */
+    .sidebar {
+        max-height: 50vh !important;
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        padding-top: 12px !important; /* Space for handle */
+    }
+
+    /* Expanded State: 90% Height */
+    .sidebar.sidebar-expanded {
+        max-height: 90vh !important;
+    }
+
+    /* Visual Drag Handle */
+    .sidebar::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: var(--text-sub);
+        border-radius: 100px;
+        margin: 0 auto 12px;
+        opacity: 0.3;
+    }
+
+    /* Hide FAB when sheet is active */
+    .mobile-fab.hidden-by-sheet {
+        opacity: 0 !important;
+        transform: scale(0.5) !important;
+        pointer-events: none !important;
+    }
 }
