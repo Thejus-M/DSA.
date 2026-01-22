@@ -157,6 +157,8 @@ body {
 
 /* Ruler Style Vertical Scale */
 .ruler-scale {
+    display: none !important; /* Replaced by Navbar Scroll Progress */
+    /*
     position: fixed;
     top: 60px;
     right: 0;
@@ -169,6 +171,7 @@ body {
     padding: 0 16px 20px 0;
     z-index: 200;
     pointer-events: none;
+    */
 }
 
 .ruler-tick {

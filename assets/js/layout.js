@@ -73,35 +73,39 @@ class LayoutManager {
         // Square-ish button styling to match design language
         const btnStyle = "background:transparent; border:1px solid var(--border); color:var(--text-sub); cursor:pointer; padding:6px; line-height:0; display:flex; align-items:center; justify-content:center; position: relative; z-index: 2147483647; pointer-events: auto;";
 
-        // Hamburger button (hidden by default, shown on mobile via CSS)
-        const hamburgerBtn = `<button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Navigation" style="display:none;">☰</button>`;
+        // UNIFIED HEADER: Use the Index Page style for ALL pages
+        // Apply responsive padding class if we are on a problem page
+        const wrapperClass = this.isProblemPage ? "index-header-wrapper header-wrapper-unified" : "index-header-wrapper";
+        const wrapperStyle = "display:flex;justify-content:space-between;align-items:center;";
 
+        // Clear any previous classes (like 'header')
+        mount.className = '';
+
+        // If on a problem page, ensure the header is FIXED, HIGH Z-INDEX, and OPAQUE
+        // so it sits above the sidebar and content.
         if (this.isProblemPage) {
-            mount.className = 'header';
-            mount.innerHTML = `
-                ${hamburgerBtn}
-                <a href="${homeLink}" class="header-brand" style="text-decoration: none;">${this.data.metadata.title}</a>
-                <div class="header-tagline">
-                    <span>UNDERSTAND DATA STRUCTURES,</span>
-                    <span>ONE PROBLEM AT A TIME.</span>
-                </div>
-                <button id="theme-toggle" class="btn-theme" style="${btnStyle} margin-left: 10px;" aria-label="Toggle Theme">${icon}</button>
-             `;
-        } else {
-            // Index Page Style
-            mount.innerHTML = `
-             <div class="index-header-wrapper" style="display:flex;justify-content:space-between;align-items:center;">
-              <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent); font-size: 20px;">${this.data.metadata.title}</a>
-              <div style="display:flex; align-items:center; gap: 20px;">
-                  <div class="index-tagline"
-                    style="font-family:var(--font-mono-sys); font-size:10px; color:var(--text-sub); text-align:right; line-height:1.4; letter-spacing:1px; text-transform: uppercase;">
-                    ${this.data.metadata.tagline}
-                  </div>
-                  <button id="theme-toggle" class="btn-theme" style="${btnStyle} width: 36px; height: 36px; border-color: var(--accent);" aria-label="Toggle Theme">${icon}</button>
-              </div>
-            </div>
-             `;
+            mount.style.position = 'fixed';
+            mount.style.top = '0';
+            mount.style.left = '0';
+            mount.style.right = '0';
+            mount.style.zIndex = '1000'; // Above sidebar (z-index: 100)
+            mount.style.backgroundColor = 'var(--bg-body)'; // Ensure text doesn't show through
+            mount.style.borderBottom = '1px solid var(--border)'; // Subtle separator
         }
+
+        mount.innerHTML = `
+         <div class="${wrapperClass}" style="${wrapperStyle}">
+          <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent); font-size: 20px; font-family: var(--font-pixel);">${this.data.metadata.title}</a>
+          <div style="display:flex; align-items:center; gap: 20px;">
+              <div class="index-tagline"
+                style="font-family:var(--font-mono-sys); font-size:10px; color:var(--text-sub); text-align:right; line-height:1.4; letter-spacing:1px; text-transform: uppercase;">
+                ${this.data.metadata.tagline}
+              </div>
+              <button id="theme-toggle" class="btn-theme" style="${btnStyle} width: 36px; height: 36px; border-color: var(--accent);" aria-label="Toggle Theme">${icon}</button>
+          </div>
+        </div>
+        <div id="header-progress" style="position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); width: 0%; transition: width 0.1s;"></div>
+         `;
 
         // Attach listeners after DOM update
         setTimeout(() => {
@@ -115,15 +119,16 @@ class LayoutManager {
                 };
             }
 
-            // Sidebar toggle (hamburger)
-            const sidebarBtn = document.getElementById('sidebar-toggle');
-            if (sidebarBtn) {
-                sidebarBtn.onclick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.toggleSidebar();
-                };
-            }
+            // Scroll Progress Listener
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                const bar = document.getElementById('header-progress');
+                if (bar) {
+                    bar.style.width = scrolled + "%";
+                }
+            });
         }, 0);
     }
 

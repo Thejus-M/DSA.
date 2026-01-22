@@ -159,7 +159,18 @@ pre,
     }
 
     .brand-pixel {
-        font-size: 14px;
+        font-size: 16px !important; /* Force override of inline style */
+    }
+
+    #theme-toggle {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 4px !important;
+    }
+
+    #theme-toggle svg {
+        width: 12px !important;
+        height: 12px !important;
     }
 
     /* Sidebar is now controlled by JS toggle - see MOBILE SIDEBAR TOGGLE section below */
@@ -465,4 +476,35 @@ pre,
         margin-left: 0 !important;
         width: 100%;
     }
+}
+/* Unified Header Responsive Padding (Matches index.html #header-mount) */
+/* Unified Header Responsive Padding (Compact for Fixed Problem Page Header) */
+.header-wrapper-unified {
+    padding: 10px 30px; /* Reduced vertical padding significantly */
+    width: 100%;
+    box-sizing: border-box;
+    height: 60px; /* Fixed height for neatness */
+    display: flex;
+    align-items: center; /* Vertical centering */
+}
+
+@media (max-width: 1024px) {
+    .header-wrapper-unified {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-wrapper-unified {
+        padding: 10px 16px;
+    }
+    
+    .brand-pixel {
+        font-size: 14px !important;
+    }
+}
+
+/* Ensure Brand Size is 20px base (overriding components.css 24px), allowing it to shrink on mobile */
+.brand-pixel {
+    font-size: 20px;
 }
