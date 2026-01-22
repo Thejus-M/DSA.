@@ -90,14 +90,14 @@ class LayoutManager {
         } else {
             // Index Page Style
             mount.innerHTML = `
-             <div class="index-header-wrapper" style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent);">${this.data.metadata.title}</a>
-              <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
-                  <div
-                    style="font-family:var(--tech);font-size:12px;color:#666;border-top:1px solid #ddd;padding-top:10px; margin-bottom: 8px;">
+             <div class="index-header-wrapper" style="display:flex;justify-content:space-between;align-items:center;">
+              <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent); font-size: 20px;">${this.data.metadata.title}</a>
+              <div style="display:flex; align-items:center; gap: 20px;">
+                  <div class="index-tagline"
+                    style="font-family:var(--font-mono-sys); font-size:10px; color:var(--text-sub); text-align:right; line-height:1.4; letter-spacing:1px; text-transform: uppercase;">
                     ${this.data.metadata.tagline}
                   </div>
-                  <button id="theme-toggle" class="btn-theme" style="${btnStyle}" aria-label="Toggle Theme">${icon}</button>
+                  <button id="theme-toggle" class="btn-theme" style="${btnStyle} width: 36px; height: 36px; border-color: var(--accent);" aria-label="Toggle Theme">${icon}</button>
               </div>
             </div>
              `;

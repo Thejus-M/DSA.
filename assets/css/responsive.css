@@ -117,41 +117,45 @@ pre,
         width: auto;
     }
 
-    /* Table of Contents (Index Page) - Fix squashed titles */
+    /* Table of Contents (Index Page) - Cleaner Mobile List */
     .problem-list li {
+        display: flex !important;
         flex-direction: row !important;
-        /* Keep aligned next to each other */
-        flex-wrap: wrap;
-        /* Allow wrapping if needed */
-        align-items: baseline !important;
-        gap: 8px;
-        padding-bottom: 8px;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 4px 0 !important; /* Reduced padding */
+        border-bottom: none !important; /* Removed line */
+        flex-wrap: nowrap !important;
+        gap: 16px;
     }
 
-    .problem-list li .entry-leader {
-        display: none;
-        /* Hide leader */
+    .problem-list li:last-child {
+        border-bottom: none;
     }
+
+    .problem-list li a {
+        font-size: 14px; /* Readable size */
+        white-space: normal; /* Allow text wrapping */
+        line-height: 1.4;
+    }
+
+    /* .entry-leader visible by default in this range (removed display: none) */
 
     .problem-list li .entry-value {
-        font-size: 9px;
-        /* Very small */
-        padding: 2px 6px;
-        margin-top: 0;
-        align-self: center;
-        opacity: 0.8;
-    }
-
-    /* Hide badge on very small screens */
-    @media (max-width: 380px) {
-        .problem-list li .entry-value {
-            display: none !important;
-        }
+        font-size: 10px;
+        padding: 3px 8px;
+        margin: 0;
+        white-space: nowrap;
+        background: var(--bg-card-elevated); /* Subtle background for badge */
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        opacity: 1;
     }
 
     .header-tagline,
+    .index-tagline,
     .header-status {
-        display: none;
+        display: none !important;
     }
 
     .brand-pixel {
@@ -229,17 +233,20 @@ pre,
 
     /* Index Page Tweaks */
     .container {
-        padding: 20px 20px 60px !important;
+        padding: 20px 10px 60px !important;
         /* Force override for Index */
     }
 
     .hero-buttons {
         flex-direction: column;
         width: 100%;
+        align-items: center; /* Center button horizontally */
     }
 
     .hero-buttons .btn {
-        width: 100%;
+        width: auto; /* Let button size to content */
+        min-width: 200px; /* Optional: minimum readable width */
+        max-width: 80%; /* Prevent touching edges on very small screens */
     }
 
     .section-header {
@@ -355,6 +362,67 @@ pre,
         text-transform: uppercase;
         letter-spacing: 2px;
         color: var(--text-sub);
+    }
+}
+
+/* Very Small Screens (< 600px) */
+@media (max-width: 600px) {
+    /* Use full screen width */
+    .container {
+        padding: 12px 8px 40px !important;
+        max-width: 100% !important;
+    }
+
+    /* Indent problem list items under category titles */
+    .problem-list {
+        padding-left: 32px !important; /* Increased tab indentation */
+        padding-right: 8px !important;
+        width: 100% !important;
+    }
+
+    /* Title and tag GROUPED on left */
+    .problem-list li {
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        width: 100% !important;
+        gap: 10px !important;
+        padding: 8px 6px !important;
+        margin-bottom: 2px !important;
+    }
+
+
+
+    .problem-list li .entry-leader {
+        display: none !important;
+    }
+
+    /* Title styling */
+    .problem-list li a {
+        flex: 0 1 auto !important; /* Don't stretch */
+        margin-right: 0;
+    }
+
+    /* Compact difficulty tag RIGHT NEXT to title */
+    .problem-list li .entry-value {
+        flex-shrink: 0 !important;
+        font-size: 0.6rem !important;
+        padding: 2px 6px !important;
+        background: var(--bg-card-elevated) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 3px !important;
+        color: var(--text-sub) !important;
+        font-family: var(--tech);
+        font-weight: normal !important;
+        white-space: nowrap;
+        text-transform: capitalize !important;
+    }
+}
+
+/* Extra Small Screens (< 380px) */
+@media (max-width: 380px) {
+    .problem-list {
+        padding-left: 12px !important; /* Decreased tab indentation for very small screens */
     }
 }
 

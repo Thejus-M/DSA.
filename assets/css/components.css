@@ -303,16 +303,16 @@ pre {
 
 .entry-value {
   font-family: var(--tech);
-  font-weight: 700;
-  color: var(--accent);
+  font-weight: normal; /* Reduced weight */
+  color: var(--text-sub); /* Use subtle text color */
   white-space: nowrap;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  background: rgba(31, 92, 255, 0.06);
-  border: 1px solid rgba(31, 92, 255, 0.06);
-  border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 0.65rem; /* Matches mobile feeling */
+  padding: 2px 8px;
+  background: var(--bg-card-elevated); /* Slight elevated bg */
+  border: 1px solid var(--border); /* Visible border */
+  border-radius: 4px; /* Slightly rounder than radius-sm if needed */
+  text-transform: capitalize; /* "Medium" instead of "MEDIUM" */
+  letter-spacing: 0.5px;
 }
 
 .btn-expand {
