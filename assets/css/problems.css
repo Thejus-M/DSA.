@@ -81,21 +81,24 @@ body {
 /* Page Layout */
 .page-wrapper {
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr) 0px; /* minmax(0, 1fr) prevents content from forcing overflow */
+    grid-template-columns: 240px minmax(0, 1fr); /* Sidebar RESTORED to LEFT */
     padding-top: 60px;
 }
 
 /* Sidebar */
 .sidebar {
     position: fixed;
-    left: 0;
+    left: 0;   /* Restored Left */
+    right: auto;
     top: 60px;
     width: 240px;
     height: calc(100vh - 60px);
-    padding: 10px 20px 20px 40px;
+    padding: 10px 20px 20px 40px; /* Restored Left Padding */
     overflow-y: auto;
     background: var(--bg-card);
     z-index: 100;
+    border-right: 1px solid var(--border-sub); /* Restored Right Border */
+    border-left: none;
 }
 
 .sidebar-section {

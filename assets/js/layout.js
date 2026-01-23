@@ -348,6 +348,135 @@ class LayoutManager {
         }, { passive: true });
     }
 
+    initPageNavigation() {
+        if (!this.isProblemPage) return;
+
+        // Configuration for sections to detect
+        const sections = [
+            { id: 'section-problem', label: 'Problem', selector: '.terminal-card' },
+            { id: 'section-intuition', label: 'Intuition', selector: '.phase-section' },
+            { id: 'section-solution', label: 'Solution', selector: 'h2', text: 'Solution' },
+            { id: 'section-complexity', label: 'Complexity', selector: '.complexity-card' },
+            { id: 'section-demo', label: 'Interactive Visualization', selector: 'h2', text: 'Interactive' }
+        ];
+
+        let navItems = [];
+        
+        sections.forEach(sec => {
+            let el;
+            if (sec.text) {
+                // Fuzzy match by text content for H2s
+                const headers = document.querySelectorAll(sec.selector);
+                for (let h of headers) {
+                    if (h.textContent.includes(sec.text)) {
+                        el = h.closest('section') || h; 
+                        break;
+                    }
+                }
+            } else {
+                el = document.querySelector(sec.selector);
+            }
+
+            if (el) {
+                // Assign ID if missing
+                if (!el.id) el.id = sec.id;
+                navItems.push({ id: el.id, label: sec.label });
+            }
+        });
+
+        if (navItems.length === 0) return;
+
+        // Render Sub-Navbar
+        const nav = document.createElement('div');
+        nav.className = 'page-nav-scroll visible'; 
+        
+        let html = '';
+        navItems.forEach((item, index) => {
+            // First item active by default
+            const activeClass = index === 0 ? 'active' : '';
+            html += `<a href="#${item.id}" class="page-nav-item ${activeClass}" onclick="window.layoutManager.scrollToSection(event, '${item.id}')">${item.label}</a>`;
+        });
+        nav.innerHTML = html;
+        
+        document.body.appendChild(nav);
+
+        // Render TOC into Sidebar (Unified Desktop/Mobile location)
+        const sidebar = document.getElementById('sidebar-mount');
+        let sidebarTocItems = []; // Store refs for scroll spy
+
+        if (sidebar) {
+            const tocDiv = document.createElement('div');
+            tocDiv.className = 'sidebar-section sidebar-toc'; 
+            
+            let tocHtml = '<div class="sidebar-section-title" style="color:var(--accent);">ON THIS PAGE</div><ul class="sidebar-list sidebar-toc-list">';
+            navItems.forEach((item, index) => {
+                 const activeClass = index === 0 ? 'active' : '';
+                 tocHtml += `<li class="${activeClass}" data-target="${item.id}"><a href="#${item.id}" onclick="window.layoutManager.scrollToSection(event, '${item.id}')">${item.label}</a></li>`;
+            });
+            tocHtml += '</ul><div style="height: 1px; background: var(--border-sub); margin: 20px 0 30px 0;"></div>'; // Visual Divider
+            
+            tocDiv.innerHTML = tocHtml;
+
+            // Insert after mobile header if present (to keep hierarchy: Header -> TOC -> Global)
+            const mobileHeader = sidebar.querySelector('.sidebar-mobile-header');
+            if (mobileHeader) {
+                mobileHeader.after(tocDiv);
+            } else {
+                sidebar.prepend(tocDiv);
+            }
+            
+            sidebarTocItems = Array.from(tocDiv.querySelectorAll('li'));
+        }
+
+        document.body.classList.add('has-page-nav');
+
+        // Scroll Spy Logic
+        window.addEventListener('scroll', () => {
+             const mid = window.innerHeight / 3;
+             let current = navItems[0].id; // Default to first
+
+             for (let item of navItems) {
+                 const el = document.getElementById(item.id);
+                 if (el) {
+                     const rect = el.getBoundingClientRect();
+                     if (rect.top <= mid + 100) { 
+                         current = item.id;
+                     }
+                 }
+             }
+             
+             // Update Active Class (Mobile Strip)
+             const links = nav.querySelectorAll('.page-nav-item');
+             links.forEach(link => {
+                 link.classList.remove('active');
+                 if (link.getAttribute('href') === '#' + current) {
+                     link.classList.add('active');
+                     link.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                 }
+             });
+
+             // Update Active Class (Sidebar TOC)
+             if (sidebarTocItems.length > 0) {
+                 sidebarTocItems.forEach(li => {
+                     li.classList.remove('active');
+                     if (li.getAttribute('data-target') === current) {
+                         li.classList.add('active');
+                     }
+                 });
+             }
+        }, { passive: true });
+    }
+
+    scrollToSection(e, id) {
+        e.preventDefault();
+        const el = document.getElementById(id);
+        if (el) {
+             // Offset for Fixed Header (60) + Subnav (44) + Margin (20) = ~124
+             const y = el.getBoundingClientRect().top + window.pageYOffset - 124; 
+             window.scrollTo({top: y, behavior: 'smooth'});
+        }
+    }
+
     injectResponsiveCSS() {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
@@ -406,6 +535,7 @@ class LayoutManager {
         this.renderFooter();
         this.renderSidebar();
         this.renderMobileFAB(); // Init Mobile FAB
+        this.initPageNavigation(); // Init On-Page Nav
     }
 
     initTheme() {

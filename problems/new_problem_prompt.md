@@ -156,15 +156,15 @@ text, `#51cf66` accents - **Light Mode**: `#ffffff` bg, `#2A5D9C` borders,
 helper in JS to switch dynamically - **Monospace fonts**: Share Tech Mono for
 labels, JetBrains Mono for numbers - **Smooth animations**: 60+ frames per phase
 for fluid motion - **Descriptive text**: Each phase has a title and explanation
-paragraph #### Interactive Demo Requirements: - **Dynamic sizing**: Canvas
-adjusts to fit any valid input (1-20) - **Strict validation**: Auto-correct
-out-of-range inputs, never break or show errors - **Large number support**:
-Format large Fibonacci values (e.g., "1.6k" for 1597) - **Tech styling**:
-Adaptive themes (White/Navy for Light, Dark/Cyan for Dark) - **Responsive
-layout**: Always fits within canvas bounds regardless of input - **Real-time
-feedback**: Updates immediately on button click - **Reactivity**: Must update
-colors on every frame to support instant theme switching ### HTML Structure:
-```html
+paragraph #### Interactive Visualization Requirements: - **Dynamic sizing**:
+Canvas adjusts to fit any valid input (1-20) - **Strict validation**:
+Auto-correct out-of-range inputs, never break or show errors - **Large number
+support**: Format large Fibonacci values (e.g., "1.6k" for 1597) - **Tech
+styling**: Adaptive themes (White/Navy for Light, Dark/Cyan for Dark) -
+**Responsive layout**: Always fits within canvas bounds regardless of input -
+**Real-time feedback**: Updates immediately on button click - **Reactivity**:
+Must update colors on every frame to support instant theme switching ### HTML
+Structure: ```html
 <!-- Intuition with 4 Auto-Looping Phases -->
 <section class="content-section">
   <h2>Intuition</h2>
@@ -216,7 +216,7 @@ colors on every frame to support instant theme switching ### HTML Structure:
 
 <!-- Interactive Demo -->
 <section class="content-section">
-  <h2>Interactive Demo</h2>
+  <h2>Interactive Visualization</h2>
   <p>Try it yourself! Enter a number (1-20) and see how the solution grows.</p>
 
   <div class="demo-container">
@@ -366,7 +366,7 @@ colors on every frame to support instant theme switching ### HTML Structure:
         color: #2A5D9C;
     }
 
-    /* --- Interactive Demo Styling --- */
+    /* --- Interactive Visualization Styling --- */
 
     /* Demo Input Styling - Adaptive */
     .demo-input {
@@ -618,11 +618,11 @@ colors on every frame to support instant theme switching ### HTML Structure:
 </div>
 ```
 
-### 9. Interactive Demo (Optional)
+### 9. Interactive Visualization (Optional)
 
 ```html
 <section class="content-section" style="margin-top: 60px;">
-  <h2>Interactive Demo</h2>
+  <h2>Interactive Visualization</h2>
   <p style="margin-bottom: 30px;">[Description]</p>
   <!-- Canvas or interactive controls -->
 </section>

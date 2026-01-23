@@ -16,7 +16,7 @@ pre,
 /* Smoother Transition for Tablets (1024px - 1100px) */
 @media (max-width: 1100px) {
     .page-wrapper {
-        grid-template-columns: 220px minmax(0, 1fr) 0px;
+        grid-template-columns: 220px minmax(0, 1fr); /* Sidebar Left */
     }
     
     .sidebar {
@@ -49,7 +49,7 @@ pre,
 /* Tablet & Smaller Desktop (< 1024px) */
 @media (max-width: 1024px) {
     .page-wrapper {
-        grid-template-columns: 200px minmax(0, 1fr) 0px;
+        grid-template-columns: 200px minmax(0, 1fr); /* Sidebar Left */
         /* Shrink sidebar, hide ruler column */
     }
 
@@ -733,5 +733,226 @@ pre,
         opacity: 0 !important;
         transform: scale(0.5) !important;
         pointer-events: none !important;
+    }
+}
+
+/* ==========================================================================
+   SIDEBAR HIERARCHY CLARITY
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Group separation */
+    .sidebar-section {
+        margin-bottom: 40px !important;
+    }
+
+    /* Distinct Category Header */
+    .sidebar-section-title {
+        font-size: 11px !important;
+        color: var(--accent) !important;
+        font-weight: 700 !important;
+        border-bottom: 1px solid var(--border-sub);
+        padding-bottom: 10px !important;
+        margin-bottom: 20px !important;
+        letter-spacing: 3px !important;
+        opacity: 1 !important;
+    }
+
+    /* Indent items for hierarchy */
+    .sidebar-list {
+        padding-left: 6px !important;
+    }
+
+    /* Readable Item spacing */
+    .sidebar-list li {
+        margin-bottom: 16px !important;
+        font-size: 1.05rem !important; /* Slightly larger for mobile tap */
+        color: var(--text-main) !important;
+    }
+    
+    /* Make active item stand out more */
+    .sidebar-list li.active a {
+        font-weight: 700 !important;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+}
+
+/* ==========================================================================
+   IN-PAGE NAVIGATION (Navbar)
+   ========================================================================== */
+
+.in-page-nav {
+    display: flex;
+    gap: 24px;
+    margin: 0 40px; /* Spacing from Brand and Right Controls */
+}
+
+.in-page-nav a {
+    font-family: var(--font-mono-sys);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-sub);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 8px 0;
+}
+
+.in-page-nav a:hover {
+    color: var(--accent);
+}
+
+/* Hide In-Page Nav on Mobile/Tablet where space is tight */
+@media (max-width: 900px) {
+    .in-page-nav {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   MOBILE PAGE NAVIGATION (Sub-Navbar)
+   ========================================================================== */
+
+.page-nav-scroll {
+    display: none; /* User requested for "small screen". Hidden by default */
+    position: fixed;
+    top: 60px; /* Directly below the main header */
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: var(--bg-body); /* Ensure opaque background */
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 990; /* Below main header (1000) */
+    align-items: center;
+    padding: 0 16px;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+
+.page-nav-scroll::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.page-nav-item {
+    display: inline-block;
+    font-family: var(--font-mono-sys);
+    font-size: 10px;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    text-decoration: none;
+    margin-right: 24px;
+    padding: 14px 0; /* Full height click target */
+    letter-spacing: 1px;
+    opacity: 0.6;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.page-nav-item:last-child {
+    margin-right: 16px; /* End padding */
+}
+
+.page-nav-item.active {
+    color: var(--accent);
+    opacity: 1;
+    font-weight: bold;
+}
+
+/* Active Indicator Line */
+.page-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+}
+
+@media (max-width: 1024px) {
+    /* Show on Tablet/Mobile */
+    .page-nav-scroll.visible {
+        display: flex;
+    }
+    
+    /* Push content down to account for the extra 44px bar */
+    /* Only if class 'has-page-nav' is added to body/wrapper */
+    body.has-page-nav .page-wrapper {
+        padding-top: 104px !important; /* 60px header + 44px subnav */
+    }
+    
+    /* Ensure scroll-margin so links don't hide behind header */
+    [id] {
+        scroll-margin-top: 120px;
+    }
+}
+
+/* ==========================================================================
+   DESKTOP PAGE NAVIGATION (Right Sidebar TOC)
+   ========================================================================== */
+
+.desktop-page-nav {
+    display: none; /* Hidden on Mobile/Tablet */
+    position: fixed;
+    top: 120px;
+    right: 40px;
+    width: 180px;
+    z-index: 800;
+    /* Optional: Fade in */
+    animation: fadeIn 0.5s ease-out;
+}
+
+.desktop-nav-title {
+    font-family: var(--font-mono-sys);
+    font-size: 10px;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-align: right;
+    opacity: 0.6;
+}
+
+.desktop-page-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.desktop-page-nav li {
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.desktop-nav-item {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--text-sub);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding-right: 16px;
+    border-right: 2px solid transparent;
+    opacity: 0.7;
+}
+
+.desktop-nav-item:hover {
+    color: var(--accent);
+    opacity: 1;
+}
+
+.desktop-nav-item.active {
+    color: var(--accent);
+    border-right-color: var(--accent);
+    opacity: 1;
+    font-weight: 600;
+}
+
+/* Show only on large screens where there's margin space */
+@media (min-width: 1280px) {
+    .desktop-page-nav {
+        display: block;
     }
 }
