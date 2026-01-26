@@ -226,21 +226,7 @@
     </div>
 
     <script>
-        function copyCode(button) {
-            const codeBlock = button.parentElement.querySelector('code');
-            const code = codeBlock.innerText;
 
-            navigator.clipboard.writeText(code).then(() => {
-                const originalText = button.innerText;
-                button.innerText = 'COPIED!';
-
-                setTimeout(() => {
-                    button.innerText = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
 
         // Generate Ticks (Technical Ruler Style)
         const scaleContainer = document.getElementById('ruler-scale');
@@ -578,6 +564,7 @@
             new RotatedSearchDemo('rotated-search-demo');
         }
     </script>
+    <script src="../assets/js/copy-code.js"></script>
     <script src="../assets/js/data.js"></script>
     <script src="../assets/js/layout.js"></script>
 </body>
