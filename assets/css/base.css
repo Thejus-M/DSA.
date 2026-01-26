@@ -57,13 +57,45 @@ p {
 
 a {
     color: var(--accent);
-    /* Anchor links now use blue accent */
     text-decoration: none;
     transition: color var(--transition-fast);
+    cursor: pointer;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+/* ==========================================================================
+   CURSOR MANAGEMENT - Must be explicit to prevent inheritance issues
+   ========================================================================== */
+
+/* Default cursor for everything */
+*, *::before, *::after {
+    cursor: default;
+}
+
+/* Interactive elements get pointer cursor */
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.btn,
+.tech-btn,
+.demo-btn,
+.copy-btn,
+.sidebar-toggle,
+.sidebar-close,
+.mobile-fab,
+.chip,
+.page-nav-item,
+.desktop-nav-item,
+.btn-theme,
+.sidebar-list li a,
+.problem-list li a,
+.nav-footer a {
+    cursor: pointer;
 }
 
 ul,

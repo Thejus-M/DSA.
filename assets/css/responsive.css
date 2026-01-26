@@ -398,11 +398,11 @@ pre,
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 40px; /* Slightly larger squircle */
-    height: 40px;
+    width: 32px; /* Reduced from 40px */
+    height: 32px;
     background: var(--bg-card); /* Ensure solid bg */
     border: 1px solid var(--accent); /* Accent border */
-    border-radius: 8px; /* Squircle radius */
+    border-radius: 6px; /* Reduced radius */
     color: var(--accent); /* Accent icon color */
     font-size: 0; /* Hide text if any, we use SVG */
     cursor: pointer;
@@ -718,6 +718,8 @@ pre,
     transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2) !important;
     padding-top: 20px !important;
+    padding-left: 20px !important; /* Reduced from 40px default */
+    overscroll-behavior: contain; /* Prevents Pull-To-Refresh in Firefox/Chrome */
   }
 
   .sidebar.sidebar-open {
@@ -750,9 +752,9 @@ pre,
   }
 
   .sidebar-list li {
-    padding: 12px 0; /* Generous vertical spacing */
-    font-size: 1.1rem; /* Larger, readable text */
-    color: var(--text-sub); /* Default nicely dimmed */
+    padding: 6px 0; /* Reduced from 12px */
+    font-size: 0.95rem; /* Reduced from 1.1rem */
+    color: var(--text-sub);
     transition: color 0.2s ease;
   }
 
@@ -838,7 +840,7 @@ pre,
   }
 
   /* Expanded State - 90% Height */
-  .sidebar.sidebar-open.expanded {
+  .sidebar.sidebar-open.sidebar-expanded {
     height: 90vh !important;
   }
 }
@@ -889,30 +891,30 @@ pre,
 @media (max-width: 1024px) {
   /* Group separation */
   .sidebar-section {
-    margin-bottom: 40px !important;
+    margin-bottom: 24px !important; /* Reduced from 40px */
   }
 
   /* Distinct Category Header */
   .sidebar-section-title {
-    font-size: 11px !important;
+    font-size: 10px !important;
     color: var(--accent) !important;
     font-weight: 700 !important;
     border-bottom: 1px solid var(--border-sub);
-    padding-bottom: 10px !important;
-    margin-bottom: 20px !important;
-    letter-spacing: 3px !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 2px !important;
     opacity: 1 !important;
   }
 
   /* Indent items for hierarchy */
   .sidebar-list {
-    padding-left: 6px !important;
+    padding-left: 0 !important;
   }
 
   /* Readable Item spacing */
   .sidebar-list li {
-    margin-bottom: 16px !important;
-    font-size: 1.05rem !important; /* Slightly larger for mobile tap */
+    margin-bottom: 4px !important; /* Reduced from 16px */
+    font-size: 0.9rem !important; /* Reduced from 1.05rem */
     color: var(--text-main) !important;
   }
 

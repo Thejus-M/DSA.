@@ -332,12 +332,32 @@ class LayoutManager {
 
     attachSwipeListeners(sidebar) {
         let touchStartY = 0;
+        let isDragging = false; // Added for the new logic
+        let touchCurrentY = 0; // Added for the new logic
         
         sidebar.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
+            isDragging = true; // Set dragging state
         }, { passive: true });
 
+        sidebar._swipeMoveHandler = (e) => {
+            if (!isDragging) return;
+            touchCurrentY = e.touches[0].clientY;
+            
+            // LOGIC TO PREVENT PULL-TO-REFRESH IN FIREFOX
+            const deltaY = touchCurrentY - touchStartY;
+            const scrollTop = sidebar.scrollTop;
+            
+            // If dragging DOWN (positive delta) and at the very top
+            if (deltaY > 0 && scrollTop <= 0) {
+                 // Prevent default browser action (reload)
+                 if (e.cancelable) e.preventDefault();
+            }
+        };
+        sidebar.addEventListener('touchmove', sidebar._swipeMoveHandler, { passive: false }); // passive: false is crucial for preventDefault
+
         sidebar.addEventListener('touchend', (e) => {
+            isDragging = false; // Reset dragging state
             const touchEndY = e.changedTouches[0].clientY;
             const deltaY = touchEndY - touchStartY;
             const scrollTop = sidebar.scrollTop;
@@ -347,10 +367,16 @@ class LayoutManager {
                sidebar.classList.add('sidebar-expanded');
             }
             
-            // Swipe DOWN (Close) -> Delta is POSITIVE (> 50px drag)
-            // Only close if at the very top of the scrollable area
-            if (deltaY > 50 && scrollTop <= 0) {
-                this.closeSidebar();
+            // Swipe DOWN -> Either collapse or close
+            if (deltaY > 50) {
+                if (sidebar.classList.contains('sidebar-expanded') && scrollTop <= 5) {
+                    // Step 1: Collapse from 90% to 50%
+                    sidebar.classList.remove('sidebar-expanded');
+                    // Add a small shake or visual cue could be nice here
+                } else if (!sidebar.classList.contains('sidebar-expanded') && scrollTop <= 5) {
+                    // Step 2: Close completely if already at 50%
+                    this.closeSidebar();
+                }
             }
         }, { passive: true });
     }
