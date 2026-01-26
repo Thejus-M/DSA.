@@ -581,6 +581,19 @@ pre,
     padding: 12px 12px !important;
   }
 
+  /* Ensure terminal card classes work properly on mobile */
+  .terminal-constraints-list {
+    padding-left: 20px !important;
+  }
+
+  .terminal-examples-list {
+    padding-left: 20px !important;
+  }
+
+  .terminal-example-bullet {
+    left: -20px !important;
+  }
+
   .demo-feature-card {
     padding: 10px 10px !important;
   }
@@ -1078,9 +1091,21 @@ pre,
   top: 120px;
   right: 40px;
   width: 180px;
-  z-index: 800;
-  /* Optional: Fade in */
-  animation: fadeIn 0.5s ease-out;
+  z-index: 50; /* Lower z-index to not overlap headings */
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Auto-hide when inactive */
+.desktop-page-nav.inactive {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Show when hovering */
+.desktop-page-nav:hover {
+  opacity: 1 !important;
+  pointer-events: all !important;
 }
 
 .desktop-nav-title {
@@ -1137,5 +1162,12 @@ pre,
   /* Hide Redundant Sidebar TOC on Large Desktop to focus on Right Nav */
   .sidebar-toc {
     display: none !important;
+  }
+
+  /* Constrain article heading width to prevent overlap with desktop nav */
+  .article-title {
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

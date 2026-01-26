@@ -387,7 +387,7 @@ class LayoutManager {
         // Configuration for sections to detect
         const sections = [
             { id: 'section-problem', label: 'Problem', selector: '.terminal-card' },
-            { id: 'section-intuition', label: 'Intuition', selector: '.phase-section' },
+            { id: 'section-intuition', label: 'Intuition', selector: 'h2', text: 'Intuition' },
             { id: 'section-solution', label: 'Solution', selector: 'h2', text: 'Solution' },
             { id: 'section-complexity', label: 'Complexity', selector: '.complexity-card' },
             { id: 'section-demo', label: 'Interactive Visualization', selector: 'h2', text: 'Interactive' }
@@ -601,6 +601,7 @@ class LayoutManager {
         this.renderSidebar();
         this.renderMobileFAB(); // Init Mobile FAB
         this.initPageNavigation(); // Init On-Page Nav
+        this.initDesktopPageNavAutoHide(); // Auto-hide desktop nav
     }
 
     initTheme() {
@@ -623,6 +624,46 @@ class LayoutManager {
     }
 
     // ... existing methods ...
+
+    initDesktopPageNavAutoHide() {
+        const desktopNav = document.querySelector('.desktop-page-nav');
+        if (!desktopNav) return;
+
+        let inactivityTimer;
+        const INACTIVITY_DELAY = 3000; // 3 seconds
+
+        const showNav = () => {
+            desktopNav.classList.remove('inactive');
+            resetTimer();
+        };
+
+        const hideNav = () => {
+            desktopNav.classList.add('inactive');
+        };
+
+        const resetTimer = () => {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(hideNav, INACTIVITY_DELAY);
+        };
+
+        // Show on mouse move
+        document.addEventListener('mousemove', showNav);
+
+        // Show on scroll
+        window.addEventListener('scroll', showNav);
+
+        // Show on hover over nav itself
+        desktopNav.addEventListener('mouseenter', () => {
+            desktopNav.classList.remove('inactive');
+            clearTimeout(inactivityTimer);
+        });
+
+        // Resume timer when mouse leaves nav
+        desktopNav.addEventListener('mouseleave', resetTimer);
+
+        // Start the initial timer
+        resetTimer();
+    }
 
 }
 

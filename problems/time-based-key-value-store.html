@@ -81,7 +81,7 @@
                     <div class="terminal-row">
                         <span class="terminal-label">CONST:</span>
                         <div class="terminal-content mono">
-                            <ul style="list-style: disc; padding-left: 16px; margin: 0;">
+                            <ul class="terminal-constraints-list">
                                 <li>1 <= key.length, value.length <= 100</li>
                                 <li>key and value consist of lowercase English letters and digits.</li>
                                 <li>1 <= timestamp <= 10^7</li>
@@ -95,17 +95,17 @@
                     <div class="terminal-row">
                         <span class="terminal-label">EXAMPLE:</span>
                         <div class="terminal-content mono">
-                            <ul style="list-style: none; padding-left: 16px; margin: 0;">
+                            <ul class="terminal-examples-list">
                                 <!-- Example 1 -->
-                                <li style="position: relative;">
-                                    <span style="position: absolute; left: -16px; top: 0; color: var(--text-sub);">•</span>
-                                    <div style="margin-bottom: 4px; color: var(--text-sub); font-size: 0.85em; letter-spacing: 1px;">INPUT</div>
-                                    <div style="margin-bottom: 8px; font-weight: bold; padding-left: 12px;">["TimeMap", "set", "get", "get", "set", "get",
+                                <li class="terminal-example-item">
+                                    <span class="terminal-example-bullet">•</span>
+                                    <div class="terminal-example-label">INPUT</div>
+                                    <div class="terminal-example-value">["TimeMap", "set", "get", "get", "set", "get",
                                         "get"]<br>[[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4],
                                         ["foo", 4], ["foo", 5]]</div>
-                                    <div style="margin-bottom: 4px; color: var(--text-sub); font-size: 0.85em; letter-spacing: 1px;">OUTPUT</div>
-                                    <div style="margin-bottom: 8px; font-weight: bold; padding-left: 12px;">[null, null, "bar", "bar", null, "bar2", "bar2"]</div>
-                                    <div style="color: var(--text-sub); font-style: italic; font-size: 0.85rem; padding-left: 12px;">
+                                    <div class="terminal-example-label">OUTPUT</div>
+                                    <div class="terminal-example-value">[null, null, "bar", "bar", null, "bar2", "bar2"]</div>
+                                    <div class="terminal-example-explanation">
                                         // Explanation:<br>
                                         TimeMap timeMap = new TimeMap();<br>
                                         timeMap.set("foo", "bar", 1); // store the key "foo" and value "bar" along with

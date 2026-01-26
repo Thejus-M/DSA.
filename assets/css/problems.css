@@ -326,7 +326,6 @@ h3 {
     line-height: 1.7;
     color: var(--text-main);
     margin-bottom: 24px;
-    max-width: 65ch;
 }
 
 .content-section ul {
@@ -343,12 +342,12 @@ h3 {
     color: var(--text-sub);
 }
 
-.content-section ul li::before {
+/* .content-section ul li::before {
     content: "—";
     position: absolute;
     left: 0;
     color: var(--accent);
-}
+} */
 
 .content-section code {
     font-family: var(--font-mono-code);
@@ -609,11 +608,64 @@ pre[class*="language-"] {
 
 .terminal-content.serif {
     font-family: var(--font-serif);
+    text-align: justify;
 }
 
 .terminal-content.mono {
     font-family: var(--font-mono-sys);
     font-size: 0.95rem;
+    text-align: justify;
+}
+
+/* Terminal Card - Constraints List */
+.terminal-constraints-list {
+    list-style: disc;
+    padding-left: 16px;
+    margin: 0;
+}
+
+/* Terminal Card - Examples List */
+.terminal-examples-list {
+    list-style: none;
+    padding-left: 16px;
+    margin: 0;
+}
+
+.terminal-example-item {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.terminal-example-item:last-child {
+    margin-bottom: 0;
+}
+
+.terminal-example-bullet {
+    position: absolute;
+    left: -16px;
+    top: 0;
+    color: var(--text-sub);
+}
+
+.terminal-example-label {
+    margin-bottom: 4px;
+    color: var(--text-sub);
+    font-size: 0.85em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.terminal-example-value {
+    margin-bottom: 8px;
+    font-weight: bold;
+    padding-left: 12px;
+}
+
+.terminal-example-explanation {
+    color: var(--text-sub);
+    font-style: italic;
+    font-size: 0.85rem;
+    padding-left: 12px;
 }
 
 .section-divider {
