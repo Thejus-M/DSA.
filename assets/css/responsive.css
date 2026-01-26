@@ -235,9 +235,23 @@ pre,
     box-sizing: border-box !important;
   }
 
-  /* Reduce Padding for internal elements (PROB, CONST, etc.) */
   .terminal-row {
     padding: 16px 20px !important;
+    display: flex !important;
+    flex-direction: column !important; /* Stack vertically */
+    align-items: flex-start !important;
+  }
+  
+  .terminal-label {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+    color: var(--accent) !important; /* Make label distinct */
+    opacity: 0.8 !important;
+  }
+  
+  .terminal-content {
+      padding-left: 0 !important; /* Reset any indents */
+      width: 100% !important;
   }
 
   .demo-feature-card {

@@ -81,10 +81,10 @@
                     <div class="terminal-row">
                         <span class="terminal-label">CONST:</span>
                         <div class="terminal-content mono">
-                            <ul>
-                                <li>1 <= key.length, value.length <=100</li>
+                            <ul style="list-style: disc; padding-left: 16px; margin: 0;">
+                                <li>1 <= key.length, value.length <= 100</li>
                                 <li>key and value consist of lowercase English letters and digits.</li>
-                                <li>1 <= timestamp <=10^7</li>
+                                <li>1 <= timestamp <= 10^7</li>
                                 <li>All the timestamps <code>timestamp</code> of <code>set</code> are strictly
                                     increasing.</li>
                                 <li>At most 2 * 10^5 calls will be made to <code>set</code> and <code>get</code>.</li>
@@ -93,30 +93,33 @@
                     </div>
 
                     <div class="terminal-row">
-                        <span class="terminal-label">EG:</span>
+                        <span class="terminal-label">EXAMPLE:</span>
                         <div class="terminal-content mono">
-                            <!-- Example 1 -->
-                            <div style="margin-bottom: 24px;">
-                                <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
-                                <div style="margin-bottom: 8px;">["TimeMap", "set", "get", "get", "set", "get",
-                                    "get"]<br>[[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4],
-                                    ["foo", 4], ["foo", 5]]</div>
-                                <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
-                                <div style="margin-bottom: 8px;">[null, null, "bar", "bar", null, "bar2", "bar2"]</div>
-                                <div style="color: var(--text-sub); font-size: 0.85rem;">
-                                    // Explanation:<br>
-                                    TimeMap timeMap = new TimeMap();<br>
-                                    timeMap.set("foo", "bar", 1); // store the key "foo" and value "bar" along with
-                                    timestamp = 1.<br>
-                                    timeMap.get("foo", 1); // return "bar"<br>
-                                    timeMap.get("foo", 3); // return "bar", since there is no value corresponding to foo
-                                    at timestamp 3 and timestamp 2, then the only value is at timestamp 1 is "bar".<br>
-                                    timeMap.set("foo", "bar2", 4); // store the key "foo" and value "bar2" along with
-                                    timestamp = 4.<br>
-                                    timeMap.get("foo", 4); // return "bar2"<br>
-                                    timeMap.get("foo", 5); // return "bar2"
-                                </div>
-                            </div>
+                            <ul style="list-style: none; padding-left: 16px; margin: 0;">
+                                <!-- Example 1 -->
+                                <li style="position: relative;">
+                                    <span style="position: absolute; left: -16px; top: 0; color: var(--text-sub);">•</span>
+                                    <div style="margin-bottom: 4px; color: var(--text-sub); font-size: 0.85em; letter-spacing: 1px;">INPUT</div>
+                                    <div style="margin-bottom: 8px; font-weight: bold; padding-left: 12px;">["TimeMap", "set", "get", "get", "set", "get",
+                                        "get"]<br>[[], ["foo", "bar", 1], ["foo", 1], ["foo", 3], ["foo", "bar2", 4],
+                                        ["foo", 4], ["foo", 5]]</div>
+                                    <div style="margin-bottom: 4px; color: var(--text-sub); font-size: 0.85em; letter-spacing: 1px;">OUTPUT</div>
+                                    <div style="margin-bottom: 8px; font-weight: bold; padding-left: 12px;">[null, null, "bar", "bar", null, "bar2", "bar2"]</div>
+                                    <div style="color: var(--text-sub); font-style: italic; font-size: 0.85rem; padding-left: 12px;">
+                                        // Explanation:<br>
+                                        TimeMap timeMap = new TimeMap();<br>
+                                        timeMap.set("foo", "bar", 1); // store the key "foo" and value "bar" along with
+                                        timestamp = 1.<br>
+                                        timeMap.get("foo", 1); // return "bar"<br>
+                                        timeMap.get("foo", 3); // return "bar", since there is no value corresponding to foo
+                                        at timestamp 3 and timestamp 2, then the only value is at timestamp 1 is "bar".<br>
+                                        timeMap.set("foo", "bar2", 4); // store the key "foo" and value "bar2" along with
+                                        timestamp = 4.<br>
+                                        timeMap.get("foo", 4); // return "bar2"<br>
+                                        timeMap.get("foo", 5); // return "bar2"
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>

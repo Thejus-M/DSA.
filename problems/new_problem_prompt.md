@@ -127,7 +127,7 @@ Create a new DSA problem page with the following specifications:
     </div>
   </div>
   <div class="terminal-row">
-    <span class="terminal-label">EG:</span>
+    <span class="terminal-label">EXAMPLE:</span>
     <div class="terminal-content mono">
       <div style="margin-bottom: 24px;">
         <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
