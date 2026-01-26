@@ -2,520 +2,660 @@
 
 /* Hide sidebar close button on desktop by default */
 .sidebar-close {
-    display: none;
+  display: none;
 }
 
 /* Base responsiveness for Code and Tables - Apply Always or specifically for smaller screens */
 pre,
 .code-block-wrapper,
 .terminal-content {
-    max-width: 100%;
-    overflow-x: auto;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Smoother Transition for Tablets (1024px - 1100px) */
 @media (max-width: 1100px) {
-    .page-wrapper {
-        grid-template-columns: 220px minmax(0, 1fr); /* Sidebar Left */
-    }
-    
-    .sidebar {
-        width: 220px;
-    }
-    
-    .ruler-scale {
-        display: none;
-    }
-    
-    .article-container {
-        padding: 40px 30px;
-        max-width: 850px; /* Constrain width for readability */
-        margin: 0 auto;
-    }
+  .page-wrapper {
+    grid-template-columns: 220px minmax(0, 1fr); /* Sidebar Left */
+  }
 
-    /* Prevent Title Overflow on Tablet */
-    .article-title {
-        font-size: 2.2rem !important; /* Reduced from 3.5rem */
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        hyphens: auto;
-    }
-    
-    h1 {
-        font-size: 1.8rem !important;
-    }
+  .sidebar {
+    width: 220px;
+  }
+
+  .ruler-scale {
+    display: none;
+  }
+
+  .article-container {
+    padding: 40px 15px; /* Reduced side padding */
+    max-width: 100% !important; /* Allow full expansion in this range */
+    margin: 0 auto;
+  }
+
+  /* Prevent Title Overflow on Tablet */
+  .article-title {
+    font-size: 2.2rem !important; /* Reduced from 3.5rem */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  h1 {
+    font-size: 1.8rem !important;
+  }
 }
 
 /* Tablet & Smaller Desktop (< 1024px) */
 @media (max-width: 1024px) {
-    .page-wrapper {
-        grid-template-columns: 200px minmax(0, 1fr); /* Sidebar Left */
-        /* Shrink sidebar, hide ruler column */
-    }
+  .page-wrapper {
+    grid-template-columns: 200px minmax(0, 1fr); /* Sidebar Left */
+    /* Shrink sidebar, hide ruler column */
+  }
 
-    .sidebar {
-        width: 200px;
-    }
+  .sidebar {
+    width: 200px;
+  }
 
-    .ruler-scale {
-        display: none;
-    }
+  .ruler-scale {
+    display: none;
+  }
 
-    /* Adjust Index Page Grid if present */
-    .grid-2 {
-        grid-template-columns: 1fr;
-    }
+  /* Adjust Index Page Grid if present */
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 
-    /* Ensure content doesn't force scroll */
-    /* Ensure content doesn't force scroll */
-    .article-container {
-        width: 100%;
-        max-width: 750px; /* Further constrain on smaller desktop/tablet */
-        overflow-x: hidden;
-        margin: 0 auto;
-    }
+  /* Ensure content doesn't force scroll */
+  /* Ensure content doesn't force scroll */
+  .article-container {
+    width: 100%;
+    max-width: 100% !important; /* Fully utilize horizontal space */
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    overflow-x: hidden;
+    margin: 0 auto;
+  }
 }
 
-/* Mobile & Small Tablet Stack (< 900px - Increased from 768px) */
-/* User reported issues at 798px, so stacking earlier is safer */
-@media (max-width: 900px) {
+/* Mobile & Small Tablet Stack (< 1022px - Increased to handle Horizontal screens) */
+/* User reported issues for Horizontal screens (675px - 1022px), so stacking earlier ensures centering */
+@media (max-width: 1024px) {
+  /* Global Typography Scale */
+  body {
+    font-size: 18px;
+    overflow-x: hidden; /* Prevent horizontal scroll drift */
+  }
 
-    /* Global Typography Scale */
-    body {
-        font-size: 18px;
-        overflow-x: hidden; /* Prevent horizontal scroll drift */
-    }
+  h1,
+  .article-title,
+  .hero-title {
+    font-size: 2rem !important;
+  }
 
-    h1,
-    .article-title,
-    .hero-title {
-        font-size: 2rem !important;
-    }
+  h2 {
+    font-size: 1.5rem;
+  }
 
-    h2 {
-        font-size: 1.5rem;
-    }
+  /* Layout Stack - Switch to single column */
+  /* Layout Stack - Switch to single column */
+  .page-wrapper {
+    display: block;
+    padding-top: 60px; /* Restore padding for fixed header */
+  }
 
-    /* Layout Stack - Switch to single column */
-    /* Layout Stack - Switch to single column */
-    .page-wrapper {
-        display: block;
-        padding-top: 60px; /* Restore padding for fixed header */
-    }
+  /* Header */
+  .header {
+    position: relative;
+    padding: 0 16px;
+    justify-content: space-between;
+    width: 100%;
+    height: 60px;
+  }
 
-    /* Header */
-    .header {
-        position: relative;
-        padding: 0 16px;
-        justify-content: space-between;
-        width: 100%;
-        height: 60px;
-    }
+  /* Align branding to the left naturally */
+  .header-brand {
+    position: relative;
+    left: auto;
+    transform: none;
+    text-align: left;
+    width: auto;
+  }
 
-    /* Center the branding absolutely */
-    .header-brand {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        width: auto;
-    }
+  /* Table of Contents (Index Page) - Cleaner Mobile List */
+  .problem-list li {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 4px 0 !important; /* Reduced padding */
+    border-bottom: none !important; /* Removed line */
+    flex-wrap: nowrap !important;
+    gap: 16px;
+  }
 
-    /* Table of Contents (Index Page) - Cleaner Mobile List */
-    .problem-list li {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 4px 0 !important; /* Reduced padding */
-        border-bottom: none !important; /* Removed line */
-        flex-wrap: nowrap !important;
-        gap: 16px;
-    }
+  .problem-list li:last-child {
+    border-bottom: none;
+  }
 
-    .problem-list li:last-child {
-        border-bottom: none;
-    }
+  .problem-list li a {
+    font-size: 15px; /* Slightly larger for better fill */
+    white-space: normal; 
+    line-height: 1.4;
+    text-align: left;
+  }
 
-    .problem-list li a {
-        font-size: 14px; /* Readable size */
-        white-space: normal; /* Allow text wrapping */
-        line-height: 1.4;
-    }
+  /* .entry-leader visible by default in this range (removed display: none) */
 
-    /* .entry-leader visible by default in this range (removed display: none) */
+  .problem-list li .entry-value {
+    font-size: 10px;
+    padding: 3px 8px;
+    margin: 0;
+    white-space: nowrap;
+    background: var(--bg-card-elevated); /* Subtle background for badge */
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    opacity: 1;
+  }
 
-    .problem-list li .entry-value {
-        font-size: 10px;
-        padding: 3px 8px;
-        margin: 0;
-        white-space: nowrap;
-        background: var(--bg-card-elevated); /* Subtle background for badge */
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        opacity: 1;
-    }
+  .header-tagline,
+  .index-tagline,
+  .header-status {
+    display: none !important;
+  }
 
-    .header-tagline,
-    .index-tagline,
-    .header-status {
-        display: none !important;
-    }
+  .brand-pixel {
+    font-size: 18px !important;
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    height: auto;
+    width: auto;
+    line-height: 1;
+  }
 
-    .brand-pixel {
-        font-size: 16px !important; /* Force override of inline style */
-    }
+  /* Center common elements in this range */
+  .article-header,
+  .hero-content,
+  .section-header,
+  .category-title {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
 
-    #theme-toggle {
-        width: 32px !important;
-        height: 32px !important;
-        padding: 4px !important;
-    }
+  .article-title,
+  .hero-title,
+  .hero-subtitle,
+  .hero-quote {
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+  }
 
-    #theme-toggle svg {
-        width: 12px !important;
-        height: 12px !important;
-    }
+  /* Specific fix for problem pages to not be shifted by fixed header */
+  .page-wrapper {
+      padding-top: 100px !important;
+  }
 
-    /* Sidebar is now controlled by JS toggle - see MOBILE SIDEBAR TOGGLE section below */
+  /* Apply generic centering to containers EXCEPT the index hero */
+  .container:not(.hero-content .container) {
+    max-width: 100% !important;
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .sidebar-section {
-        margin-bottom: 15px;
-    }
+  #theme-toggle {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
+  }
 
-    /* Index Page Tweaks */
-    .container {
-        padding: 80px 20px 60px;
-        max-width: 100%;
-    }
+  #theme-toggle svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
 
-    /* Main Content */
-    .main-content {
-        padding: 0;
-    }
+  /* Unify header bars for clean horizontal look */
+  .index-header-wrapper,
+  .header-wrapper-unified {
+    height: 60px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    position: relative !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 
-    .article-container {
-        padding: 20px;
-        max-width: 650px; /* Optimized reading width for mobile */
-        margin: 0 auto;
-    }
+  /* Reduce Padding for internal elements (PROB, CONST, etc.) */
+  .terminal-row {
+    padding: 16px 20px !important;
+  }
 
-    /* Demo Controls Stack */
-    .demo-feature-card,
-    .demo-controls,
-    .terminal-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
+  .demo-feature-card {
+    padding: 12px 16px !important;
+  }
 
-    .demo-feature-card>div {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  /* Sidebar is now controlled by JS toggle - see MOBILE SIDEBAR TOGGLE section below */
 
-    .demo-btn {
-        width: 100%;
-        margin-bottom: 4px;
-    }
+  .sidebar-section {
+    margin-bottom: 15px;
+  }
 
-    .terminal-label {
-        width: 100%;
-        margin-bottom: 4px;
-    }
+  /* Index Page Tweaks (only for sub-900 indices) */
+  .index-container {
+    padding: 100px 20px 60px !important;
+    max-width: 100%;
+  }
 
-    /* Tree Demo Specifics */
-    .tree-controls-bar {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 12px !important;
-    }
+  /* Main Content */
+  .main-content {
+    padding: 0;
+  }
 
-    .tree-input-group {
-        min-width: 0 !important;
-        width: 100% !important;
-        flex-wrap: wrap;
-    }
+  .article-container {
+    padding: 20px 15px; /* Minimal side gap */
+    max-width: 98% !important; /* Near total fill for horizontal small screens */
+    margin: 0 auto;
+  }
 
-    .tree-play-controls {
-        justify-content: space-between;
-        width: 100%;
-    }
+  /* Demo Controls Stack */
+  .demo-feature-card,
+  .demo-controls,
+  .terminal-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
 
-    /* Adjust input fields in demos */
-    input[type="text"] {
-        width: 100%;
-    }
+  .demo-feature-card > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    /* Index Page Tweaks */
-    .container {
-        padding: 20px 10px 60px !important;
-        /* Force override for Index */
-    }
+  .demo-btn {
+    width: 100%;
+    margin-bottom: 4px;
+  }
 
-    .hero-buttons {
-        flex-direction: column;
-        width: 100%;
-        align-items: center; /* Center button horizontally */
-    }
+  .terminal-label {
+    width: 100%;
+    margin-bottom: 4px;
+  }
 
-    .hero-buttons .btn {
-        width: auto; /* Let button size to content */
-        min-width: 200px; /* Optional: minimum readable width */
-        max-width: 80%; /* Prevent touching edges on very small screens */
-    }
+  /* Tree Demo Specifics */
+  .tree-controls-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
 
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
+  .tree-input-group {
+    min-width: 0 !important;
+    width: 100% !important;
+    flex-wrap: wrap;
+  }
 
-    /* ========================================
+  .tree-play-controls {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Adjust input fields in demos */
+  input[type="text"] {
+    width: 100%;
+  }
+
+  /* Index Page Tweaks */
+  .container {
+    padding: 20px 10px 60px !important;
+    /* Force override for Index */
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    align-items: center; /* Center button horizontally */
+  }
+
+  .hero-buttons .btn {
+    width: auto; /* Let button size to content */
+    min-width: 200px; /* Optional: minimum readable width */
+    max-width: 80%; /* Prevent touching edges on very small screens */
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  /* ========================================
        MOBILE SIDEBAR TOGGLE (Hamburger Menu)
        ======================================== */
 
-    /* Hide sidebar by default on mobile */
-    .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: -280px; /* Hidden off-screen */
-        width: 280px !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
-        background: var(--bg-card);
-        z-index: 1000;
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: none;
-        border-bottom: none;
-        border-right: 1px solid var(--border);
-        padding-top: 60px !important; /* Space for close button */
-        overflow-y: auto;
-    }
+  /* Hide sidebar by default on mobile */
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -280px; /* Hidden off-screen */
+    width: 280px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    background: var(--bg-card);
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+    padding-top: 60px !important; /* Space for close button */
+    overflow-y: auto;
+  }
 
-    /* Sidebar visible state - Force override with high specificity */
-    .sidebar.sidebar-open {
-        left: 0 !important;
-        z-index: 2000 !important; /* Ensure it's above backdrop (999) and everything else */
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-        display: block !important;
-    }
+  /* Sidebar visible state - Force override with high specificity */
+  .sidebar.sidebar-open {
+    left: 0 !important;
+    z-index: 2000 !important; /* Ensure it's above backdrop (999) and everything else */
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    display: block !important;
+  }
 
-    /* Hamburger Button - Tech Style */
-    .sidebar-toggle {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--accent);
-        font-size: 20px;
-        cursor: pointer;
-        font-family: var(--font-mono-sys);
-        margin-right: 12px;
-        transition: all 0.2s ease;
-    }
+  /* Hamburger Button - Tech Style */
+  .sidebar-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-size: 20px;
+    cursor: pointer;
+    font-family: var(--font-mono-sys);
+    margin-right: 12px;
+    transition: all 0.2s ease;
+  }
 
-    .sidebar-toggle:hover {
-        background: var(--accent);
-        color: var(--bg-body);
-        border-color: var(--accent);
-    }
+  .sidebar-toggle:hover {
+    background: var(--accent);
+    color: var(--bg-body);
+    border-color: var(--accent);
+  }
 
-    /* Close Button inside Sidebar */
-    /* Close Button inside Sidebar */
-    .sidebar-close {
-        display: flex; /* Override global display: none on mobile */
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        width: 40px; /* Slightly larger squircle */
-        height: 40px;
-        background: var(--bg-card); /* Ensure solid bg */
-        border: 1px solid var(--accent); /* Accent border */
-        border-radius: 8px; /* Squircle radius */
-        color: var(--accent); /* Accent icon color */
-        font-size: 0; /* Hide text if any, we use SVG */
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        z-index: 10;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Subtle shadow */
-    }
+  /* Close Button inside Sidebar */
+  /* Close Button inside Sidebar */
+  .sidebar-close {
+    display: flex; /* Override global display: none on mobile */
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px; /* Slightly larger squircle */
+    height: 40px;
+    background: var(--bg-card); /* Ensure solid bg */
+    border: 1px solid var(--accent); /* Accent border */
+    border-radius: 8px; /* Squircle radius */
+    color: var(--accent); /* Accent icon color */
+    font-size: 0; /* Hide text if any, we use SVG */
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
 
-    .sidebar-close:hover {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: var(--bg-body);
-    }
+  .sidebar-close:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-body);
+  }
 
-    /* Backdrop Overlay */
-    .sidebar-backdrop {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(2px);
-        z-index: 999;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
+  /* Backdrop Overlay */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-    .sidebar-backdrop.visible {
-        display: block;
-        opacity: 1;
-    }
+  .sidebar-backdrop.visible {
+    display: block;
+    opacity: 1;
+  }
 
-    /* Sidebar Header */
-    .sidebar-header {
-        padding: 0 20px 16px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 16px;
-        font-family: var(--font-mono-sys);
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: var(--text-sub);
-    }
+  /* Sidebar Header */
+  .sidebar-header {
+    padding: 0 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    font-family: var(--font-mono-sys);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-sub);
+  }
 }
 
 /* Very Small Screens (< 600px) */
 @media (max-width: 600px) {
-    /* Use full screen width */
-    .container {
-        padding: 12px 8px 40px !important;
-        max-width: 100% !important;
-    }
+  /* Use full screen width and remove side gaps for the container */
+  .container,
+  .article-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
 
-    /* Indent problem list items under category titles */
-    .problem-list {
-        padding-left: 32px !important; /* Increased tab indentation */
-        padding-right: 8px !important;
-        width: 100% !important;
-    }
+  /* Re-apply padding ONLY to text elements so they don't touch the edge */
+  .article-header,
+  .content-section > p,
+  .content-section > ul,
+  .content-section > ol,
+  .content-section > h1,
+  .content-section > h2,
+  .content-section > h3,
+  .content-section > h4,
+  .article-meta,
+  .tags,
+  .section-divider,
+  .hero-content,
+  .section-header,
+  .category-title {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 
-    /* Title and tag GROUPED on left */
-    .problem-list li {
-        display: flex !important;
-        justify-content: flex-start !important;
-        align-items: center !important;
-        width: 100% !important;
-        gap: 10px !important;
-        padding: 8px 6px !important;
-        margin-bottom: 2px !important;
-    }
+  /* Make select Boxes (Terminal) take the WHOLE screen width */
+  .terminal-card {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+  }
 
+  /* Keep Solution and Complexity as distinct centered boxes */
+  .complexity-card,
+  .code-block-wrapper {
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+    width: calc(100% - 40px) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+  }
 
+  .complexity-grid {
+    grid-template-columns: 1fr !important;
+  }
 
-    .problem-list li .entry-leader {
-        display: none !important;
-    }
+  .complexity-item {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px !important;
+  }
 
-    /* Title styling */
-    .problem-list li a {
-        flex: 0 1 auto !important; /* Don't stretch */
-        margin-right: 0;
-    }
+  .complexity-item:last-child {
+    border-bottom: none !important;
+  }
 
-    /* Compact difficulty tag RIGHT NEXT to title */
-    .problem-list li .entry-value {
-        flex-shrink: 0 !important;
-        font-size: 0.6rem !important;
-        padding: 2px 6px !important;
-        background: var(--bg-card-elevated) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 3px !important;
-        color: var(--text-sub) !important;
-        font-family: var(--tech);
-        font-weight: normal !important;
-        white-space: nowrap;
-        text-transform: capitalize !important;
-    }
+  pre {
+    padding: 16px 20px !important;
+  }
+
+  /* Indent problem list items under category titles */
+  .problem-list {
+    padding-left: 32px !important; /* Increased tab indentation */
+    padding-right: 8px !important;
+    width: 100% !important;
+  }
+
+  /* Title and tag GROUPED on left */
+  .problem-list li {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+    padding: 8px 6px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .problem-list li .entry-leader {
+    display: none !important;
+  }
+
+  /* Title styling */
+  .problem-list li a {
+    flex: 0 1 auto !important; /* Don't stretch */
+    margin-right: 0;
+  }
+
+  /* Compact difficulty tag RIGHT NEXT to title */
+  .problem-list li .entry-value {
+    flex-shrink: 0 !important;
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+    background: var(--bg-card-elevated) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 3px !important;
+    color: var(--text-sub) !important;
+    font-family: var(--tech);
+    font-weight: normal !important;
+    white-space: nowrap;
+    text-transform: capitalize !important;
+  }
+
+  /* Further reduce Padding for internal elements on very small screens */
+  .terminal-row {
+    padding: 12px 12px !important;
+  }
+
+  .demo-feature-card {
+    padding: 10px 10px !important;
+  }
 }
 
 /* Extra Small Screens (< 380px) */
 @media (max-width: 380px) {
-    .problem-list {
-        padding-left: 12px !important; /* Decreased tab indentation for very small screens */
-    }
+  .problem-list {
+    padding-left: 12px !important; /* Decreased tab indentation for very small screens */
+  }
 }
 
 /* ========================================
    RESPONSIVE CANVAS HANDLING
    ======================================== */
 @media (max-width: 700px) {
-    /* Allow horizontal scroll for complex visualizations */
-    .phase-canvas-wrapper,
-    .demo-output,
-    .code-block-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+  /* Allow horizontal scroll for complex visualizations */
+  .phase-canvas-wrapper,
+  .demo-output,
+  .code-block-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    /* Prevent canvases from squashing too much */
-    .phase-canvas,
-    #demo-canvas {
-        min-width: 600px !important;
-        width: 600px !important;
-    }
+  /* Prevent canvases and tree containers from squashing too much */
+  .phase-canvas,
+  #demo-canvas,
+  .tree-container {
+    min-width: 600px !important;
+    width: 600px !important;
+  }
 
-    /* Make phase description text smaller */
-    .phase-description {
-        font-size: 14px;
-    }
+  .tree-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    /* Stack demo input controls */
-    .demo-input-group {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
+  /* Make phase description text smaller */
+  .phase-description {
+    font-size: 14px;
+  }
 
-    .demo-input-group label {
-        margin-bottom: 4px;
-    }
+  /* Stack demo input controls */
+  .demo-input-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 
-    .demo-btn {
-        margin-left: 0 !important;
-        width: 100%;
-    }
+  .demo-input-group label {
+    margin-bottom: 4px;
+  }
+
+  .demo-btn {
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }
 /* Unified Header Responsive Padding (Matches index.html #header-mount) */
 /* Unified Header Responsive Padding (Compact for Fixed Problem Page Header) */
 .header-wrapper-unified {
-    padding: 10px 30px; /* Reduced vertical padding significantly */
-    width: 100%;
-    box-sizing: border-box;
-    height: 60px; /* Fixed height for neatness */
-    display: flex;
-    align-items: center; /* Vertical centering */
+  padding: 10px 30px; /* Reduced vertical padding significantly */
+  width: 100%;
+  box-sizing: border-box;
+  height: 60px; /* Fixed height for neatness */
+  display: flex;
+  align-items: center; /* Vertical centering */
 }
 
 @media (max-width: 1024px) {
-    .header-wrapper-unified {
-        padding: 10px 20px;
-    }
+  .header-wrapper-unified {
+    padding: 10px 20px;
+  }
 }
 
 @media (max-width: 768px) {
-    .header-wrapper-unified {
-        padding: 10px 16px;
-    }
-    
-    .brand-pixel {
-        font-size: 14px !important;
-    }
+  .header-wrapper-unified {
+    padding: 10px 16px;
+  }
+
+  .brand-pixel {
+    font-size: 14px !important;
+  }
 }
 
-/* Ensure Brand Size is 20px base (overriding components.css 24px), allowing it to shrink on mobile */
+/* Ensure Brand Size allows it to shrink on mobile */
 .brand-pixel {
-    font-size: 20px;
+  font-size: 20px;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -524,70 +664,72 @@ pre,
 
 /* 1. Mobile FAB (Floating Action Button) */
 .mobile-fab {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 50px;
-    height: 50px;
-    background: var(--bg-card);
-    border: 1px solid var(--accent);
-    border-radius: 8px; /* Squircle */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    cursor: pointer;
-    /* Slow, premium transitions */
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-    opacity: 1;
-    transform: scale(1);
-    color: var(--accent);
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  border-radius: 8px; /* Squircle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  /* Slow, premium transitions */
+  transition:
+    opacity 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
+  opacity: 1;
+  transform: scale(1);
+  color: var(--accent);
 }
 
 /* Hide on Desktop */
-@media (min-width: 1025px) {
-    .mobile-fab {
-        display: none !important;
-    }
+@media (min-width: 1024px) {
+  .mobile-fab {
+    display: none !important;
+  }
 }
 
 /* Hidden State (on scroll) */
 .mobile-fab.fab-hidden {
-    opacity: 0;
-    transform: scale(0.85);
-    pointer-events: none; 
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
 }
 
 /* 2. Bottom Sheet Logic (Transforms Sidebar on Mobile) */
 @media (max-width: 1024px) {
-    /* Override Sidebar default fixed-left behavior to be a Bottom Sheet */
-    .sidebar {
-        top: auto !important;
-        bottom: -100% !important; /* Hidden below screen */
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        height: auto !important;
-        max-height: 85vh !important;
-        border-right: none !important;
-        border-top: 1px solid var(--accent) !important;
-        border-radius: 16px 16px 0 0; /* Rounded top */
-        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
-        padding-top: 20px !important;
-    }
+  /* Override Sidebar default fixed-left behavior to be a Bottom Sheet */
+  .sidebar {
+    top: auto !important;
+    bottom: -100% !important; /* Hidden below screen */
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 85vh !important;
+    border-right: none !important;
+    border-top: 1px solid var(--accent) !important;
+    border-radius: 16px 16px 0 0; /* Rounded top */
+    transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2) !important;
+    padding-top: 20px !important;
+  }
 
-    .sidebar.sidebar-open {
-        bottom: 0 !important;
-        left: 0 !important; /* Ensure it stays anchored */
-    }
+  .sidebar.sidebar-open {
+    bottom: 0 !important;
+    left: 0 !important; /* Ensure it stays anchored */
+  }
 
-    /* Adjust sidebar close button position for bottom sheet */
-    .sidebar-close {
-        top: 16px !important;
-        right: 16px !important;
-    }
+  /* Adjust sidebar close button position for bottom sheet */
+  .sidebar-close {
+    top: 16px !important;
+    right: 16px !important;
+  }
 }
 
 /* ==========================================================================
@@ -595,43 +737,43 @@ pre,
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    /* Larger, Spaced Out List Items */
-    .sidebar-section {
-        margin-bottom: 30px;
-    }
+  /* Larger, Spaced Out List Items */
+  .sidebar-section {
+    margin-bottom: 30px;
+  }
 
-    .sidebar-section-title {
-        font-size: 0.7rem;
-        opacity: 0.6;
-        margin-bottom: 16px;
-        padding-left: 2px;
-    }
+  .sidebar-section-title {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-bottom: 16px;
+    padding-left: 2px;
+  }
 
-    .sidebar-list li {
-        padding: 12px 0; /* Generous vertical spacing */
-        font-size: 1.1rem; /* Larger, readable text */
-        color: var(--text-sub); /* Default nicely dimmed */
-        transition: color 0.2s ease;
-    }
+  .sidebar-list li {
+    padding: 12px 0; /* Generous vertical spacing */
+    font-size: 1.1rem; /* Larger, readable text */
+    color: var(--text-sub); /* Default nicely dimmed */
+    transition: color 0.2s ease;
+  }
 
-    .sidebar-list li a {
-        transition: padding-left 0.2s ease;
-    }
+  .sidebar-list li a {
+    transition: padding-left 0.2s ease;
+  }
 
-    .sidebar-list li.active {
-        color: var(--accent) !important;
-        font-weight: 500;
-        /* highlight active item */
-    }
+  .sidebar-list li.active {
+    color: var(--accent) !important;
+    font-weight: 500;
+    /* highlight active item */
+  }
 
-    /* Refine Indicators (+ / ->) */
-    .sidebar-list li::before {
-        font-size: 12px;
-        margin-right: 16px; /* More space between icon and text */
-        opacity: 0.8;
-        display: inline-block;
-        width: 12px; /* Fixed width alignment */
-    }
+  /* Refine Indicators (+ / ->) */
+  .sidebar-list li::before {
+    font-size: 12px;
+    margin-right: 16px; /* More space between icon and text */
+    opacity: 0.8;
+    display: inline-block;
+    width: 12px; /* Fixed width alignment */
+  }
 }
 
 /* ==========================================================================
@@ -639,34 +781,34 @@ pre,
    ========================================================================== */
 
 .sidebar-mobile-header {
-    display: none; /* Hidden on Desktop */
+  display: none; /* Hidden on Desktop */
 }
 
 @media (max-width: 1024px) {
-    .sidebar-mobile-header {
-        display: block;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-sub); /* Subtle separator line */
-        margin-bottom: 24px;
-        /* Sidebar has internal padding, this flows within it */
-    }
+  .sidebar-mobile-header {
+    display: block;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-sub); /* Subtle separator line */
+    margin-bottom: 24px;
+    /* Sidebar has internal padding, this flows within it */
+  }
 
-    .sidebar-mobile-subtitle {
-        font-family: var(--font-mono-sys);
-        font-size: 10px;
-        color: var(--text-sub);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 12px;
-        opacity: 0.8;
-    }
+  .sidebar-mobile-subtitle {
+    font-family: var(--font-mono-sys);
+    font-size: 10px;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
 
-    .sidebar-mobile-title {
-        font-size: 32px;
-        color: var(--text-main);
-        line-height: 1;
-        letter-spacing: -1px;
-    }
+  .sidebar-mobile-title {
+    font-size: 32px;
+    color: var(--text-main);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
 }
 
 /* ==========================================================================
@@ -674,29 +816,31 @@ pre,
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    /* Drag Handle (Line on Top) */
-    .sidebar::before {
-        content: "";
-        display: block;
-        width: 40px;
-        height: 4px;
-        background: var(--border);
-        border-radius: 2px;
-        margin: 0 auto 20px auto; /* Center horizontally, spacing below */
-        /* Note: Sidebar padding-top is 20px, so this acts as visual grab bar */
-    }
+  /* Drag Handle (Line on Top) */
+  .sidebar::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px auto; /* Center horizontally, spacing below */
+    /* Note: Sidebar padding-top is 20px, so this acts as visual grab bar */
+  }
 
-    /* Initial Open State - Half Height */
-    .sidebar.sidebar-open {
-        height: 50vh !important;
-        /* Ensure transition allows height change */
-        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
+  /* Initial Open State - Half Height */
+  .sidebar.sidebar-open {
+    height: 50vh !important;
+    /* Ensure transition allows height change */
+    transition:
+      bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
 
-    /* Expanded State - 90% Height */
-    .sidebar.sidebar-open.expanded {
-        height: 90vh !important;
-    }
+  /* Expanded State - 90% Height */
+  .sidebar.sidebar-open.expanded {
+    height: 90vh !important;
+  }
 }
 
 /* ==========================================================================
@@ -704,36 +848,38 @@ pre,
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    /* Base State: 50% Height */
-    .sidebar {
-        max-height: 50vh !important;
-        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        padding-top: 12px !important; /* Space for handle */
-    }
+  /* Base State: 50% Height */
+  .sidebar {
+    max-height: 50vh !important;
+    transition:
+      bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding-top: 12px !important; /* Space for handle */
+  }
 
-    /* Expanded State: 90% Height */
-    .sidebar.sidebar-expanded {
-        max-height: 90vh !important;
-    }
+  /* Expanded State: 90% Height */
+  .sidebar.sidebar-expanded {
+    max-height: 90vh !important;
+  }
 
-    /* Visual Drag Handle */
-    .sidebar::before {
-        content: '';
-        display: block;
-        width: 40px;
-        height: 4px;
-        background: var(--text-sub);
-        border-radius: 100px;
-        margin: 0 auto 12px;
-        opacity: 0.3;
-    }
+  /* Visual Drag Handle */
+  .sidebar::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--text-sub);
+    border-radius: 100px;
+    margin: 0 auto 12px;
+    opacity: 0.3;
+  }
 
-    /* Hide FAB when sheet is active */
-    .mobile-fab.hidden-by-sheet {
-        opacity: 0 !important;
-        transform: scale(0.5) !important;
-        pointer-events: none !important;
-    }
+  /* Hide FAB when sheet is active */
+  .mobile-fab.hidden-by-sheet {
+    opacity: 0 !important;
+    transform: scale(0.5) !important;
+    pointer-events: none !important;
+  }
 }
 
 /* ==========================================================================
@@ -741,41 +887,41 @@ pre,
    ========================================================================== */
 
 @media (max-width: 1024px) {
-    /* Group separation */
-    .sidebar-section {
-        margin-bottom: 40px !important;
-    }
+  /* Group separation */
+  .sidebar-section {
+    margin-bottom: 40px !important;
+  }
 
-    /* Distinct Category Header */
-    .sidebar-section-title {
-        font-size: 11px !important;
-        color: var(--accent) !important;
-        font-weight: 700 !important;
-        border-bottom: 1px solid var(--border-sub);
-        padding-bottom: 10px !important;
-        margin-bottom: 20px !important;
-        letter-spacing: 3px !important;
-        opacity: 1 !important;
-    }
+  /* Distinct Category Header */
+  .sidebar-section-title {
+    font-size: 11px !important;
+    color: var(--accent) !important;
+    font-weight: 700 !important;
+    border-bottom: 1px solid var(--border-sub);
+    padding-bottom: 10px !important;
+    margin-bottom: 20px !important;
+    letter-spacing: 3px !important;
+    opacity: 1 !important;
+  }
 
-    /* Indent items for hierarchy */
-    .sidebar-list {
-        padding-left: 6px !important;
-    }
+  /* Indent items for hierarchy */
+  .sidebar-list {
+    padding-left: 6px !important;
+  }
 
-    /* Readable Item spacing */
-    .sidebar-list li {
-        margin-bottom: 16px !important;
-        font-size: 1.05rem !important; /* Slightly larger for mobile tap */
-        color: var(--text-main) !important;
-    }
-    
-    /* Make active item stand out more */
-    .sidebar-list li.active a {
-        font-weight: 700 !important;
-        text-decoration: underline;
-        text-underline-offset: 4px;
-    }
+  /* Readable Item spacing */
+  .sidebar-list li {
+    margin-bottom: 16px !important;
+    font-size: 1.05rem !important; /* Slightly larger for mobile tap */
+    color: var(--text-main) !important;
+  }
+
+  /* Make active item stand out more */
+  .sidebar-list li.active a {
+    font-weight: 700 !important;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 
 /* ==========================================================================
@@ -783,31 +929,43 @@ pre,
    ========================================================================== */
 
 .in-page-nav {
-    display: flex;
-    gap: 24px;
-    margin: 0 40px; /* Spacing from Brand and Right Controls */
+  display: flex;
+  gap: 24px;
+  margin: 0 40px; /* Spacing from Brand and Right Controls */
 }
 
 .in-page-nav a {
-    font-family: var(--font-mono-sys);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-sub);
-    text-decoration: none;
-    transition: color 0.2s ease;
-    padding: 8px 0;
+  font-family: var(--font-mono-sys);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-sub);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 8px 0;
 }
 
 .in-page-nav a:hover {
-    color: var(--accent);
+  color: var(--accent);
+}
+
+/* Adjust In-Page Nav for smaller desktop/larger tablet screens */
+@media (max-width: 1024px) {
+  .in-page-nav {
+    gap: 16px;
+    margin: 0 20px;
+  }
+
+  .in-page-nav a {
+    font-size: 10px;
+  }
 }
 
 /* Hide In-Page Nav on Mobile/Tablet where space is tight */
-@media (max-width: 900px) {
-    .in-page-nav {
-        display: none;
-    }
+@media (max-width: 800px) {
+  .in-page-nav {
+    display: none;
+  }
 }
 
 /* ==========================================================================
@@ -815,79 +973,83 @@ pre,
    ========================================================================== */
 
 .page-nav-scroll {
-    display: none; /* User requested for "small screen". Hidden by default */
-    position: fixed;
-    top: 60px; /* Directly below the main header */
-    left: 0;
-    right: 0;
-    height: 44px;
-    background: var(--bg-body); /* Ensure opaque background */
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    z-index: 990; /* Below main header (1000) */
-    align-items: center;
-    padding: 0 16px;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+  display: none; /* User requested for "small screen". Hidden by default */
+  position: fixed;
+  top: 60px; /* Directly below the main header */
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: var(--bg-body); /* Ensure opaque background */
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 990; /* Below main header (1000) */
+  align-items: center;
+  padding: 0 16px;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
 }
 
 .page-nav-scroll::-webkit-scrollbar {
-    display: none; /* Hide scrollbar Chrome/Safari */
+  display: none; /* Hide scrollbar Chrome/Safari */
 }
 
 .page-nav-item {
-    display: inline-block;
-    font-family: var(--font-mono-sys);
-    font-size: 10px;
-    color: var(--text-sub);
-    text-transform: uppercase;
-    text-decoration: none;
-    margin-right: 24px;
-    padding: 14px 0; /* Full height click target */
-    letter-spacing: 1px;
-    opacity: 0.6;
-    transition: all 0.2s;
-    position: relative;
+  display: inline-block;
+  font-family: var(--font-mono-sys);
+  font-size: 10px;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  text-decoration: none;
+  margin-right: 24px;
+  padding: 14px 0; /* Full height click target */
+  letter-spacing: 1px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  position: relative;
 }
 
 .page-nav-item:last-child {
-    margin-right: 16px; /* End padding */
+  margin-right: 16px; /* End padding */
 }
 
 .page-nav-item.active {
-    color: var(--accent);
-    opacity: 1;
-    font-weight: bold;
+  color: var(--accent);
+  opacity: 1;
+  font-weight: bold;
 }
 
 /* Active Indicator Line */
 .page-nav-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--accent);
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
 }
 
 @media (max-width: 1024px) {
-    /* Show on Tablet/Mobile */
-    .page-nav-scroll.visible {
-        display: flex;
-    }
-    
-    /* Push content down to account for the extra 44px bar */
-    /* Only if class 'has-page-nav' is added to body/wrapper */
-    body.has-page-nav .page-wrapper {
-        padding-top: 104px !important; /* 60px header + 44px subnav */
-    }
-    
-    /* Ensure scroll-margin so links don't hide behind header */
-    [id] {
-        scroll-margin-top: 120px;
-    }
+  /* Show the horizontal navigation strip (Sub-Navbar) */
+  .page-nav-scroll.visible {
+    display: flex !important;
+  }
+
+  /* Adjust content padding for the horizontal bar */
+  body.has-page-nav .page-wrapper {
+    padding-top: 104px !important; /* Header (60) + Nav (44) */
+  }
+
+  /* Hide Redundant TOC in the hamburger as it's already in the top nav bar (Sub-Navbar) */
+  .sidebar-toc {
+    display: none !important;
+  }
+
+  /* Ensure scroll-margin so links don't hide behind header + subnav */
+  [id] {
+    scroll-margin-top: 120px;
+  }
 }
 
 /* ==========================================================================
@@ -895,64 +1057,69 @@ pre,
    ========================================================================== */
 
 .desktop-page-nav {
-    display: none; /* Hidden on Mobile/Tablet */
-    position: fixed;
-    top: 120px;
-    right: 40px;
-    width: 180px;
-    z-index: 800;
-    /* Optional: Fade in */
-    animation: fadeIn 0.5s ease-out;
+  display: none; /* Hidden on Mobile/Tablet */
+  position: fixed;
+  top: 120px;
+  right: 40px;
+  width: 180px;
+  z-index: 800;
+  /* Optional: Fade in */
+  animation: fadeIn 0.5s ease-out;
 }
 
 .desktop-nav-title {
-    font-family: var(--font-mono-sys);
-    font-size: 10px;
-    color: var(--text-sub);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-    text-align: right;
-    opacity: 0.6;
+  font-family: var(--font-mono-sys);
+  font-size: 10px;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-align: right;
+  opacity: 0.6;
 }
 
 .desktop-page-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .desktop-page-nav li {
-    margin-bottom: 10px;
-    text-align: right;
+  margin-bottom: 10px;
+  text-align: right;
 }
 
 .desktop-nav-item {
-    display: inline-block;
-    font-size: 13px;
-    color: var(--text-sub);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    padding-right: 16px;
-    border-right: 2px solid transparent;
-    opacity: 0.7;
+  display: inline-block;
+  font-size: 13px;
+  color: var(--text-sub);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding-right: 16px;
+  border-right: 2px solid transparent;
+  opacity: 0.7;
 }
 
 .desktop-nav-item:hover {
-    color: var(--accent);
-    opacity: 1;
+  color: var(--accent);
+  opacity: 1;
 }
 
 .desktop-nav-item.active {
-    color: var(--accent);
-    border-right-color: var(--accent);
-    opacity: 1;
-    font-weight: 600;
+  color: var(--accent);
+  border-right-color: var(--accent);
+  opacity: 1;
+  font-weight: 600;
 }
 
 /* Show only on large screens where there's margin space */
 @media (min-width: 1280px) {
-    .desktop-page-nav {
-        display: block;
-    }
+  .desktop-page-nav {
+    display: block;
+  }
+
+  /* Hide Redundant Sidebar TOC on Large Desktop to focus on Right Nav */
+  .sidebar-toc {
+    display: none !important;
+  }
 }

@@ -31,7 +31,7 @@ class LayoutManager {
 
         mount.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:inherit;">${this.data.metadata.title}</a>
+              <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:inherit;">DSA.</a>
               <div
                 style="text-align:right;font-family:var(--tech);font-size:12px;color:#666;border-top:1px solid #ddd;padding-top:10px;">
                 ${this.data.metadata.tagline}
@@ -95,7 +95,7 @@ class LayoutManager {
 
         mount.innerHTML = `
          <div class="${wrapperClass}" style="${wrapperStyle}">
-          <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent); font-size: 20px; font-family: var(--font-pixel);">${this.data.metadata.title}</a>
+          <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:var(--accent); font-size: 20px; font-family: var(--font-pixel);">DSA.</a>
           <div style="display:flex; align-items:center; gap: 20px;">
               <div class="index-tagline"
                 style="font-family:var(--font-mono-sys); font-size:10px; color:var(--text-sub); text-align:right; line-height:1.4; letter-spacing:1px; text-transform: uppercase;">
@@ -268,12 +268,19 @@ class LayoutManager {
         const mount = document.getElementById('sidebar-mount');
         if (!mount) return;
 
-        // Initialize with Mobile Header (Hidden on Desktop)
+        // Initialize with Context Header (Unified)
+        // Get title from the H1 if available (Problem Name), otherwise fallback
+        const h1 = document.querySelector('.article-title');
+        // Use textContent to ensure we get text even if hidden, and trim whitespace
+        const pageTitle = h1 ? h1.textContent.trim().replace(/\.$/, '') : 'HOME'; 
+
         let html = `
-            <div class="sidebar-mobile-header">
-                <div class="sidebar-mobile-subtitle">// SYSTEM_NAVIGATION</div>
-                <div class="sidebar-mobile-title brand-pixel" style="font-family: var(--font-pixel);">DSA.</div>
+            <div class="sidebar-context-header">
+                <div class="sidebar-context-sup">// NOW_READING</div>
+                <div class="sidebar-context-title">${pageTitle}</div>
             </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title" style="letter-spacing: 2px; margin-bottom: 24px; color: var(--text-sub); opacity: 0.8;">DSA. ARCHIVE</div>
         `;
         const currentPath = window.location.pathname;
 
@@ -403,29 +410,57 @@ class LayoutManager {
         // Render TOC into Sidebar (Unified Desktop/Mobile location)
         const sidebar = document.getElementById('sidebar-mount');
         let sidebarTocItems = []; // Store refs for scroll spy
+        let desktopTocItems = [];
+
+        // Identify or create Desktop TOC Container
+        let desktopToc = document.querySelector('.desktop-page-nav');
+        if (!desktopToc) {
+            desktopToc = document.createElement('div');
+            desktopToc.className = 'desktop-page-nav';
+            document.body.appendChild(desktopToc);
+        }
+
+        const renderTocHtml = (items, isDesktop = false) => {
+            if (isDesktop) {
+                let html = '<div class="desktop-nav-title">ON THIS PAGE</div><ul>';
+                items.forEach(item => {
+                    html += `<li><a href="#${item.id}" class="desktop-nav-item" data-target="${item.id}" onclick="window.layoutManager.scrollToSection(event, '${item.id}')">${item.label}</a></li>`;
+                });
+                html += '</ul>';
+                return html;
+            } else {
+                let html = '<div class="sidebar-section-title" style="letter-spacing: 2px;">ON THIS PAGE</div><ul class="sidebar-list sidebar-toc-list">';
+                items.forEach((item, index) => {
+                    const activeClass = index === 0 ? 'active' : '';
+                    html += `<li class="${activeClass}" data-target="${item.id}"><a href="#${item.id}" onclick="window.layoutManager.scrollToSection(event, '${item.id}')">${item.label}</a></li>`;
+                });
+                html += '</ul><div style="height: 1px; background: var(--border-sub); margin: 20px 0 30px 0;"></div>';
+                return html;
+            }
+        };
 
         if (sidebar) {
             const tocDiv = document.createElement('div');
             tocDiv.className = 'sidebar-section sidebar-toc'; 
-            
-            let tocHtml = '<div class="sidebar-section-title" style="color:var(--accent);">ON THIS PAGE</div><ul class="sidebar-list sidebar-toc-list">';
-            navItems.forEach((item, index) => {
-                 const activeClass = index === 0 ? 'active' : '';
-                 tocHtml += `<li class="${activeClass}" data-target="${item.id}"><a href="#${item.id}" onclick="window.layoutManager.scrollToSection(event, '${item.id}')">${item.label}</a></li>`;
-            });
-            tocHtml += '</ul><div style="height: 1px; background: var(--border-sub); margin: 20px 0 30px 0;"></div>'; // Visual Divider
-            
-            tocDiv.innerHTML = tocHtml;
+            tocDiv.innerHTML = renderTocHtml(navItems, false);
 
-            // Insert after mobile header if present (to keep hierarchy: Header -> TOC -> Global)
-            const mobileHeader = sidebar.querySelector('.sidebar-mobile-header');
-            if (mobileHeader) {
-                mobileHeader.after(tocDiv);
+            const headerDivider = sidebar.querySelector('.sidebar-divider');
+            if (headerDivider) {
+                headerDivider.after(tocDiv);
             } else {
-                sidebar.prepend(tocDiv);
+                const mobileHeader = sidebar.querySelector('.sidebar-mobile-header');
+                if (mobileHeader) {
+                    mobileHeader.after(tocDiv);
+                } else {
+                    sidebar.prepend(tocDiv);
+                }
             }
-            
             sidebarTocItems = Array.from(tocDiv.querySelectorAll('li'));
+        }
+
+        if (desktopToc) {
+            desktopToc.innerHTML = renderTocHtml(navItems, true);
+            desktopTocItems = Array.from(desktopToc.querySelectorAll('.desktop-nav-item'));
         }
 
         document.body.classList.add('has-page-nav');
@@ -458,10 +493,14 @@ class LayoutManager {
              // Update Active Class (Sidebar TOC)
              if (sidebarTocItems.length > 0) {
                  sidebarTocItems.forEach(li => {
-                     li.classList.remove('active');
-                     if (li.getAttribute('data-target') === current) {
-                         li.classList.add('active');
-                     }
+                     li.classList.toggle('active', li.getAttribute('data-target') === current);
+                 });
+             }
+
+             // Update Active Class (Desktop Right TOC)
+             if (desktopTocItems.length > 0) {
+                 desktopTocItems.forEach(a => {
+                     a.classList.toggle('active', a.getAttribute('data-target') === current);
                  });
              }
         }, { passive: true });
