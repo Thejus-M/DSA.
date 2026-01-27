@@ -318,3 +318,62 @@ pre {
 .btn-expand {
   display: none !important;
 }
+/* Site Footer Styles - Minimalist with Content */
+.site-footer {
+    margin-top: 120px;
+    padding-bottom: 80px;
+    text-align: center;
+    background: transparent;
+    border-top: none;
+    font-family: var(--font-mono-sys);
+}
+
+.footer-filler {
+    font-family: var(--font-mono-sys);
+    font-size: 10px;
+    color: var(--text-sub);
+    letter-spacing: 4px;
+    opacity: 0.3;
+    margin-bottom: 32px;
+    user-select: none;
+}
+
+.footer-brand-minimal {
+    font-family: 'Press Start 2P', monospace; /* Match Header DSA. */
+    font-size: 24px;
+    line-height: 1;
+    color: var(--accent); /* Same as DSA. logo */
+    text-transform: uppercase;
+    display: inline-block;
+    cursor: default;
+    margin-top: 40px;
+}
+
+.footer-tagline {
+    font-size: 10px;
+    color: var(--text-sub);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.footer-description {
+    font-size: 10px;
+    color: var(--text-sub);
+    max-width: 400px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+    opacity: 0.6;
+}
+
+.footer-copyright {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    color: var(--text-sub);
+    opacity: 0.4;
+    letter-spacing: 1px;
+}

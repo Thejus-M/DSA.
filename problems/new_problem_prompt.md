@@ -640,7 +640,7 @@ Structure: ```html
 ### 11. Footer Mount
 
 ```html
-<div id="footer-mount"></div>
+<footer id="footer-mount"></footer>
 ```
 
 ---

@@ -202,10 +202,24 @@ class LayoutManager {
         if (!mount) return;
 
         // Current style in index.html
+        // New Modern Footer - Minimalist
         mount.innerHTML = `
-             <div style="margin-top:80px;padding:40px 0;border-top:1px solid #ddd;text-align:center;font-family:var(--tech);font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#666;">
-                ${this.data.metadata.footerText}
-             </div>
+             <footer class="site-footer">
+
+                <div class="section-divider" aria-hidden="true"></div>
+                
+                <div class="footer-tagline">| DSA LEARNING |</div>
+                
+                <div class="footer-description">
+                    UNDERSTAND DATA STRUCTURES,<br>ONE PROBLEM AT A TIME.
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025 DSA
+                </div>
+
+                <div class="footer-brand-minimal">T.</div>
+             </footer>
         `;
 
         // Note: Problem pages use a slightly different class-based footer (.nav-footer + .page-footer).
