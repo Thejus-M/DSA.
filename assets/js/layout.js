@@ -574,6 +574,9 @@ class LayoutManager {
     }
 
     renderMobileFAB() {
+        // Don't show FAB on the Home Page (index.html)
+        if (this.isHome) return;
+
         // Inject FAB button (Icon: Hamburger)
         const fab = document.createElement('button');
         fab.id = 'mobile-fab';
@@ -619,21 +622,29 @@ class LayoutManager {
     }
 
     initTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
+        // Theme init is handled by theme-init.js (via Cookie)
+        // We just ensure the button icon matches the DOM state
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const btn = document.getElementById('theme-toggle');
+        if (btn) {
+           btn.innerHTML = this.getThemeIcon(currentTheme);
         }
     }
 
     toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme');
-        const target = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', target);
-        localStorage.setItem('theme', target);
-
+        const newTheme = window.ThemeManager.toggle(); // Use Cookie logic
         const btn = document.getElementById('theme-toggle');
         if (btn) {
-            btn.innerHTML = this.getThemeIcon(target);
+            btn.innerHTML = this.getThemeIcon(newTheme);
+        }
+        
+        // Also ensure classList updates for fallback styles if any
+        if (newTheme === 'dark') {
+            document.documentElement.classList.add('theme-dark');
+            document.documentElement.classList.remove('theme-light');
+        } else {
+             document.documentElement.classList.add('theme-light');
+             document.documentElement.classList.remove('theme-dark');
         }
     }
 
