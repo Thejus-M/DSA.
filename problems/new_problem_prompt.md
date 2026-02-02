@@ -40,6 +40,7 @@ Create a new DSA problem page with the following specifications:
     <link rel="stylesheet" href="../assets/css/variables.css" />
     <link rel="stylesheet" href="../assets/css/problems.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../assets/css/visualization.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>[Problem Name] | DSA</title>
@@ -90,8 +91,15 @@ Create a new DSA problem page with the following specifications:
 
 ```html
 <div class="ruler-scale" id="ruler-scale"></div>
-<aside class="sidebar" id="sidebar-mount"></aside>
+<div class="page-wrapper">
+  <aside class="sidebar" id="sidebar-mount"></aside>
+  <main class="main-content">
+    <div class="article-container"></div>
+  </main>
+</div>
 ```
+
+_Note: Close divs at end of file._
 
 ### 3. Article Header
 
@@ -120,7 +128,7 @@ Create a new DSA problem page with the following specifications:
   <div class="terminal-row">
     <span class="terminal-label">CONST:</span>
     <div class="terminal-content mono">
-      <ul style="list-style: disc; padding-left: 20px;">
+      <ul class="terminal-constraints-list">
         <li>[Constraint 1]</li>
         <li>[Constraint 2]</li>
       </ul>
@@ -129,15 +137,16 @@ Create a new DSA problem page with the following specifications:
   <div class="terminal-row">
     <span class="terminal-label">EXAMPLE:</span>
     <div class="terminal-content mono">
-      <div style="margin-bottom: 24px;">
-        <div style="margin-bottom: 4px; color: var(--text-sub);">INPUT</div>
-        <div style="margin-bottom: 8px;">[input]</div>
-        <div style="margin-bottom: 4px; color: var(--text-sub);">OUTPUT</div>
-        <div style="margin-bottom: 8px;">[output]</div>
-        <div style="color: var(--text-sub); font-size: 0.85rem;">
-          Explanation: [explanation]
-        </div>
-      </div>
+      <ul class="terminal-examples-list">
+        <li class="terminal-example-item">
+          <span class="terminal-example-bullet">•</span>
+          <div class="terminal-example-label">INPUT</div>
+          <div class="terminal-example-value">[Input Value]</div>
+          <div class="terminal-example-label">OUTPUT</div>
+          <div class="terminal-example-value">[Output Value]</div>
+          <div class="terminal-example-explanation">Explanation: [Text]</div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -244,13 +253,6 @@ Structure: ```html
 </section>
 ````
 
-#### Animation Requirements:
-
-1. **Auto-loop**: Animation should continuously loop through all steps
-2. **Pausable**: User can pause at any frame
-3. **Steppable**: Can move forward/backward through steps
-4. **Self-explanatory**: Combined with short text, user should understand without reading long paragraphs
-
 #### Animation Teaching Flow (Example for Climbing Stairs):
 
 - **Step 1**: Show brute force approach (all possible paths)
@@ -261,217 +263,7 @@ Structure: ```html
 
 #### Inline CSS for Animation:
 
-```css
-<style>
-    /* Canvas Wrapper */
-    .phase-canvas-wrapper {
-        position: relative;
-        width: 100%;
-        margin: 20px 0;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-    }
-
-    .phase-canvas {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-
-    /* Floating Glassmorphic Controls */
-    .phase-controls {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%) translateY(10px);
-        display: flex;
-        gap: 10px;
-        background: rgba(26, 26, 46, 0.85); /* Dark Glass */
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        padding: 8px 16px;
-        border-radius: 50px;
-        border: 1px solid rgba(42, 93, 156, 0.3);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        pointer-events: none;
-        z-index: 10;
-    }
-
-    /* Reveal on Hover */
-    .phase-canvas-wrapper:hover .phase-controls {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-        pointer-events: auto;
-    }
-
-    /* Mobile: Always Visible */
-    @media (hover: none) {
-        .phase-controls {
-            opacity: 1 !important;
-            transform: translateX(-50%) translateY(0) !important;
-            pointer-events: auto !important;
-        }
-    }
-
-    /* Button Styling */
-    .phase-controls button {
-        background: transparent;
-        border: 1px solid transparent;
-        color: #4fc1ff;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 14px;
-        cursor: pointer;
-        padding: 4px 10px;
-        border-radius: 12px;
-        transition: all 0.2s ease;
-    }
-
-    .phase-controls button:hover {
-        background: rgba(79, 193, 255, 0.1);
-        transform: scale(1.05);
-        color: #fff;
-    }
-
-    .phase-controls button.active {
-        background: rgba(79, 193, 255, 0.2);
-        border-color: rgba(79, 193, 255, 0.4);
-        color: #fff;
-        font-weight: bold;
-    }
-
-    /* Light Theme Overrides */
-    html[data-theme="light"] .phase-controls {
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    html[data-theme="light"] .phase-controls button {
-        color: #2A5D9C;
-        border-color: transparent;
-    }
-
-    html[data-theme="light"] .phase-controls button:hover {
-        background: #2A5D9C;
-        color: #fff;
-    }
-
-    html[data-theme="light"] .phase-controls button.active {
-        background: rgba(42, 93, 156, 0.1);
-        border-color: rgba(42, 93, 156, 0.3);
-        color: #2A5D9C;
-    }
-
-    /* --- Interactive Visualization Styling --- */
-
-    /* Demo Input Styling - Adaptive */
-    .demo-input {
-        background: #1a1a2e;
-        color: #4fc1ff;
-        border: 2px solid #2A5D9C;
-        padding: 8px 12px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
-    }
-
-    /* Light Theme Input Override */
-    html[data-theme="light"] .demo-input {
-        background: #ffffff;
-        color: #1e3a5f;
-        border: 2px solid #cbd5e1;
-    }
-
-    .demo-input:focus {
-        outline: none;
-        border-color: #51cf66;
-        box-shadow: 0 0 8px rgba(81, 207, 102, 0.3);
-    }
-
-    html[data-theme="light"] .demo-input:focus {
-        border-color: #2A5D9C;
-        box-shadow: 0 0 8px rgba(42, 93, 156, 0.2);
-    }
-
-    /* Demo Button */
-    .demo-btn {
-        background: transparent;
-        border: 2px solid #2A5D9C;
-        color: #2A5D9C;
-        padding: 8px 24px;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-left: 12px;
-    }
-
-    .demo-btn:hover {
-        background: #2A5D9C;
-        color: #fff;
-    }
-
-    html[data-theme="light"] .demo-btn {
-        border-color: #1e3a5f;
-        color: #1e3a5f;
-    }
-
-    html[data-theme="light"] .demo-btn:hover {
-        background: #1e3a5f;
-        color: #fff;
-    }
-
-    /* Result Bar */
-    .demo-result {
-        background: #1a1a2e;
-        border: 2px solid #2A5D9C;
-        padding: 12px 20px;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    /* Light Theme Result Override */
-    html[data-theme="light"] .demo-result {
-        background: #f8fafc;
-        border: 2px solid #cbd5e1;
-    }
-
-    .result-label {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 11px;
-        color: #666;
-        letter-spacing: 1px;
-    }
-
-    .result-value {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 24px;
-        color: #51cf66;
-        font-weight: bold;
-    }
-
-    html[data-theme="light"] .result-value {
-            color: #1e40af; /* Dark blue for result value in light mode */
-    }
-
-    #demo-canvas {
-        background: #1a1a2e;
-        display: block;
-        width: 100%;
-    }
-
-    html[data-theme="light"] #demo-canvas {
-        background: #f8fafc;
-    }
-</style>
-```
+_Use the global `visualization.css` styles. No inline CSS needed._
 
 #### Inline JavaScript for Animation:
 
@@ -628,16 +420,7 @@ Structure: ```html
 </section>
 ```
 
-### 10. Navigation Footer
-
-```html
-<div class="nav-footer">
-  <a href="[previous-problem].html">← Previous Problem</a>
-  <a href="[next-problem].html">Next Problem →</a>
-</div>
-```
-
-### 11. Footer Mount
+### 10. Footer Mount
 
 ```html
 <footer id="footer-mount"></footer>

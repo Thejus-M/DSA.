@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Common Scripts & Styles handled by layout.js, but we include base for good measure -->
+    <script src="../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../assets/css/variables.css" />
+    <link rel="stylesheet" href="../assets/css/problems.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../assets/css/visualization.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Longest Common Subsequence | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    
+    <style>
+        /* Problem-specific inline overrides */
+        .article-container {
+            /* Fix for LCS page specifically if needed, otherwise standard padding applies */
+            padding-top: 60px; 
+        }
+    </style>
+</head>
+<body>
+    <div id="header-mount"></div>
+    <div class="ruler-scale" id="ruler-scale"></div>
+    <div class="page-wrapper">
+        <aside class="sidebar" id="sidebar-mount"></aside>
+        <main class="main-content">
+            <div class="article-container">
+        <header class="article-header">
+            <div class="article-meta">DSA LEARNING</div>
+            <h1 class="article-title">Longest Common Subsequence</h1>
+            <div class="tags">
+                <span class="tag">Medium</span>
+                <span class="tag">2D DP</span>
+                <span class="tag">String</span>
+            </div>
+        </header>
+
+        <div class="divider"></div>
+
+        <div class="terminal-card">
+            <div class="terminal-row">
+                <span class="terminal-label">PROB:</span>
+                <div class="terminal-content serif">
+                    <p style="margin-top: 0;">Given two strings <code>text1</code> and <code>text2</code>, return the length of their longest common subsequence. A subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.</p>
+                </div>
+            </div>
+            <div class="terminal-row">
+                <span class="terminal-label">CONST:</span>
+                <div class="terminal-content mono">
+                    <ul class="terminal-constraints-list">
+                        <li>1 ≤ text1.length, text2.length ≤ 1000</li>
+                        <li>text1 and text2 consist of only lowercase English characters</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="terminal-row">
+                <span class="terminal-label">EXAMPLE:</span>
+                <div class="terminal-content mono">
+                    <ul class="terminal-examples-list">
+                        <li class="terminal-example-item">
+                            <span class="terminal-example-bullet">•</span>
+                            <div class="terminal-example-label">INPUT</div>
+                            <div class="terminal-example-value">text1 = "abcde", text2 = "ace"</div>
+                            <div class="terminal-example-label">OUTPUT</div>
+                            <div class="terminal-example-value">3</div>
+                            <div class="terminal-example-explanation">
+                                Explanation: The longest common subsequence is "ace" with length 3.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider" aria-hidden="true"></div>
+
+        <section class="content-section">
+            <h2>Intuition</h2>
+            <p>We are looking for the longest sequence made by picking characters from both strings in their original order. We can skip characters, but we can't swap them.</p>
+
+            <!-- Phase 1 -->
+            <div class="phase-section">
+                <h3 class="phase-title">Phase 1: Subsequence vs Substring</h3>
+                <p class="phase-description">In our example <code>"abcde"</code> and <code>"ace"</code>. Notice we match 'a', 'c', and 'e', skipping 'b' and 'd'.</p>
+                <div class="phase-canvas-wrapper">
+                    <!-- Increased width for better resolution, min-width in CSS handles responsiveness -->
+                    <canvas id="phase1-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                    <div class="phase-controls">
+                        <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
+                        <button onclick="restartPhase(1)">↻</button>
+                        <button onclick="setSpeed(1, 0.5)">0.5x</button>
+                        <button class="active" onclick="setSpeed(1, 1)">1x</button>
+                        <button onclick="setSpeed(1, 2)">2x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="phase-section">
+                <h3 class="phase-title">Phase 2: The Decision Tree</h3>
+                <p class="phase-description">If we try a naive recursive approach, we branch out deeply. For <code>"abcde"</code> & <code>"ace"</code>, we start by matching 'a'. Then we have a subproblem <code>"bcde"</code> & <code>"ce"</code>. Since 'b' ≠ 'c', we branch twice! This leads to an explosion of states.</p>
+                <div class="phase-canvas-wrapper">
+                    <canvas id="phase2-canvas" class="phase-canvas" width="800" height="600"></canvas>
+                    <div class="phase-controls">
+                        <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
+                        <button onclick="restartPhase(2)">↻</button>
+                        <button onclick="setSpeed(2, 0.5)">0.5x</button>
+                        <button class="active" onclick="setSpeed(2, 1)">1x</button>
+                        <button onclick="setSpeed(2, 2)">2x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="phase-section">
+                <h3 class="phase-title">Phase 3: Defining The State</h3>
+                <p class="phase-description">Instead of re-calculating, we store results in a table. <code>dp[i][j]</code> stores the LCS length for suffix <code>text1[i:]</code> and <code>text2[j:]</code>. Here is the grid for "abcde" vs "ace".</p>
+                <div class="phase-canvas-wrapper">
+                    <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                    <div class="phase-controls">
+                        <button id="play-btn-3" onclick="togglePhase(3)">❚❚</button>
+                        <button onclick="restartPhase(3)">↻</button>
+                        <button onclick="setSpeed(3, 0.5)">0.5x</button>
+                        <button class="active" onclick="setSpeed(3, 1)">1x</button>
+                        <button onclick="setSpeed(3, 2)">2x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 4 (NEW) -->
+            <div class="phase-section">
+                <h3 class="phase-title">Phase 4: The Transitions (Logic)</h3>
+                <p class="phase-description">
+                    <strong>Why Diagonal?</strong>: When characters match (e.g., 'd'=='d'), this character <em>must</em> be part of the LCS. We "consume" it from <strong>both</strong> strings (+1 to length) and check the remaining substrings (the diagonal).<br><br>
+                    <strong>Why Max?</strong>: When characters differ (e.g. 'a' vs 'b'), we simply cannot match them at this position. We are forced to discard at least one to make progress. Since we don't know which path leads to a better outcome, we try <strong>both</strong> options:
+                    1. Skip 'a' and see what happens (Move Down).
+                    2. Skip 'b' and see what happens (Move Right).
+                    <br>Since our goal is the <em>Longest</em> subsequence, we strictly choose the path that gave the larger value. Thus: <code>max(Option1, Option2)</code>.
+                </p>
+                <div class="phase-canvas-wrapper">
+                    <canvas id="phase4-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                    <div class="phase-controls">
+                        <button id="play-btn-4" onclick="togglePhase(4)">❚❚</button>
+                        <button onclick="restartPhase(4)">↻</button>
+                        <button onclick="setSpeed(4, 0.5)">0.5x</button>
+                        <button class="active" onclick="setSpeed(4, 1)">1x</button>
+                        <button onclick="setSpeed(4, 2)">2x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 5 (Old Phase 4) -->
+            <div class="phase-section">
+                <h3 class="phase-title">Phase 5: Filling The Table</h3>
+                <p class="phase-description">We fill from the bottom-right. When characters match (e.g., 'e'=='e'), we take diagonal + 1. When they differ, we take max(right, down). Watch the table fill for "abcde" and "ace".</p>
+                <div class="phase-canvas-wrapper">
+                    <canvas id="phase5-canvas" class="phase-canvas" width="800" height="500"></canvas>
+                    <div class="phase-controls">
+                        <button id="play-btn-5" onclick="togglePhase(5)">❚❚</button>
+                        <button onclick="restartPhase(5)">↻</button>
+                        <button onclick="setSpeed(5, 0.5)">0.5x</button>
+                        <button class="active" onclick="setSpeed(5, 1)">1x</button>
+                        <button onclick="setSpeed(5, 2)">2x</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider" aria-hidden="true"></div>
+
+        <section class="content-section">
+            <h2>Solutions</h2>
+            
+            <div class="code-annotation">Ideally intuitive. Matches our recursion tree (Phase 2). We define a function <code>lcs(i, j)</code> representing the LCS of <code>text1[i:]</code> and <code>text2[j:]</code> and simply cache the result.</div>
+            <div class="code-block-wrapper">
+                <span class="code-label">Python - Top-Down Recursion + Memoization</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                <div class="code-annotation" style="display: none;"></div>
+                <pre><code class="language-python">class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        @cache
+        def lcs(i: int, j: int) -> int:
+            # Base case: reached end of either string
+            if i == len(text1) or j == len(text2):
+                return 0
+            
+            # If characters match: take diagonal
+            if text1[i] == text2[j]:
+                return 1 + lcs(i + 1, j + 1)
+            
+            # If not, try skipping either character and take max
+            return max(lcs(i + 1, j), lcs(i, j + 1))
+        
+        return lcs(0, 0)</code></pre>
+            </div>
+
+            <div class="code-annotation" style="margin-top: 40px;">Iterative approach. Matches our Table Filling (Phase 5). We build the <code>dp</code> table from the base cases up to the full answer. Avoids recursion stack overhead.</div>
+            <div class="code-block-wrapper">
+                <span class="code-label">Python - Bottom-Up DP (Tabulation)</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                <div class="code-annotation" style="display: none;"></div>
+                <pre><code class="language-python">class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        m, n = len(text1), len(text2)
+        # dp[i][j] = length of LCS of text1[i:] and text2[j:]
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        
+        for i in range(m - 1, -1, -1):
+            for j in range(n - 1, -1, -1):
+                if text1[i] == text2[j]:
+                    # Match: 1 + result from remainder
+                    dp[i][j] = 1 + dp[i+1][j+1]
+                else:
+                    # No match: skip char from text1 OR text2
+                    dp[i][j] = max(dp[i+1][j], dp[i][j+1])
+        
+        return dp[0][0]</code></pre>
+            </div>
+
+            <div class="code-annotation" style="margin-top: 40px;">Since we only ever look at the previous row (<code>dp[i+1]</code> when computing <code>dp[i]</code>), we don't need the full matrix. We can maintain just two rows: <code>prev</code> and <code>curr</code>, reducing Space Complexity from O(m*n) to O(min(m,n)).</div>
+            <div class="code-block-wrapper">
+                <span class="code-label">Python - Space Optimized O(min(m,n))</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                <div class="code-annotation" style="display: none;"></div>
+                <pre><code class="language-python">class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        # Ensure text2 is the shorter one for min space
+        if len(text1) < len(text2):
+            text1, text2 = text2, text1
+        
+        m, n = len(text1), len(text2)
+        prev = [0] * (n + 1)
+        curr = [0] * (n + 1)
+        
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if text1[i - 1] == text2[j - 1]:
+                    curr[j] = prev[j - 1] + 1
+                else:
+                    curr[j] = max(prev[j], curr[j - 1])
+            # Move curr to prev for next iteration
+            # We copy specifically or swap if languages allow safely (Python does)
+            prev = list(curr) 
+            
+        return prev[n]</code></pre>
+            </div>
+        </section>
+
+        <div class="complexity-card">
+            <h3>Complexity Analysis</h3>
+            <div class="complexity-grid">
+                <div class="complexity-item">
+                    <div class="complexity-label">Time Complexity</div>
+                    <div class="complexity-value">O(m × n)</div>
+                    <div class="complexity-note">All solutions must solve M × N unique subproblems.</div>
+                </div>
+                <div class="complexity-item">
+                    <div class="complexity-label">Space Complexity</div>
+                    <div class="complexity-value">Varies by Approach</div>
+                    <div class="complexity-note">
+                        <div style="margin-bottom: 6px;"><strong>Recursion/Basic DP:</strong> <span style="color: var(--text-main);">O(m × n)</span> for the full table/cache.</div>
+                        <div><strong>Space Optimized:</strong> <span style="color: var(--accent);">O(min(m, n))</span> by storing only current & previous rows.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="content-section" style="margin-top: 60px;">
+            <h2>Interactive Visualization</h2>
+            <p style="margin-bottom: 30px;">Input any two strings to see the DP table being constructed.</p>
+            
+            <div class="demo-container">
+                <div class="demo-input-group">
+                    <label for="text1-input" class="demo-label">String 1 (Rows):</label>
+                    <input type="text" id="text1-input" class="demo-input" value="abcde" maxlength="12" />
+                    
+                    <label for="text2-input" class="demo-label" style="margin-left: 20px;">String 2 (Cols):</label>
+                    <input type="text" id="text2-input" class="demo-input" value="ace" maxlength="12" />
+                    
+                    <button class="demo-btn" onclick="runDemo()">Generate Table</button>
+                </div>
+
+                <div class="demo-output">
+                    <div class="demo-result">
+                        <span class="result-label">RESULT:</span>
+                        <span class="result-value" id="result-value">3</span>
+                    </div>
+                    <canvas id="demo-canvas" width="900" height="500"></canvas>
+                </div>
+            </div>
+        </section>
+
+            </div>
+        </main>
+    </div>
+
+    <footer id="footer-mount"></footer>
+
+
+    <script src="../assets/js/copy-code.js"></script>
+    <script src="../assets/js/problems.js"></script>
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/layout.js"></script>
+
+    <!-- Problem-specific JavaScript inline -->
+    <script>
+        // Visualization constants
+        const VIS_CONFIG = {};
+        
+        function getTheme() {
+            return document.documentElement.getAttribute('data-theme') || 'dark';
+        }
+
+        // Shared color logic
+        function getColors() {
+            const isDark = getTheme() === 'dark';
+            return {
+                bg: isDark ? '#1a1a2e' : '#ffffff',
+                text: isDark ? '#4fc1ff' : '#1e3a5f',
+                accent: isDark ? '#51cf66' : '#2A5D9C',
+                border: isDark ? '#2A5D9C' : '#cbd5e1',
+                highlight: isDark ? '#ff6b6b' : '#ef4444',
+                match: isDark ? '#51cf66' : '#10b981',
+                dim: isDark ? '#666' : '#94a3b8',
+                gridLine: isDark ? '#2a5d9c' : '#e2e8f0'
+            };
+        }
+
+        const phases = [
+            { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 200 },
+            { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 450 },
+            { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 360 },
+            { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 }, // New P4
+            { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 480 }  // Old P4 -> P5
+        ];
+
+        function initPhases() {
+            for (let i = 0; i < 5; i++) {
+                phases[i].canvas = document.getElementById(`phase${i+1}-canvas`);
+                phases[i].ctx = phases[i].canvas.getContext('2d');
+            }
+        }
+
+        // ---- VISUALIZATION LOGIC ----
+
+        // Phase 1: Specific "abcde" and "ace"
+        function drawPhase1(phase) {
+            const ctx = phase.ctx;
+            const c = phase.canvas;
+            const colors = getColors();
+            const f = phase.frame;
+            
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height); // Background
+            
+            const s1 = "abcde";
+            const s2 = "ace";
+            const startX = 200;
+            const y = 200;
+            const size = 60;
+            const spacing = 70;
+
+            // Draw full string "abcde"
+            ctx.font = 'bold 40px "JetBrains Mono"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 0; i < s1.length; i++) {
+                const x = startX + i * spacing;
+                
+                // Logic to dim non-matches ('b' and 'd')
+                const char = s1[i];
+                const isTarget = s2.includes(char);
+                const isSelected = isTarget && f > (i + 1) * 30;
+
+                // Dim others after animation passes them
+                let alpha = 1.0;
+                if (!isTarget && f > (i + 1) * 30) {
+                    alpha = 0.3; 
+                }
+
+                ctx.save();
+                ctx.globalAlpha = alpha;
+
+                if (isSelected) {
+                    // Highlight box
+                    ctx.fillStyle = colors.match + '33'; // transparent green
+                    ctx.fillRect(x - 30, y - 30, 60, 60);
+                    ctx.fillStyle = colors.match;
+                } else {
+                    ctx.fillStyle = colors.text;
+                }
+                
+                ctx.fillText(char, x, y);
+                
+                // Draw indices
+                ctx.font = '14px "Share Tech Mono"';
+                ctx.fillStyle = colors.dim;
+                ctx.fillText(i, x, y + 40);
+                
+                // Restore font for next char
+                ctx.font = 'bold 40px "JetBrains Mono"';
+                ctx.restore();
+            }
+
+            // Draw "ace" result below
+            if (f > 180) {
+                ctx.fillStyle = colors.match;
+                ctx.font = 'bold 32px "JetBrains Mono"';
+                ctx.fillText("Found: \"ace\"", c.width/2, 320);
+            }
+        }
+
+        // Phase 2: Complete Recursion Tree (BFS Generation)
+        function drawPhase2(phase) {
+            const ctx = phase.ctx;
+            const c = phase.canvas;
+            const colors = getColors();
+            const f = phase.frame;
+            
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            const s1 = "abcde";
+            const s2 = "ace";
+            const centerX = c.width / 2;
+            const startY = 40;
+            const levelH = 80; // slightly clearer vertical spacing
+            
+            let nodes = [];
+            let queue = [{ i: 0, j: 0, x: centerX, y: startY, p: -1, level: 0 }];
+            
+            // BFS limit
+            const MAX_NODES = 60;
+            // Process queue
+            let head = 0;
+            
+            while(head < queue.length && nodes.length < MAX_NODES) {
+                let curr = queue[head++];
+                curr.id = nodes.length; // assign ID based on insertion order
+                nodes.push(curr);
+                
+                // Base Cases
+                if (curr.i >= s1.length || curr.j >= s2.length) {
+                    curr.isLeaf = true;
+                    curr.val = 0;
+                    continue;
+                }
+                
+                if (curr.level >= 5) {
+                    curr.isPruned = true;
+                    continue; 
+                }
+
+                const match = s1[curr.i] === s2[curr.j];
+                curr.isMatch = match;
+
+                const offset = 240 / Math.pow(2, curr.level); 
+
+                if (match) {
+                    queue.push({
+                        i: curr.i + 1,
+                        j: curr.j + 1,
+                        x: curr.x, // straight down
+                        y: curr.y + levelH,
+                        p: curr.id,
+                        level: curr.level + 1
+                    });
+                } else {
+                    // Two children
+                    queue.push({
+                        i: curr.i + 1,
+                        j: curr.j, // skip s1 char
+                        x: curr.x - offset,
+                        y: curr.y + levelH,
+                        p: curr.id,
+                        level: curr.level + 1
+                    });
+                     queue.push({
+                        i: curr.i,
+                        j: curr.j + 1, // skip s2 char
+                        x: curr.x + offset,
+                        y: curr.y + levelH,
+                        p: curr.id,
+                        level: curr.level + 1
+                    });
+                }
+            }
+
+            // Draw Relationships and Nodes
+            nodes.forEach((n, idx) => {
+                // Animation timing: appear sequentially
+                const threshold = idx * 6;
+                if (f < threshold) return;
+
+                // Draw Line to Parent
+                if (n.p !== -1) {
+                    const parent = nodes[n.p];
+                    ctx.beginPath();
+                    ctx.moveTo(parent.x, parent.y + 15);
+                    ctx.lineTo(n.x, n.y - 15);
+                    ctx.strokeStyle = colors.border;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                // Draw Box
+                let w = 44, h = 34;
+                // Larger top nodes
+                if (n.level === 0) { w = 150; h = 36; }
+                else if (n.level === 1) { w = 110; h = 34; }
+                
+                ctx.fillStyle = colors.bg;
+                ctx.fillRect(n.x - w/2, n.y - h/2, w, h);
+                
+                // Color coding
+                if (n.isMatch) ctx.strokeStyle = colors.match;
+                else if (n.isLeaf) ctx.strokeStyle = colors.dim;
+                else ctx.strokeStyle = colors.text;
+                
+                if (n.isPruned) ctx.strokeStyle = colors.border;
+
+                ctx.lineWidth = 2;
+                ctx.strokeRect(n.x - w/2, n.y - h/2, w, h);
+
+                // Text Content
+                ctx.fillStyle = colors.text;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const sub1 = s1.slice(n.i);
+                const sub2 = s2.slice(n.j);
+
+                if (n.level === 0) {
+                    ctx.font = '14px "JetBrains Mono"';
+                    ctx.fillText(`("${sub1}", "${sub2}")`, n.x, n.y);
+                } else if (n.level === 1) {
+                    ctx.font = '12px "JetBrains Mono"';
+                    ctx.fillText(`("${sub1}", "${sub2}")`, n.x, n.y);
+                } else {
+                    // Stacked Substrings
+                    ctx.font = '10px "JetBrains Mono"';
+                    if (n.isPruned) {
+                        ctx.fillText("...", n.x, n.y);
+                    } else if (n.isLeaf) {
+                         ctx.fillText('""', n.x, n.y);
+                    } else {
+                        ctx.fillText(`"${sub1}"`, n.x, n.y - 5);
+                        ctx.fillText(`"${sub2}"`, n.x, n.y + 6);
+                    }
+                }
+            });
+            
+            // Final overlay text
+            if (f > nodes.length * 6 + 30) {
+                ctx.save();
+                ctx.fillStyle = colors.highlight; 
+                ctx.font = 'bold 20px "Share Tech Mono"';
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.shadowBlur = 4;
+                ctx.fillText("EXPONENTIAL BRANCHING DETECTED", c.width/2, c.height - 30);
+                ctx.restore();
+            }
+        }
+
+        // Phase 3: Defining The State (Multi-step Explanation)
+        function drawPhase3(phase) {
+            const ctx = phase.ctx;
+            const c = phase.canvas;
+            const colors = getColors();
+            const f = phase.frame;
+            
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            const s1 = "abcde";
+            const s2 = "ace";
+            const curRow = 2; // 'c' in abcde -> "cde"
+            const curCol = 1; // 'c' in ace -> "ce"
+
+            const rows = s1.length + 1; // 6
+            const cols = s2.length + 1; // 4
+            const size = 50;
+            const startX = 250;
+            const startY = 80;
+            
+            // Draw Grid Structure
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for(let i=0; i<rows; i++) {
+                for(let j=0; j<cols; j++) {
+                    const x = startX + j*size;
+                    const y = startY + i*size;
+                    
+                    ctx.strokeStyle = colors.gridLine;
+                    ctx.lineWidth = 1;
+                    
+                    // Highlight logic
+                    let isTarget = (i === curRow && j === curCol);
+                    let isRowHighlight = (i === curRow && f > 60 && f < 180);
+                    let isColHighlight = (j === curCol && f > 120 && f < 240);
+                    
+                    if (isTarget && f > 220) {
+                        ctx.fillStyle = colors.highlight + '33';
+                        ctx.fillRect(x,y,size,size);
+                        ctx.strokeStyle = colors.highlight;
+                        ctx.lineWidth = 3;
+                    } else if (isRowHighlight || isColHighlight) {
+                         ctx.fillStyle = colors.text + '11';
+                         ctx.fillRect(x,y,size,size);
+                    }
+
+                    ctx.strokeRect(x,y,size,size);
+                }
+            }
+
+            // Draw Labels (Indices & Chars)
+            ctx.font = 'bold 16px "JetBrains Mono"';
+            ctx.fillStyle = colors.text;
+
+            // Column Labels
+            for(let j=0; j<cols; j++) {
+                const char = j < s2.length ? s2[j] : '""';
+                let color = colors.text;
+                let scale = 1;
+                
+                if (j === curCol && f > 120 && f < 240) {
+                    color = colors.match;
+                    scale = 1.2;
+                }
+
+                ctx.save();
+                ctx.translate(startX + j*size + size/2, startY - 25);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = color;
+                ctx.fillText(j, 0, -15);
+                ctx.font = 'normal 14px "Share Tech Mono"';
+                ctx.fillText(char, 0, 5);
+                ctx.restore();
+            }
+
+            // Row Labels
+            for(let i=0; i<rows; i++) {
+                const char = i < s1.length ? s1[i] : '""';
+                let color = colors.text;
+                let scale = 1;
+                
+                if (i === curRow && f > 60 && f < 180) {
+                    color = colors.match;
+                    scale = 1.2;
+                }
+
+                ctx.save();
+                ctx.translate(startX - 30, startY + i*size + size/2);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = color;
+                ctx.font = 'bold 16px "JetBrains Mono"';
+                ctx.fillText(i, -10, 0); // Index
+                ctx.font = 'normal 14px "Share Tech Mono"';
+                ctx.fillText(char, 15, 0); // Char
+                ctx.restore();
+            }
+            
+            // Explanatory Overlays
+            ctx.textAlign = 'center';
+            
+            // Step 1: Row Suffix
+            if (f > 60 && f < 160) {
+                ctx.fillStyle = colors.match;
+                ctx.font = 'bold 20px "JetBrains Mono"';
+                ctx.fillText(`Row 2 starts at 'c'`, c.width/2, c.height - 80);
+                ctx.font = 'normal 16px "Share Tech Mono"';
+                ctx.fillText(`Represents suffix: "cde"`, c.width/2, c.height - 50);
+                
+                ctx.strokeStyle = colors.match;
+                ctx.beginPath();
+                ctx.moveTo(startX - 60, startY + 2*size);
+                ctx.lineTo(startX - 70, startY + 2*size);
+                ctx.lineTo(startX - 70, startY + 5*size); 
+                ctx.lineTo(startX - 60, startY + 5*size);
+                ctx.stroke();
+            }
+            // Step 2: Col Suffix
+            else if (f > 160 && f < 220) {
+                ctx.fillStyle = colors.match;
+                ctx.font = 'bold 20px "JetBrains Mono"';
+                ctx.fillText(`Col 1 starts at 'c'`, c.width/2, c.height - 80);
+                ctx.font = 'normal 16px "Share Tech Mono"';
+                ctx.fillText(`Represents suffix: "ce"`, c.width/2, c.height - 50);
+                
+                ctx.strokeStyle = colors.match;
+                ctx.beginPath();
+                ctx.moveTo(startX + 1*size, startY - 50);
+                ctx.lineTo(startX + 1*size, startY - 60);
+                ctx.lineTo(startX + 3*size, startY - 60); 
+                ctx.lineTo(startX + 3*size, startY - 50);
+                ctx.stroke();
+            }
+            // Step 3: Intersection
+            else if (f > 220) {
+                ctx.fillStyle = colors.highlight;
+                ctx.font = 'bold 22px "JetBrains Mono"';
+                ctx.fillText(`dp[2][1]`, c.width/2, c.height - 80);
+                ctx.fillStyle = colors.text;
+                ctx.font = 'normal 16px "Share Tech Mono"';
+                ctx.fillText(`= LCS("cde", "ce")`, c.width/2, c.height - 50);
+            }
+        }
+
+        // Phase 4: NEW - The Transitions
+        function drawPhase4(phase) {
+            const ctx = phase.ctx;
+            const c = phase.canvas;
+            const colors = getColors();
+            const f = phase.frame;
+            
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            const size = 60; 
+            const midX = c.width / 2;
+
+            function drawFragment(offsetX, label1, label2, s1, s2, highlightType) {
+                const x = midX + offsetX - size;
+                const y = 100;
+                
+                // Draw 2x2 Grid Fragment
+                ctx.strokeStyle = colors.border;
+                ctx.lineWidth = 1;
+                // Cells (0,0), (0,1), (1,0), (1,1)
+                
+                // Labels
+                ctx.fillStyle = colors.text;
+                ctx.font = 'bold 16px "JetBrains Mono"';
+                ctx.textAlign = 'center';
+                // Row labels
+                ctx.fillText(s1[0], x - 20, y + size/2);
+                ctx.fillText(s1[1], x - 20, y + size + size/2);
+                // Col labels
+                ctx.fillText(s2[0], x + size/2, y - 20);
+                ctx.fillText(s2[1], x + size + size/2, y - 20);
+
+                // Draw Cells
+                ctx.strokeRect(x, y, size, size);
+                ctx.strokeRect(x+size, y, size, size);
+                ctx.strokeRect(x, y+size, size, size);
+                ctx.strokeRect(x+size, y+size, size, size);
+                
+                // Highlight Target Cell (0,0)
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = colors.text;
+                ctx.strokeRect(x, y, size, size);
+
+                // Highlight Logic neighbors
+                if (highlightType === 'match') {
+                    // Highlight Diagonal
+                    ctx.fillStyle = colors.match + '33';
+                    ctx.fillRect(x+size, y+size, size, size);
+                    ctx.strokeStyle = colors.match;
+                    ctx.strokeRect(x+size, y+size, size, size);
+                    
+                    // Arrow
+                    ctx.beginPath();
+                    ctx.moveTo(x+size+20, y+size+20);
+                    ctx.lineTo(x+size/2+10, y+size/2+10);
+                    ctx.stroke();
+
+                } else if (highlightType === 'mismatch') {
+                    // Highlight Right & Down
+                    ctx.fillStyle = colors.highlight + '33';
+                    ctx.fillRect(x+size, y, size, size); // Right
+                    ctx.fillRect(x, y+size, size, size); // Down
+                    
+                    ctx.strokeStyle = colors.highlight;
+                    ctx.strokeRect(x+size, y, size, size);
+                    ctx.strokeRect(x, y+size, size, size);
+                }
+            }
+
+            // Sequence 1: Match Logic (frames 0-150)
+            if (f < 150) {
+                 ctx.fillStyle = colors.match;
+                 ctx.font = 'bold 24px "Share Tech Mono"';
+                 ctx.textAlign = 'center';
+                 ctx.fillText("CASE 1: MATCH", midX, 40);
+                 
+                 drawFragment(0, 'd', 'd', "de", "de", f > 50 ? 'match' : null);
+                 
+                 if (f > 50) {
+                     ctx.fillStyle = colors.text;
+                     ctx.font = '18px "JetBrains Mono"';
+                     ctx.fillText("'d' == 'd' : Found a common character!", midX, 260);
+                     ctx.fillText("1. Include it (+1)", midX, 290);
+                     ctx.fillText("2. Consume BOTH chars → Move Diagonal", midX, 320);
+                 }
+            } 
+            // Sequence 2: Mismatch Logic (frames 150+)
+            else {
+                 ctx.fillStyle = colors.highlight;
+                 ctx.font = 'bold 24px "Share Tech Mono"';
+                 ctx.textAlign = 'center';
+                 ctx.fillText("CASE 2: MISMATCH", midX, 40);
+                 
+                 drawFragment(0, 'a', 'b', "ac", "bd", f > 200 ? 'mismatch' : null);
+                 
+                 if (f > 200) {
+                     ctx.fillStyle = colors.text;
+                     ctx.font = '18px "JetBrains Mono"';
+                     ctx.fillText("'a' != 'b' : Cannot match these.", midX, 260);
+                     ctx.fillText("Must skip one. Which logic wins?", midX, 290);
+                     ctx.font = '16px "Share Tech Mono"';
+                     ctx.fillText("Option A: Skip 'a' (Down) | Option B: Skip 'b' (Right)", midX, 320);
+                     ctx.font = 'bold 18px "JetBrains Mono"';
+                     ctx.fillStyle = colors.highlight;
+                     ctx.fillText("Result = Max(Option A, Option B)", midX, 350);
+                     ctx.font = '14px "Share Tech Mono"';
+                     ctx.fillStyle = colors.text;
+                     ctx.fillText("(We pick the winner to maximize length)", midX, 375);
+                 }
+            }
+        }
+
+        // Phase 5: Filling The Table (Previously Phase 4)
+        function drawPhase5(phase) {
+            const ctx = phase.ctx;
+            const c = phase.canvas;
+            const colors = getColors();
+            const f = phase.frame;
+            
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height); 
+
+            const text1 = "abcde";
+            const text2 = "ace";
+            const m = text1.length;
+            const n = text2.length;
+            
+            // Recompute DP
+            const dp = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+            for (let i = m - 1; i >= 0; i--) {
+                for (let j = n - 1; j >= 0; j--) {
+                    if (text1[i] === text2[j]) dp[i][j] = 1 + dp[i+1][j+1];
+                    else dp[i][j] = Math.max(dp[i+1][j], dp[i][j+1]);
+                }
+            }
+
+            const size = 50;
+            const startX = 200;
+            const startY = 80;
+            
+            // Draw Labels
+            ctx.font = 'bold 18px "JetBrains Mono"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = colors.text;
+
+            // Col Labels
+            for(let j=0; j<n; j++) ctx.fillText(text2[j], startX + j*size + size/2, startY - 20);
+            ctx.fillText('""', startX + n*size + size/2, startY - 20);
+
+            // Row Labels
+            for(let i=0; i<m; i++) ctx.fillText(text1[i], startX - 20, startY + i*size + size/2);
+            ctx.fillText('""', startX - 20, startY + m*size + size/2);
+
+            // Draw Entire Grid Skeleton
+            for(let i = 0; i <= m; i++) {
+                for(let j = 0; j <= n; j++) {
+                    const x = startX + j*size;
+                    const y = startY + i*size;
+                    ctx.strokeStyle = colors.gridLine;
+                    ctx.strokeRect(x, y, size, size);
+                }
+            }
+
+            // --- ANIMATION STEPS ---
+
+            // Step 1: Base Cases (f: 40-100)
+            if (f > 40) {
+                // Draw Zeros for last row and col
+                ctx.fillStyle = '#444'; // Dim background
+                
+                // Last Row
+                for(let j=0; j<=n; j++) {
+                     const x = startX + j*size;
+                     const y = startY + m*size;
+                     if(f < 100) ctx.fillRect(x,y,size,size); // flash
+                     ctx.fillStyle = colors.text;
+                     ctx.fillText("0", x+size/2, y+size/2);
+                     ctx.fillStyle = '#444';
+                }
+                
+                // Last Col
+                for(let i=0; i<=m; i++) {
+                     const x = startX + n*size;
+                     const y = startY + i*size;
+                     if(f < 100 && i!=m) ctx.fillRect(x,y,size,size);
+                     ctx.fillStyle = colors.text;
+                     ctx.fillText("0", x+size/2, y+size/2);
+                     ctx.fillStyle = '#444';
+                }
+                
+                if (f < 100) {
+                    ctx.fillStyle = colors.text;
+                    ctx.font = '16px "Share Tech Mono"';
+                    ctx.fillText("Base Case: Empty string LCS is 0", c.width/2, c.height - 40);
+                }
+            }
+
+            // Step 2: Match Example (f: 100-180) -> Cell (4, 2) 'e' vs 'e'
+            if (f > 100) {
+                 const i=4, j=2;
+                 const x = startX + j*size;
+                 const y = startY + i*size;
+                 
+                 // Show chars match
+                 if (f < 180) {
+                     ctx.fillStyle = colors.match + '44';
+                     ctx.fillRect(x, y, size, size);
+                     
+                     ctx.strokeStyle = colors.match;
+                     ctx.lineWidth = 2;
+                     ctx.beginPath();
+                     ctx.moveTo(x+size/2 + 20, y+size/2 + 20); // from diagonal center
+                     ctx.lineTo(x+size/2, y+size/2);
+                     ctx.stroke();
+                     ctx.lineWidth = 1;
+                     
+                     ctx.fillStyle = colors.match;
+                     ctx.font = '16px "Share Tech Mono"';
+                     ctx.fillText("Match 'e'=='e': 1 + Diagonal(0) = 1", c.width/2, c.height - 40);
+                 }
+                 
+                 ctx.fillStyle = colors.text;
+                 ctx.font = 'bold 18px "JetBrains Mono"';
+                 ctx.fillText(1, x+size/2, y+size/2);
+            }
+
+            // Step 3: Mismatch Example (f: 180-260) -> Cell (4, 1) 'e' vs 'c'
+            if (f > 180) {
+                 const i=4, j=1;
+                 const x = startX + j*size;
+                 const y = startY + i*size;
+                 
+                 if (f < 260) {
+                     ctx.fillStyle = colors.highlight + '33';
+                     ctx.fillRect(x, y, size, size);
+                     
+                     ctx.strokeStyle = colors.highlight;
+                     ctx.lineWidth = 2;
+                     
+                     // Right
+                     ctx.beginPath(); ctx.moveTo(x+size+size/2 - 25, y+size/2); ctx.lineTo(x+size/2, y+size/2); ctx.stroke();
+                     // Down
+                     ctx.beginPath(); ctx.moveTo(x+size/2, y+size+size/2 - 25); ctx.lineTo(x+size/2, y+size/2); ctx.stroke();
+                     
+                     ctx.lineWidth = 1;
+                     
+                     ctx.fillStyle = colors.highlight;
+                     ctx.font = '16px "Share Tech Mono"';
+                     ctx.fillText("Mismatch 'e'!='c': Max(Right, Down) = 1", c.width/2, c.height - 40);
+                 }
+                 
+                 ctx.fillStyle = colors.text;
+                 ctx.font = 'bold 18px "JetBrains Mono"';
+                 ctx.fillText(1, x+size/2, y+size/2);
+            }
+
+            // Step 4: Fast Fill Rest (f: 260+)
+            const cells = [];
+            for(let i = m; i >= 0; i--) {
+                for(let j = n; j >= 0; j--) {
+                    if (i==m || j==n) continue;
+                    if (i==4 && j==2) continue;
+                    if (i==4 && j==1) continue;
+                    cells.push({i, j, val: dp[i][j]});
+                }
+            }
+            
+            cells.forEach((cell, idx) => {
+                const threshold = 260 + idx * 5;
+                if (f > threshold) {
+                    const x = startX + cell.j*size;
+                    const y = startY + cell.i*size;
+                    
+                    if (text1[cell.i] === text2[cell.j]) {
+                         ctx.fillStyle = colors.match + '20';
+                         ctx.fillRect(x,y,size,size);
+                    }
+                    
+                    ctx.fillStyle = colors.text;
+                    ctx.font = 'bold 18px "JetBrains Mono"';
+                    ctx.fillText(cell.val, x+size/2, y+size/2);
+                }
+            });
+        }
+
+        // Shared Animation Engine
+        function animatePhase(phaseIdx) {
+            const phase = phases[phaseIdx];
+            if (!phase.playing) return;
+            
+            switch(phaseIdx) {
+                case 0: drawPhase1(phase); break;
+                case 1: drawPhase2(phase); break;
+                case 2: drawPhase3(phase); break;
+                case 3: drawPhase4(phase); break; // New P4
+                case 4: drawPhase5(phase); break; // Old P4 (now P5)
+            }
+            
+            phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
+            requestAnimationFrame(() => animatePhase(phaseIdx));
+        }
+
+        function togglePhase(phaseNum) {
+            const phase = phases[phaseNum - 1];
+            phase.playing = !phase.playing;
+            const btn = document.getElementById(`play-btn-${phaseNum}`);
+            btn.textContent = phase.playing ? '❚❚' : '▶';
+            if (phase.playing) animatePhase(phaseNum - 1);
+        }
+
+        function restartPhase(phaseNum) {
+            phases[phaseNum - 1].frame = 0;
+        }
+
+        function setSpeed(phaseNum, speed) {
+            phases[phaseNum - 1].speed = speed;
+            const btns = document.querySelectorAll(`#phase${phaseNum}-canvas + .phase-controls button`);
+            btns.forEach(b => b.classList.remove('active'));
+        }
+
+        // Demo Logic
+        function runDemo() {
+            const text1 = document.getElementById('text1-input').value;
+            const text2 = document.getElementById('text2-input').value;
+            
+            const m = text1.length;
+            const n = text2.length;
+            const dp = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
+            
+            for (let i = m - 1; i >= 0; i--) {
+                for (let j = n - 1; j >= 0; j--) {
+                    if (text1[i] === text2[j]) {
+                        dp[i][j] = 1 + dp[i+1][j+1];
+                    } else {
+                        dp[i][j] = Math.max(dp[i+1][j], dp[i][j+1]);
+                    }
+                }
+            }
+            
+            document.getElementById('result-value').textContent = dp[0][0];
+            drawDemoTable(text1, text2, dp);
+        }
+
+        function drawDemoTable(text1, text2, dp) {
+            const canvas = document.getElementById('demo-canvas');
+            const ctx = canvas.getContext('2d');
+            const colors = getColors();
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // BG
+            
+            const m = text1.length;
+            const n = text2.length;
+            // Adaptive Cell Size
+            const maxSize = n > 12 ? 30 : 50; 
+            const size = Math.min(maxSize, 800 / (n + 2)); 
+            const startX = 60;
+            const startY = 60;
+            
+            ctx.font = 'bold 16px "JetBrains Mono"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = colors.text;
+
+            // Labels
+            for (let j = 0; j < n; j++) ctx.fillText(text2[j], startX + j*size + size/2, startY - 15);
+            for (let i = 0; i < m; i++) ctx.fillText(text1[i], startX - 15, startY + i*size + size/2);
+
+            for (let i = 0; i <= m; i++) {
+                for (let j = 0; j <= n; j++) {
+                    const x = startX + j*size;
+                    const y = startY + i*size;
+                    
+                    ctx.strokeStyle = colors.gridLine;
+                    ctx.strokeRect(x, y, size, size);
+                    
+                    if (i < m && j < n && text1[i] === text2[j]) {
+                         ctx.fillStyle = colors.match + '20';
+                         ctx.fillRect(x,y,size,size);
+                    }
+                    
+                    ctx.fillStyle = colors.text;
+                    ctx.fillText(dp[i][j], x+size/2, y+size/2);
+                }
+            }
+        }
+
+        window.addEventListener('load', () => {
+            initPhases();
+            phases.forEach((_, idx) => animatePhase(idx));
+            runDemo();
+        });
+
+        // Theme Observer
+        const observer = new MutationObserver(() => {
+            runDemo(); // Redraw demo
+            // Phases redraw naturally on next frame
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    </script>
+</body>
+</html>

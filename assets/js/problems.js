@@ -3,21 +3,81 @@
  * Shared functionality across all problem pages
  */
 
-// Code copy functionality
+// Enhanced Copy Code Function with Icon Animation
 function copyCode(button) {
     const codeBlock = button.parentElement.querySelector('code');
     const code = codeBlock.innerText;
 
-    navigator.clipboard.writeText(code).then(() => {
-        const originalText = button.innerText;
-        button.innerText = 'COPIED!';
-
+    // UI Update Helper
+    const showSuccess = () => {
+        button.classList.add('copied');
+        // Handle if icon text was read, remove existing [ ]
+        const currentText = button.textContent;
+        // If it starts with [ ], clean it for the "COPIED" state or just keep it simple
+        // The CSS ::before handles the icon, so we just manage the text.
+        
+        button.textContent = 'COPIED!';
+        
         setTimeout(() => {
-            button.innerText = originalText;
+            button.classList.remove('copied');
+            button.textContent = 'COPY'; 
         }, 2000);
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-    });
+    };
+
+    const showError = (err) => {
+        console.error('Copy failed:', err);
+        button.classList.add('copied'); // Use same anim for attention
+        button.textContent = 'FAILED';
+        button.style.borderColor = 'red';
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.textContent = 'COPY';
+            button.style.borderColor = '';
+        }, 2000);
+    };
+
+    // 1. Try Modern Async API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code)
+            .then(showSuccess)
+            .catch((err) => {
+                // If async fails, try fallback
+                fallbackCopy(code, showSuccess, showError);
+            });
+    } else {
+        // 2. Fallback for Mobile/Insecure Contexts
+        fallbackCopy(code, showSuccess, showError);
+    }
+}
+
+/**
+ * Fallback using textarea hack and execCommand
+ */
+function fallbackCopy(text, onSuccess, onError) {
+    try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        // Ensure not visible but part of DOM
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        
+        textArea.focus();
+        textArea.select();
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+            onSuccess();
+        } else {
+            onError('execCommand returned false');
+        }
+    } catch (err) {
+        onError(err);
+    }
 }
 
 // Generate ruler ticks

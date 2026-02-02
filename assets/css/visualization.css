@@ -1,0 +1,263 @@
+/* ===============================================
+   DSA VISUALIZATION & GIF STYLES
+   Global specific styles for Phase Animations (GIFs)
+   and Interactive Demos to ensure consistency.
+   =============================================== */
+
+/* --- Demo Input Styling --- */
+.demo-input {
+    background: #1a1a2e;
+    color: #4fc1ff;
+    border: 2px solid #2A5D9C;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+/* Light Theme Input Override */
+html[data-theme="light"] .demo-input {
+    background: #ffffff;
+    color: #1e3a5f;
+    border: 2px solid #cbd5e1;
+}
+
+.demo-input:focus {
+    outline: none;
+    border-color: #51cf66;
+    box-shadow: 0 0 8px rgba(81, 207, 102, 0.3);
+}
+
+html[data-theme="light"] .demo-input:focus {
+    border-color: #2A5D9C;
+    box-shadow: 0 0 8px rgba(42, 93, 156, 0.2);
+}
+
+/* --- Demo Button --- */
+.demo-btn {
+    background: transparent;
+    border: 2px solid #2A5D9C;
+    color: #2A5D9C;
+    padding: 8px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 12px;
+}
+
+.demo-btn:hover {
+    background: #2A5D9C;
+    color: #fff;
+}
+
+html[data-theme="light"] .demo-btn {
+    border-color: #1e3a5f;
+    color: #1e3a5f;
+}
+
+html[data-theme="light"] .demo-btn:hover {
+    background: #1e3a5f;
+    color: #fff;
+}
+
+/* --- Result Bar --- */
+.demo-result {
+    background: #1a1a2e;
+    border: 2px solid #2A5D9C;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Light Theme Result Override */
+html[data-theme="light"] .demo-result {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+}
+
+.result-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    color: #51cf66;
+    font-weight: bold;
+}
+
+html[data-theme="light"] .result-value {
+     color: #1e40af; /* Dark blue for result value in light mode */
+}
+
+.demo-canvas {
+    background: #1a1a2e; /* Dark background for dark mode */
+    display: block;
+    width: 100%;
+    max-width: 900px;
+}
+
+html[data-theme="light"] .demo-canvas {
+    background: #f8fafc; /* Light gray for light mode */
+}
+
+/* --- Phase Sections (The "GIFs") --- */
+.phase-section {
+    margin: 50px 0;
+    background: rgba(42, 93, 156, 0.03);
+    border: 1px solid rgba(42, 93, 156, 0.1);
+    padding: 20px;
+    padding-bottom: 0;
+}
+
+.phase-title {
+    font-family: var(--font-mono-sys);
+    font-size: 14px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.phase-description {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.phase-canvas-wrapper {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(42, 93, 156, 0.2);
+}
+
+.phase-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--bg-body);
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px),
+        repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px);
+    border-bottom: 1px solid rgba(42, 93, 156, 0.2);
+}
+
+/* --- Phase Controls (Floating) --- */
+.phase-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(26, 26, 46, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(42, 93, 156, 0.3);
+    border-radius: 50px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.phase-canvas-wrapper:hover .phase-controls {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* Mobile: Always show controls */
+@media (hover: none) {
+    .phase-controls {
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0) !important;
+        pointer-events: auto !important;
+    }
+}
+
+/* Light Theme Override */
+html[data-theme="light"] .phase-controls {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Control Buttons */
+.phase-controls button {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 10px;
+    font-family: var(--font-mono-sys);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 32px;
+    border-radius: 12px;
+}
+
+html[data-theme="light"] .phase-controls button {
+     border-color: #2A5D9C;
+     color: #2A5D9C;
+}
+
+.phase-controls button:hover {
+    background: var(--accent);
+    color: var(--bg-body);
+    transform: scale(1.05);
+}
+
+html[data-theme="light"] .phase-controls button:hover {
+    background: #2A5D9C;
+    color: #fff;
+}
+
+.phase-controls button.active {
+    background: rgba(42, 93, 156, 0.3);
+    font-weight: bold;
+}
+
+html[data-theme="light"] .phase-controls button.active {
+    background: rgba(42, 93, 156, 0.1);
+}
+
+/* --- Responsive Helpers --- */
+@media (max-width: 600px) {
+    .phase-canvas {
+        height: 250px; /* Compact height on mobile */
+    }
+    .demo-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .demo-input {
+        width: 100%;
+        margin: 0 !important;
+    }
+    .demo-label {
+        margin: 0 !important;
+    }
+    .demo-btn {
+        width: 100%;
+        margin: 0 !important;
+    }
+}

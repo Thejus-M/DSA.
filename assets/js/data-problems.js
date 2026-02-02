@@ -30,5 +30,13 @@ const problems = [
     difficulty: "easy",
     tags: ["dynamic-programming", "math", "fibonacci"],
     summary: "Calculate the number of distinct ways to climb to the top of a staircase with n steps."
+  },
+  {
+    id: 1143,
+    title: "Longest Common Subsequence",
+    slug: "longest-common-subsequence",
+    difficulty: "medium",
+    tags: ["dynamic-programming", "string", "2d-dp"],
+    summary: "Find the length of the longest common subsequence between two strings."
   }
 ];

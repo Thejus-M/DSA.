@@ -52,6 +52,12 @@ const DSA_DATA = {
                     url: "problems/climbing-stairs.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
+                },
+                {
+                    title: "Longest Common Subsequence",
+                    url: "problems/longest-common-subsequence.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         }
