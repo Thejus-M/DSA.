@@ -503,8 +503,8 @@ pre,
   .hero-content,
   .section-header,
   .category-title {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
   
   /* Full bleed divider */
@@ -532,9 +532,9 @@ pre,
   /* Keep Solution and Complexity as distinct centered boxes */
   .complexity-card,
   .code-block-wrapper {
-    margin-left: 20px !important;
-    margin-right: 20px !important;
-    width: calc(100% - 40px) !important;
+    margin-left: 12px !important;
+    margin-right: 12px !important;
+    width: calc(100% - 24px) !important;
     border: 1px solid var(--border) !important;
     border-radius: 4px !important;
   }
@@ -546,7 +546,7 @@ pre,
   .complexity-item {
     border-right: none !important;
     border-bottom: 1px solid var(--border);
-    padding: 16px 20px !important;
+    padding: 16px 12px !important;
   }
 
   .complexity-item:last-child {
@@ -554,7 +554,7 @@ pre,
   }
 
   pre {
-    padding: 16px 20px !important;
+    padding: 16px 12px !important;
   }
 
   /* Indent problem list items under category titles */
@@ -576,11 +576,11 @@ pre,
 
   /* Ensure terminal card classes work properly on mobile */
   .terminal-constraints-list {
-    padding-left: 20px !important;
+    padding-left: 12px !important;
   }
 
   .terminal-examples-list {
-    padding-left: 20px !important;
+    padding-left: 12px !important;
   }
 
   .terminal-example-bullet {

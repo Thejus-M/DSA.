@@ -363,7 +363,8 @@ h3 {
     font-size: 14px;
     color: var(--text-sub);
     margin-bottom: 12px;
-    padding-left: 10px;
+    padding: 12px 20px;
+    margin-left: 20px;
     border-left: 2px solid var(--accent);
     line-height: 1.5;
 }
@@ -456,7 +457,7 @@ h3 {
     color: var(--text-sub);
     margin-bottom: 12px;
     display: block;
-    padding: 10px 12px;
+    padding: 10px 100px 10px 20px;
     background: var(--bg-body);
     border-left: 3px solid var(--accent);
     line-height: 1.2;
@@ -978,4 +979,59 @@ pre[class*="language-"] {
     color: var(--text-sub);
     opacity: 0.4;
     letter-spacing: 1px;
+}
+
+/* Page Navigation (Sub-header) */
+.page-nav-scroll {
+    position: sticky;
+    top: 60px; /* Below partial header */
+    z-index: 400;
+    background: var(--bg-body);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center; /* CENTER ALIGNMENT FIX */
+    align-items: center;
+    gap: 32px; /* Space between items */
+    padding: 0 20px;
+    height: 48px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(8px);
+    width: 100%;
+}
+
+.page-nav-item {
+    font-family: var(--font-mono-sys);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-sub);
+    text-decoration: none;
+    padding: 14px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.page-nav-item:hover {
+    color: var(--accent);
+}
+
+.page-nav-item.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* Hide on Mobile if needed, or make scrollable */
+@media (max-width: 768px) {
+    .page-nav-scroll {
+        justify-content: flex-start; /* Revert to scroll on mobile */
+        overflow-x: auto;
+        padding: 0 16px;
+        gap: 24px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .page-nav-scroll::-webkit-scrollbar {
+        display: none;
+    }
 }
