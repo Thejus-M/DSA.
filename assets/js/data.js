@@ -10,13 +10,13 @@ const DSA_DATA = {
             problems: [
                 {
                     title: "Find Minimum in Rotated Sorted Array",
-                    url: "problems/find-minimum-in-rotated-sorted-array.html",
+                    url: "problems/arrays/find-minimum-in-rotated-sorted-array.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium" // For future styling if needed
                 },
                 {
                     title: "Search in Rotated Sorted Array",
-                    url: "problems/search-in-rotated-sorted-array.html",
+                    url: "problems/arrays/search-in-rotated-sorted-array.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
                 }
@@ -27,7 +27,7 @@ const DSA_DATA = {
             problems: [
                 {
                     title: "Time-Based Key-Value Store",
-                    url: "problems/time-based-key-value-store.html",
+                    url: "problems/hashmaps/time-based-key-value-store.html",
                     difficulty: "HARD",
                     difficultyClass: "hard"
                 }
@@ -38,7 +38,7 @@ const DSA_DATA = {
             problems: [
                 {
                     title: "Balanced Binary Tree",
-                    url: "problems/balanced-binary-tree.html",
+                    url: "problems/trees/balanced-binary-tree.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
                 }
@@ -49,13 +49,13 @@ const DSA_DATA = {
             problems: [
                 {
                     title: "Climbing Stairs",
-                    url: "problems/climbing-stairs.html",
+                    url: "problems/dynamic-programming/climbing-stairs.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
                 },
                 {
                     title: "Longest Common Subsequence",
-                    url: "problems/longest-common-subsequence.html",
+                    url: "problems/dynamic-programming/longest-common-subsequence.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
                 }
@@ -66,7 +66,7 @@ const DSA_DATA = {
             problems: [
                 {
                     title: "Rotate Image",
-                    url: "problems/rotate-image.html",
+                    url: "problems/math-geometry/rotate-image.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
                 }

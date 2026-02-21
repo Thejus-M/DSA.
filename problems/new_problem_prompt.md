@@ -37,11 +37,11 @@ Create a new DSA problem page with the following specifications:
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script src="../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="../assets/css/variables.css" />
-    <link rel="stylesheet" href="../assets/css/problems.css" />
-    <link rel="stylesheet" href="../assets/css/responsive.css" />
-    <link rel="stylesheet" href="../assets/css/visualization.css" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/problems.css" />
+    <link rel="stylesheet" href="../../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../../assets/css/visualization.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>[Problem Name] | DSA</title>
@@ -151,10 +151,10 @@ Create a new DSA problem page with the following specifications:
   </head>
   <body>
     <!-- Content here -->
-    <script src="../assets/js/copy-code.js"></script>
-    <script src="../assets/js/problems.js"></script>
-    <script src="../assets/js/data.js"></script>
-    <script src="../assets/js/layout.js"></script>
+    <script src="../../assets/js/copy-code.js"></script>
+    <script src="../../assets/js/problems.js"></script>
+    <script src="../../assets/js/data.js"></script>
+    <script src="../../assets/js/layout.js"></script>
 
     <!-- Problem-specific JavaScript inline -->
     <script>

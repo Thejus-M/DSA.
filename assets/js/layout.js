@@ -16,7 +16,16 @@ class LayoutManager {
         // We can detect this by checking if 'problems' is in the URL, or simply checking if we are on index.
         const path = window.location.pathname;
         this.isProblemPage = path.includes('/problems/');
-        this.rootPath = this.isProblemPage ? '../' : './';
+        
+        // Robust rootPath detection based on depth from 'problems'
+        if (this.isProblemPage) {
+            const problemsIndex = path.indexOf('/problems/');
+            const subPath = path.substring(problemsIndex + '/problems/'.length);
+            const depth = subPath.split('/').filter(p => p).length;
+            this.rootPath = '../'.repeat(depth);
+        } else {
+            this.rootPath = './';
+        }
     }
 
     renderHeader() {
