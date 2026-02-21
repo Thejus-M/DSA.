@@ -582,15 +582,6 @@ function updateDemoUI() {
         <p class="viz-desc">Bottom-up matrix filling.</p>
       </div>
     </div>
-
-    <!-- Result / Conclusion Bar -->
-    <div
-      class="demo-result"
-      style="margin-top: 25px; justify-content: center; border-style: dashed; opacity: 0.9;"
-    >
-      <span class="result-label">FINAL RESULT:</span>
-      <span class="result-value" id="result-value">0</span>
-    </div>
   </div>
 </section>
 ```
@@ -617,15 +608,15 @@ function getTheme() {
 function getColors() {
   const isDark = getTheme() === "dark";
   return {
-    bg: isDark ? "#1a1a2e" : "#E2DFD6", // --bg-body
+    bg: isDark ? "#1a1a2e" : "var(--bg-body)", // paper-like tone
     text: isDark ? "#4fc1ff" : "#1e3a5f",
-    accent: isDark ? "#51cf66" : "#2A5D9C",
-    border: isDark ? "#2A5D9C" : "#CFCBC2", // --border
+    accent: isDark ? "#51cf66" : "var(--accent)",
+    border: isDark ? "#2A5D9C" : "var(--border)",
     highlight: isDark ? "#ff6b6b" : "#ef4444",
     match: isDark ? "#51cf66" : "#10b981",
     dim: isDark ? "#666" : "#94a3b8",
-    gridLine: isDark ? "#2a5d9c" : "#D4D1C9", // --grid-line
-    cellBg: isDark ? "#1e1e36" : "#EBE8DF", // NEVER use #ffffff — use paper-like tone
+    gridLine: isDark ? "#2a5d9c" : "var(--grid-line)",
+    cellBg: isDark ? "#1e1e36" : "var(--bg-card-elevated)", // interactive surfaces
   };
 }
 
@@ -662,8 +653,9 @@ function initPhases() {
 
 // 5. Control functions (EXACT signatures — do not rename)
 function togglePhase(n) {
-  phases[n].playing = !phases[n].playing;
-  document.getElementById(`play-btn-${n}`).textContent = phases[n].playing
+  const phase = phases[n];
+  phase.playing = !phase.playing;
+  document.getElementById(`play-btn-${n}`).textContent = phase.playing
     ? "❚❚"
     : "▶";
 
@@ -672,24 +664,39 @@ function togglePhase(n) {
   if (canvasEl) {
     const controls = canvasEl.nextElementSibling;
     if (controls && controls.classList.contains("phase-controls")) {
-      controls.classList.toggle("is-paused", !phases[n].playing);
+      controls.classList.toggle("is-paused", !phase.playing);
     }
   }
-  if (phases[n].playing) animatePhase(n);
+  updateNavState(n);
+  if (phase.playing) animatePhase(n);
 }
 function restartPhase(n) {
   phases[n].frame = 0;
-  // Removed forced playing/unpausing to match LCS, just resets playhead
+  updateNavState(n);
 }
 function setSpeed(n, speed) {
   phases[n].speed = speed;
+  const canvasEl = document.getElementById(`phase${n}-canvas`);
+  if (!canvasEl) return;
+  const controls = canvasEl.nextElementSibling;
+  if (controls && controls.classList.contains("phase-controls")) {
+    const btns = controls.querySelectorAll("button");
+    btns.forEach((b) => {
+      if (b.textContent.includes("x")) {
+        b.classList.remove("active");
+        if (b.textContent.trim() === `${speed}x`) {
+          b.classList.add("active");
+        }
+      }
+    });
+  }
 }
 function stepPhase(n, dir) {
   phases[n].playing = false;
   document.getElementById(`play-btn-${n}`).textContent = "▶";
   phases[n].frame = Math.max(
     0,
-    Math.min(phases[n].maxFrames, phases[n].frame + dir * 10),
+    Math.min(phases[n].maxFrames, phases[n].frame + dir * 20),
   );
   // Ensure is-paused is set when stepping
   const canvasEl = document.getElementById(`phase${n}-canvas`);
@@ -698,6 +705,31 @@ function stepPhase(n, dir) {
     if (controls && controls.classList.contains("phase-controls")) {
       controls.classList.add("is-paused");
     }
+  }
+  updateNavState(n);
+}
+
+function updateNavState(n) {
+  const phase = phases[n];
+  const canvasEl = document.getElementById(`phase${n}-canvas`);
+  if (!canvasEl) return;
+
+  // Manage wrapper state for visual feedback (START/FINISHED badges + blur)
+  const wrapper = canvasEl.parentElement;
+  if (wrapper && wrapper.classList.contains("phase-canvas-wrapper")) {
+    if (phase.frame <= 0) wrapper.classList.add("at-start");
+    else wrapper.classList.remove("at-start");
+
+    if (phase.frame >= phase.maxFrames) wrapper.classList.add("at-end");
+    else wrapper.classList.remove("at-end");
+  }
+
+  const controls = canvasEl.nextElementSibling;
+  if (controls) {
+    const prevBtn = controls.querySelector('button[onclick*="-1"]');
+    const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+    if (prevBtn) prevBtn.disabled = phase.frame <= 0;
+    if (nextBtn) nextBtn.disabled = phase.frame >= phase.maxFrames;
   }
 }
 
@@ -709,7 +741,8 @@ function drawAll() {
     if (phase.playing) {
       phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
     }
-    // Call the appropriate draw function per phase, e.g. drawPhase0(phase), drawPhase1(phase), etc.
+    // CUSTOM_DRAW_FUNCTION(phase);
+    updateNavState(n);
   });
   requestAnimationFrame(drawAll);
 }
@@ -796,9 +829,10 @@ See `longest-common-subsequence.html` and `rotate-image.html` for complete examp
 - Inline CSS and JavaScript (problem-specific styles + comparison-grid)
 - Multi-phase animated intuition walkthroughs (4+ phases)
 - Looping, pausable, steppable animations with speed controls
-- Interactive visualization section with triple comparison grid
-- Sticky controls bar with step counter
-- Full theme support (dark/light)
+- Interactive visualization section with side-by-side comparison grid
+- Dynamic N sizing and physics-based flying cell animations
+- Red/Green heat-map highlighting (Displacement vs. Correct Position)
+- Full theme support for paper-like light mode and high-contrast dark mode
 
 ---
 

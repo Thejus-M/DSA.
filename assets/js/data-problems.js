@@ -44,7 +44,7 @@ const problems = [
     title: "Rotate Image",
     slug: "rotate-image",
     difficulty: "medium",
-    tags: ["array", "math", "matrix"],
+    tags: ["math", "geometry", "matrix", "array"],
     summary: "Rotate an n x n 2D matrix representing an image by 90 degrees clockwise in-place."
   }
 ];

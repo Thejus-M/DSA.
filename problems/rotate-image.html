@@ -419,10 +419,6 @@
                     </div>
                 </div>
 
-                <div class="demo-result" style="margin-top: 25px; justify-content: center; border-style: dashed; opacity: 0.9;">
-                    <span class="result-label">MATRIX INTEGRITY:</span>
-                    <span class="result-value" id="result-value">OK</span>
-                </div>
             </div>
         </section>
 
@@ -449,7 +445,7 @@
 
         // Shared color logic
         function getColors() {
-            const isDark = getTheme() === 'dark';
+            const isDark = (typeof getTheme === 'function' ? getTheme() : 'dark') === 'dark';
             return {
                 bg: isDark ? '#1a1a2e' : '#E2DFD6',
                 text: isDark ? '#4fc1ff' : '#1e3a5f',
@@ -464,10 +460,10 @@
         }
 
         const phases = {
-            0: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 },
-            1: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 },
-            2: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 },
-            3: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 }
+            0: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 960 },
+            1: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 380 },
+            2: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 380 },
+            3: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 600 }
         };
 
         function initPhases() {
@@ -491,21 +487,36 @@
                     controls.classList.toggle('is-paused', !phases[n].playing);
                 }
             }
+            updateNavState(n);
         }
         
         function restartPhase(n) {
             phases[n].frame = 0;
-            // Removed forced playing/unpausing to match LCS, just resets playhead
+            updateNavState(n);
         }
         
         function setSpeed(n, speed) {
             phases[n].speed = speed;
+            const canvasEl = document.getElementById(`phase${n}-canvas`);
+            if (!canvasEl) return;
+            const controls = canvasEl.nextElementSibling;
+            if (controls && controls.classList.contains('phase-controls')) {
+                const btns = controls.querySelectorAll('button');
+                btns.forEach(b => {
+                    if (b.textContent.includes('x')) {
+                        b.classList.remove('active');
+                        if (b.textContent.trim() === `${speed}x`) {
+                            b.classList.add('active');
+                        }
+                    }
+                });
+            }
         }
         
         function stepPhase(n, dir) {
             phases[n].playing = false;
             document.getElementById(`play-btn-${n}`).textContent = '▶';
-            phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + (dir * 10)));
+            phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + (dir * 20)));
             // Ensure is-paused is set when stepping
             const canvasEl = document.getElementById(`phase${n}-canvas`);
             if (canvasEl) {
@@ -514,168 +525,314 @@
                     controls.classList.add('is-paused');
                 }
             }
+            updateNavState(n);
+        }
+        function updateNavState(n) {
+            const phase = phases[n];
+            const canvasEl = document.getElementById(`phase${n}-canvas`);
+            if (!canvasEl) return;
+            
+            // Manage wrapper state for visual feedback (START/FINISHED badges + blur)
+            const wrapper = canvasEl.parentElement;
+            if (wrapper && wrapper.classList.contains('phase-canvas-wrapper')) {
+                if (phase.frame <= 0) wrapper.classList.add('at-start');
+                else wrapper.classList.remove('at-start');
+                
+                if (phase.frame >= phase.maxFrames) wrapper.classList.add('at-end');
+                else wrapper.classList.remove('at-end');
+            }
+
+            const controls = canvasEl.nextElementSibling;
+            if (controls) {
+                const prevBtn = controls.querySelector('button[onclick*="-1"]');
+                const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+                if (prevBtn) prevBtn.disabled = (phase.frame <= 0);
+                if (nextBtn) nextBtn.disabled = (phase.frame >= phase.maxFrames);
+            }
         }
 
-        // Handle speed control active state
-        document.querySelectorAll('.speed-controls').forEach(group => {
-            const btns = group.querySelectorAll('button');
-            btns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    btns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                });
-            });
-        });
+        let demoStep = 0;
+        let demoMaxSteps = 9;
+        let demoProgress = 1;
+        let demoN = 3;
+        let demoSwaps = [];
+        let demoGroups = [];
+
+        function updateDemoNav() {
+            const prevBtn = document.getElementById('prev-step-btn');
+            const nextBtn = document.getElementById('next-step-btn');
+            const counter = document.getElementById('step-counter');
+            if (prevBtn) prevBtn.disabled = (demoStep <= 0);
+            if (nextBtn) nextBtn.disabled = (demoStep >= demoMaxSteps);
+            if (counter) counter.textContent = `STEP: ${demoStep}`;
+        }
 
         function initDemo() {
-            console.log("Demo initialized");
+            const input = document.getElementById('demo-size');
+            demoN = parseInt(input.value) || 3;
+            demoStep = 0;
+            demoProgress = 1;
+            demoMaxSteps = demoN * demoN;
+            
+            // Generate metadata for comparison
+            demoSwaps = [];
+            for (let i = 0; i < demoN; i++) {
+                for (let j = i + 1; j < demoN; j++) {
+                    demoSwaps.push([i, j]);
+                }
+            }
+            demoGroups = [];
+            for (let i = 0; i < Math.floor(demoN / 2); i++) {
+                for (let j = i; j < demoN - 1 - i; j++) {
+                    demoGroups.push([[i, j], [j, demoN - 1 - i], [demoN - 1 - i, demoN - 1 - j], [demoN - 1 - j, i]]);
+                }
+            }
+            updateDemoNav();
         }
 
         function stepDemo(dir) {
-            console.log("Stepping demo " + dir);
-        }
-
-        // ---- VISUALIZATION LOGIC ----
-
-        function drawMatrix(ctx, width, height, colors, title) {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = colors.bg;
-            ctx.fillRect(0, 0, width, height);
-
-            const n = 3;
-            const cellSize = 50;
-            const spacing = 10;
-            const startX = (width - (n * cellSize + (n-1)*spacing)) / 2;
-            const startY = (height - (n * cellSize + (n-1)*spacing)) / 2;
-
-            for(let i=0; i<n; i++) {
-                for(let j=0; j<n; j++) {
-                    const x = startX + j*(cellSize+spacing);
-                    const y = startY + i*(cellSize+spacing);
-                    
-                    ctx.fillStyle = colors.cellBg;
-                    ctx.fillRect(x, y, cellSize, cellSize);
-                    
-                    ctx.strokeStyle = colors.border;
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(x, y, cellSize, cellSize);
-
-                    ctx.fillStyle = colors.text;
-                    ctx.font = '16px "JetBrains Mono"';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(`${i*n + j + 1}`, x + cellSize/2, y + cellSize/2);
+            if (dir > 0) {
+                if (demoStep < demoMaxSteps) {
+                    demoStep++;
+                    demoProgress = 0;
+                }
+            } else {
+                if (demoStep > 0) {
+                    demoStep--;
+                    demoProgress = 1; // Snap back when going prev
                 }
             }
-            
-            ctx.fillStyle = colors.dim;
-            ctx.font = '12px "Share Tech Mono"';
-            ctx.textAlign = 'center';
-            ctx.fillText(title, width/2, height - 20);
+            updateDemoNav();
         }
 
-        // Phase 0: Show the goal - original -> rotated result
+
+        // Phase 0: Show the goal - original -> rotated result (4x4 and 5x5 sequentially)
         function drawPhase0(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
             const colors = getColors();
-            const f = phase.frame;
+            const f = phase.frame; // maxFrames is 860
             
             ctx.clearRect(0, 0, c.width, c.height);
             ctx.fillStyle = colors.bg;
             ctx.fillRect(0, 0, c.width, c.height);
 
-            const original = [[1,2,3],[4,5,6],[7,8,9]];
-            const rotated  = [[7,4,1],[8,5,2],[9,6,3]];
-            const n = 3;
-            const cellSize = Math.min(50, c.width / 12);
-            const gap = 4;
+            function drawMatrixPair(n, centerX, centerY, scale, localF) {
+                const original = [];
+                const rotated = [];
+                for (let i = 0; i < n; i++) {
+                    original.push([]);
+                    rotated.push([]);
+                    for (let j = 0; j < n; j++) {
+                        original[i].push(i * n + j + 1);
+                        rotated[i].push(0);
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        rotated[j][n - 1 - i] = original[i][j];
+                    }
+                }
 
-            // Draw original on left
-            const leftStartX = c.width * 0.15;
-            const topY = c.height * 0.25;
+                const cellSize = 32 * scale;
+                const gap = 4 * scale;
+                const matrixSpan = n * (cellSize + gap) - gap;
+                const pairGap = 60 * scale; 
+                
+                const leftStartX = centerX - matrixSpan - (pairGap / 2);
+                const rightStartX = centerX + (pairGap / 2);
+                const topY = centerY - (matrixSpan / 2);
 
-            ctx.fillStyle = colors.dim;
-            ctx.font = `${Math.max(10, cellSize * 0.28)}px "Share Tech Mono"`;
-            ctx.textAlign = 'center';
-            ctx.fillText('ORIGINAL', leftStartX + (n * (cellSize + gap)) / 2, topY - 15);
+                ctx.fillStyle = colors.dim;
+                ctx.font = `${16 * scale}px "Share Tech Mono"`;
+                ctx.textAlign = 'center';
+                ctx.fillText(`${n}x${n} MATRIX`, centerX, topY - 40 * scale);
 
-            for (let i = 0; i < n; i++) {
-                for (let j = 0; j < n; j++) {
-                    const x = leftStartX + j * (cellSize + gap);
-                    const y = topY + i * (cellSize + gap);
-                    ctx.fillStyle = colors.cellBg;
-                    ctx.fillRect(x, y, cellSize, cellSize);
-                    ctx.strokeStyle = colors.border;
-                    ctx.lineWidth = 1.5;
-                    ctx.strokeRect(x, y, cellSize, cellSize);
-                    ctx.fillStyle = colors.text;
-                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(original[i][j], x + cellSize / 2, y + cellSize / 2);
+                const framesPerRow = 80;
+                const curFrame = Math.max(0, localF);
+                const activeRow = Math.min(n - 1, Math.floor(curFrame / framesPerRow));
+                
+                let flightProgress = (curFrame % framesPerRow) / (framesPerRow * 0.7);
+                flightProgress = Math.min(1, Math.max(0, flightProgress));
+                
+                const easeFlight = flightProgress < 0.5 
+                    ? 4 * flightProgress * flightProgress * flightProgress 
+                    : 1 - Math.pow(-2 * flightProgress + 2, 3) / 2;
+
+                const isPausedEnd = curFrame >= n * framesPerRow;
+
+                // Draw Original (Base Grid)
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const x = leftStartX + j * (cellSize + gap);
+                        const y = topY + i * (cellSize + gap);
+                        
+                        let isGone = isPausedEnd || i < activeRow || (i === activeRow && flightProgress > 0);
+                        let isHighlight = (i === activeRow && !isPausedEnd && flightProgress === 0 && localF >= 0);
+
+                        if (isGone) {
+                            ctx.fillStyle = colors.cellBg;
+                            ctx.globalAlpha = 0.2;
+                            ctx.fillRect(x, y, cellSize, cellSize);
+                            ctx.strokeStyle = colors.border;
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(x, y, cellSize, cellSize);
+                            ctx.globalAlpha = 1;
+                        } else {
+                            ctx.fillStyle = isHighlight ? colors.accent + '33' : colors.cellBg;
+                            ctx.fillRect(x, y, cellSize, cellSize);
+                            
+                            ctx.strokeStyle = isHighlight ? colors.accent : colors.border;
+                            ctx.lineWidth = isHighlight ? 2 : 1.5;
+                            ctx.strokeRect(x, y, cellSize, cellSize);
+                            
+                            ctx.fillStyle = isHighlight ? colors.accent : colors.text;
+                            ctx.font = `${isHighlight ? 'bold' : ''} ${15 * scale}px "JetBrains Mono"`;
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(original[i][j], x + cellSize / 2, y + cellSize / 2);
+                        }
+                    }
+                }
+
+                // Arrow
+                const arrowY = centerY;
+                ctx.strokeStyle = colors.accent;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX - 12 * scale, arrowY);
+                ctx.lineTo(centerX + 12 * scale, arrowY);
+                ctx.lineTo(centerX + 6 * scale, arrowY - 8 * scale);
+                ctx.moveTo(centerX + 12 * scale, arrowY);
+                ctx.lineTo(centerX + 6 * scale, arrowY + 8 * scale);
+                ctx.stroke();
+
+                // Draw Rotated (Base Grid)
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const x = rightStartX + j * (cellSize + gap);
+                        const y = topY + i * (cellSize + gap);
+                        
+                        const origRow = n - 1 - j;
+                        let hasArrived = isPausedEnd || origRow < activeRow || ((origRow === activeRow) && flightProgress >= 1);
+                        let isHighlight = (!isPausedEnd && origRow === activeRow && flightProgress >= 1 && localF >= 0);
+
+                        if (hasArrived) {
+                            ctx.fillStyle = isHighlight ? colors.accent + '33' : colors.cellBg;
+                            ctx.fillRect(x, y, cellSize, cellSize);
+                            
+                            ctx.strokeStyle = isHighlight ? colors.accent : colors.border;
+                            ctx.lineWidth = isHighlight ? 2 : 1.5;
+                            ctx.strokeRect(x, y, cellSize, cellSize);
+                            
+                            ctx.fillStyle = isHighlight ? colors.accent : colors.text;
+                            ctx.font = `${isHighlight ? 'bold' : ''} ${15 * scale}px "JetBrains Mono"`;
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(rotated[i][j], x + cellSize / 2, y + cellSize / 2);
+                        } else {
+                            ctx.fillStyle = colors.cellBg;
+                            ctx.globalAlpha = 0.2;
+                            ctx.fillRect(x, y, cellSize, cellSize);
+                            ctx.strokeStyle = colors.border;
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(x, y, cellSize, cellSize);
+                            ctx.globalAlpha = 1;
+                        }
+                    }
+                }
+
+                // Draw Flying Cells
+                if (!isPausedEnd && flightProgress > 0 && flightProgress < 1 && localF >= 0) {
+                    for (let j = 0; j < n; j++) {
+                        const startX = leftStartX + j * (cellSize + gap);
+                        const startY = topY + activeRow * (cellSize + gap);
+                        
+                        // rotated[i][j] where i=j, j=n-1-activeRow
+                        const endI = j;
+                        const endJ = n - 1 - activeRow;
+                        const endX = rightStartX + endJ * (cellSize + gap);
+                        const endY = topY + endI * (cellSize + gap);
+                        
+                        const p = easeFlight;
+                        const currX = startX + (endX - startX) * p;
+                        const currY = startY + (endY - startY) * p;
+
+                        // Add flight arc
+                        const arcHeight = 40 * scale;
+                        const arcY = Math.sin(p * Math.PI) * arcHeight;
+                        
+                        const sx = currX;
+                        const sy = currY - arcY;
+
+                        // pop-out scale
+                        const s = 1 + Math.sin(p * Math.PI) * 0.15;
+                        const drawX = sx + cellSize/2 - (cellSize*s)/2;
+                        const drawY = sy + cellSize/2 - (cellSize*s)/2;
+
+                        ctx.save();
+                        ctx.shadowColor = "rgba(0,0,0,0.3)";
+                        ctx.shadowBlur = 12;
+                        ctx.shadowOffsetY = 6;
+
+                        ctx.fillStyle = colors.bg;
+                        ctx.fillRect(drawX, drawY, cellSize*s, cellSize*s);
+                        ctx.fillStyle = colors.accent + '33';
+                        ctx.fillRect(drawX, drawY, cellSize*s, cellSize*s);
+                        
+                        ctx.strokeStyle = colors.accent;
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(drawX, drawY, cellSize*s, cellSize*s);
+
+                        ctx.shadowColor = "transparent";
+                        
+                        ctx.fillStyle = colors.text;
+                        ctx.font = `bold ${15 * scale * s}px "JetBrains Mono"`;
+                        ctx.textBaseline = 'middle';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(original[activeRow][j], drawX + (cellSize*s) / 2, drawY + (cellSize*s) / 2);
+                        ctx.restore();
+                    }
+                }
+
+                // Outlines around rotating row
+                if (!isPausedEnd && localF >= 0) {
+                    if (flightProgress < 1) {
+                        const bx = leftStartX - 4;
+                        const by = topY + activeRow * (cellSize + gap) - 4;
+                        const bw = matrixSpan + 8;
+                        const bh = cellSize + 8;
+                        ctx.strokeStyle = colors.accent;
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([4, 4]);
+                        ctx.strokeRect(bx, by, bw, bh);
+                    }
+                    if (flightProgress > 0) {
+                        const colIdx = n - 1 - activeRow;
+                        const hx = rightStartX + colIdx * (cellSize + gap) - 4;
+                        const hy = topY - 4;
+                        const hw = cellSize + 8;
+                        const hh = matrixSpan + 8;
+                        ctx.strokeStyle = colors.accent;
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([4, 4]);
+                        ctx.strokeRect(hx, hy, hw, hh);
+                    }
+                    ctx.setLineDash([]);
                 }
             }
 
-            // Arrow
-            const arrowX = c.width * 0.5;
-            const arrowY = topY + (n * (cellSize + gap)) / 2;
-            ctx.strokeStyle = colors.accent;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(arrowX - 20, arrowY);
-            ctx.lineTo(arrowX + 20, arrowY);
-            ctx.lineTo(arrowX + 14, arrowY - 6);
-            ctx.moveTo(arrowX + 20, arrowY);
-            ctx.lineTo(arrowX + 14, arrowY + 6);
-            ctx.stroke();
-            ctx.fillStyle = colors.accent;
-            ctx.font = `${Math.max(9, cellSize * 0.22)}px "Share Tech Mono"`;
-            ctx.textAlign = 'center';
-            ctx.fillText('90° CW', arrowX, arrowY - 14);
-
-            // Draw rotated on right
-            const rightStartX = c.width * 0.62;
-
-            ctx.fillStyle = colors.dim;
-            ctx.font = `${Math.max(10, cellSize * 0.28)}px "Share Tech Mono"`;
-            ctx.fillText('ROTATED', rightStartX + (n * (cellSize + gap)) / 2, topY - 15);
-
-            const progress = Math.min(1, f / 60);
-            for (let i = 0; i < n; i++) {
-                for (let j = 0; j < n; j++) {
-                    const delay = (i * n + j) * 0.08;
-                    const cellProgress = Math.max(0, Math.min(1, (progress - delay) / 0.3));
-                    const x = rightStartX + j * (cellSize + gap);
-                    const y = topY + i * (cellSize + gap);
-
-                    if (cellProgress > 0) {
-                        const isHighlighted = f % 120 > 60 && progress >= 1;
-                        ctx.fillStyle = isHighlighted ? 
-                            `rgba(42, 93, 156, ${0.15 + Math.sin(f * 0.05) * 0.1})` : colors.cellBg;
-                        ctx.fillRect(x, y, cellSize, cellSize);
-                        ctx.strokeStyle = cellProgress >= 1 ? colors.match : colors.border;
-                        ctx.lineWidth = 1.5;
-                        ctx.strokeRect(x, y, cellSize, cellSize);
-                        ctx.globalAlpha = cellProgress;
-                        ctx.fillStyle = cellProgress >= 1 ? colors.match : colors.text;
-                        ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(rotated[i][j], x + cellSize / 2, y + cellSize / 2);
-                        ctx.globalAlpha = 1;
-                    } else {
-                        ctx.fillStyle = colors.cellBg;
-                        ctx.fillRect(x, y, cellSize, cellSize);
-                        ctx.strokeStyle = colors.border;
-                        ctx.lineWidth = 1.5;
-                        ctx.strokeRect(x, y, cellSize, cellSize);
-                    }
-                }
+            // 4x4 total: start(60) + anim(320) + end(60) = 440
+            // 5x5 total: start(60) + anim(400) + end(60) = 520
+            // maxFrames = 960
+            if (f < 440) {
+                // localF runs from -60 to 380
+                drawMatrixPair(4, c.width * 0.5, c.height * 0.5, 1.2, f - 60);
+            } else {
+                // localF runs from -60 to 460
+                drawMatrixPair(5, c.width * 0.5, c.height * 0.5, 1.05, f - 440 - 60);
             }
         }
 
-        // Phase 1: Transpose animation
+        // Phase 1: Transpose animation with physical flying cells
         function drawPhase1(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
@@ -689,19 +846,29 @@
             const matrix = [[1,2,3],[4,5,6],[7,8,9]];
             const n = 3;
             const cellSize = Math.min(55, c.width / 10);
-            const gap = 6;
+            const gap = 8;
             const totalW = n * (cellSize + gap) - gap;
             const startX = (c.width - totalW) / 2;
-            const startY = (c.height - totalW) / 2 - 10;
+            const startY = (c.height - totalW) / 2;
             
             // Swap pairs for transpose: (0,1), (0,2), (1,2)
             const swapPairs = [[0,1],[0,2],[1,2]];
-            const swapPhase = Math.floor(f / 80); // which swap we're on
-            const swapProgress = Math.min(1, (f % 80) / 50);
+            const pauseFrames = 40;
+            const animFrames = 60;
+            const totalSwapCycle = animFrames + 20; // 60 anim + 20 hold
             
-            // Current state of matrix
+            // Start slide (0-40)
+            const curF = f - pauseFrames;
+            const swapIdx = Math.floor(curF / totalSwapCycle);
+            const swapLocalF = curF % totalSwapCycle;
+            
+            let progress = Math.min(1, Math.max(0, swapLocalF / animFrames));
+            const ease = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2, 2)/2;
+
+            // Current state of matrix (account for mid-swap hold)
             let current = matrix.map(r => [...r]);
-            for (let s = 0; s < Math.min(swapPhase, swapPairs.length); s++) {
+            const completedSwapsCount = (progress === 1) ? swapIdx + 1 : swapIdx;
+            for (let s = 0; s < Math.min(completedSwapsCount, swapPairs.length); s++) {
                 const [si, sj] = swapPairs[s];
                 const tmp = current[si][sj];
                 current[si][sj] = current[sj][si];
@@ -712,62 +879,124 @@
             ctx.fillStyle = colors.dim;
             ctx.font = `12px "Share Tech Mono"`;
             ctx.textAlign = 'center';
-            if (swapPhase < swapPairs.length) {
-                const [si, sj] = swapPairs[swapPhase];
-                ctx.fillText(`Swapping matrix[${si}][${sj}] ↔ matrix[${sj}][${si}]`, c.width / 2, startY - 20);
+            if (f < pauseFrames) {
+                ctx.fillText(`TRANSPOSE: Flipping across diagonal`, c.width / 2, startY - 25);
+            } else if (swapIdx < swapPairs.length) {
+                const [si, sj] = swapPairs[swapIdx];
+                ctx.fillText(`Swapping matrix[${si}][${sj}] ↔ matrix[${sj}][${si}]`, c.width / 2, startY - 25);
             } else {
                 ctx.fillStyle = colors.match;
-                ctx.fillText('TRANSPOSE COMPLETE ✓', c.width / 2, startY - 20);
+                ctx.fillText('TRANSPOSE COMPLETE ✓', c.width / 2, startY - 25);
             }
+
+            // Diagonal Line
+            ctx.save();
+            ctx.strokeStyle = colors.accent;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.moveTo(startX - 20, startY - 20);
+            ctx.lineTo(startX + totalW + 20, startY + totalW + 20);
+            ctx.stroke();
+            ctx.restore();
             
+            // Determine active pair
+            let activePair = (f >= pauseFrames && swapIdx < swapPairs.length) ? swapPairs[swapIdx] : null;
+            // progress and ease already defined above
+
             for (let i = 0; i < n; i++) {
                 for (let j = 0; j < n; j++) {
                     const x = startX + j * (cellSize + gap);
                     const y = startY + i * (cellSize + gap);
                     
-                    let isActive = false;
-                    let isDone = false;
+                    const isDiagonal = i === j;
+                    const isActive = activePair && ((i === activePair[0] && j === activePair[1]) || (i === activePair[1] && j === activePair[0]));
                     
-                    if (swapPhase < swapPairs.length) {
-                        const [si, sj] = swapPairs[swapPhase];
-                        isActive = (i === si && j === sj) || (i === sj && j === si);
+                    // If active, we don't draw the static cell, we handle it in fly loop
+                    if (isActive && progress < 1) {
+                         // Translucent placeholder
+                        ctx.fillStyle = colors.cellBg;
+                        ctx.globalAlpha = 0.1;
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                        ctx.globalAlpha = 1;
+                        continue;
                     }
-                    
-                    // Check if this cell was part of a completed swap
-                    for (let s = 0; s < Math.min(swapPhase, swapPairs.length); s++) {
-                        const [si, sj] = swapPairs[s];
-                        if ((i === si && j === sj) || (i === sj && j === si)) isDone = true;
-                    }
-                    if (i === j) isDone = swapPhase > 0; // diagonal stays
-                    
-                    ctx.fillStyle = isActive ? `rgba(81, 207, 102, 0.2)` : 
-                                   isDone ? `rgba(42, 93, 156, 0.1)` : colors.cellBg;
+
+                    // Static cell drawing
+                    const initialVal = i * n + j + 1;
+                    const correctVal = (n - 1 - j) * n + i + 1;
+                    const val = current[i][j];
+                    const isCorrect = val === correctVal;
+                    const isMoved = val !== initialVal;
+
+                    ctx.fillStyle = colors.cellBg;
                     ctx.fillRect(x, y, cellSize, cellSize);
-                    
-                    ctx.strokeStyle = isActive ? colors.highlight : isDone ? colors.match : colors.border;
-                    ctx.lineWidth = isActive ? 2.5 : 1.5;
+                    ctx.strokeStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : (isDiagonal ? colors.accent : colors.border));
+                    ctx.lineWidth = (isCorrect || isMoved) ? 2 : 1.5;
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
-                    ctx.fillStyle = isActive ? colors.highlight : isDone ? colors.match : colors.text;
-                    ctx.font = `bold ${Math.max(13, cellSize * 0.35)}px "JetBrains Mono"`;
+                    ctx.fillStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : colors.text);
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(current[i][j], x + cellSize / 2, y + cellSize / 2);
+                    ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
                 }
             }
-            
-            // Draw diagonal line
-            ctx.strokeStyle = colors.accent;
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(startX + totalW, startY + totalW);
-            ctx.stroke();
-            ctx.setLineDash([]);
+
+            // FLY LOOP for transpose
+            if (activePair && progress < 1) {
+                const r1 = activePair[0];
+                const c1 = activePair[1];
+
+                // The cells being swapped are (r1, c1) and (c1, r1)
+                // Start coordinates for cell at (r1, c1)
+                const p1_start_x = startX + c1 * (cellSize + gap);
+                const p1_start_y = startY + r1 * (cellSize + gap);
+                
+                // Start coordinates for cell at (c1, r1)
+                const p2_start_x = startX + r1 * (cellSize + gap);
+                const p2_start_y = startY + c1 * (cellSize + gap);
+
+                function drawFlying(sx, sy, ex, ey, val, dir) {
+                    const px = sx + (ex - sx) * ease;
+                    const py = sy + (ey - sy) * ease;
+                    const arc = Math.sin(progress * Math.PI) * 40 * dir;
+                    
+                    ctx.save();
+                    ctx.shadowColor = "rgba(0,0,0,0.3)";
+                    ctx.shadowBlur = 15;
+                    ctx.shadowOffsetY = 8;
+                    
+                    const s = 1 + Math.sin(progress * Math.PI) * 0.15;
+                    ctx.translate(px + cellSize/2, py + cellSize/2);
+                    ctx.scale(s, s);
+                    
+                    ctx.fillStyle = colors.bg;
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.fillStyle = colors.accent + '33';
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.strokeStyle = colors.accent;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    
+                    ctx.shadowColor = "transparent";
+                    ctx.fillStyle = colors.text;
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(val, 0, 0);
+                    ctx.restore();
+                }
+
+                // Value at (r1, c1) moves to (c1, r1)
+                drawFlying(p1_start_x, p1_start_y, p2_start_x, p2_start_y, current[r1][c1], 1);
+                // Value at (c1, r1) moves to (r1, c1)
+                drawFlying(p2_start_x, p2_start_y, p1_start_x, p1_start_y, current[c1][r1], -1);
+            }
         }
 
-        // Phase 2: Reverse each row animation
+        // Phase 2: Reverse each row with physical flying cells
         function drawPhase2(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
@@ -778,59 +1007,128 @@
             ctx.fillStyle = colors.bg;
             ctx.fillRect(0, 0, c.width, c.height);
             
-            // After transpose
             const transposed = [[1,4,7],[2,5,8],[3,6,9]];
-            const n = 3;
+            const n = transposed[0].length; // 3
             const cellSize = Math.min(55, c.width / 10);
-            const gap = 6;
+            const gap = 8;
             const totalW = n * (cellSize + gap) - gap;
             const startX = (c.width - totalW) / 2;
-            const startY = (c.height - totalW) / 2 - 10;
-            
-            const rowPhase = Math.floor(f / 80);
-            const rowProgress = Math.min(1, (f % 80) / 50);
-            
-            let current = transposed.map(r => [...r]);
-            for (let r = 0; r < Math.min(rowPhase, n); r++) {
+            const startY = (c.height - totalW) / 2;
+
+            const pauseFrames = 40;
+            const animFrames = 60;
+            const totalRowCycle = animFrames + 20;
+
+            // Start pause (0-40)
+            const curF = f - pauseFrames;
+            const rowIdx = Math.floor(curF / totalRowCycle);
+            const rowLocalF = curF % totalRowCycle;
+
+            let progress = Math.min(1, Math.max(0, rowLocalF / animFrames));
+            const ease = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2, 2)/2;
+
+            let current = [[1,4,7],[2,5,8],[3,6,9]];
+            const completedRowsCount = (progress === 1) ? rowIdx + 1 : rowIdx;
+            for (let r = 0; r < Math.min(completedRowsCount, 3); r++) {
                 current[r].reverse();
             }
-            
+
             ctx.fillStyle = colors.dim;
             ctx.font = `12px "Share Tech Mono"`;
             ctx.textAlign = 'center';
-            if (rowPhase < n) {
-                ctx.fillText(`Reversing Row ${rowPhase}`, c.width / 2, startY - 20);
+            if (f < pauseFrames) {
+                ctx.fillText(`STEP 2: Reverse Each Row`, c.width / 2, startY - 25);
+            } else if (rowIdx < 3) {
+                ctx.fillText(`Reversing Row ${rowIdx}`, c.width / 2, startY - 25);
             } else {
                 ctx.fillStyle = colors.match;
-                ctx.fillText('ROTATION COMPLETE ✓ — Result: [[7,4,1],[8,5,2],[9,6,3]]', c.width / 2, startY - 20);
+                ctx.fillText('ROTATION COMPLETE ✓ — This is the answer!', c.width / 2, startY - 25);
             }
-            
+
             for (let i = 0; i < n; i++) {
                 for (let j = 0; j < n; j++) {
                     const x = startX + j * (cellSize + gap);
                     const y = startY + i * (cellSize + gap);
                     
-                    const isActiveRow = i === rowPhase && rowPhase < n;
-                    const isDoneRow = i < rowPhase;
+                    const isReversingRow = (i === rowIdx && rowIdx < 3);
+                    const isFlyingCell = isReversingRow && (j === 0 || j === 2);
                     
-                    ctx.fillStyle = isActiveRow ? `rgba(255, 107, 107, 0.15)` : 
-                                   isDoneRow ? `rgba(81, 207, 102, 0.1)` : colors.cellBg;
+                    if (isFlyingCell && progress < 1) {
+                        ctx.fillStyle = colors.cellBg;
+                        ctx.globalAlpha = 0.1;
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                        ctx.globalAlpha = 1;
+                        continue;
+                    }
+
+                    const initialVal = i * n + j + 1;
+                    const correctVal = (n - 1 - j) * n + i + 1;
+                    const val = current[i][j];
+                    const isCorrect = val === correctVal;
+                    const isMoved = val !== initialVal;
+
+                    ctx.fillStyle = colors.cellBg;
                     ctx.fillRect(x, y, cellSize, cellSize);
-                    
-                    ctx.strokeStyle = isActiveRow ? colors.highlight : isDoneRow ? colors.match : colors.border;
-                    ctx.lineWidth = isActiveRow ? 2.5 : 1.5;
+                    ctx.strokeStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : colors.border);
+                    ctx.lineWidth = (isCorrect || isMoved) ? 2 : 1.5;
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
-                    ctx.fillStyle = isActiveRow ? colors.highlight : isDoneRow ? colors.match : colors.text;
-                    ctx.font = `bold ${Math.max(13, cellSize * 0.35)}px "JetBrains Mono"`;
+                    ctx.fillStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : colors.text);
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(current[i][j], x + cellSize / 2, y + cellSize / 2);
+                    ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
                 }
+            }
+
+            // FLY LOOP for Reverse
+            if (rowIdx < 3 && progress > 0 && progress < 1) {
+                const r = rowIdx;
+                // Get row data from CURRENT state BEFORE it was reversed
+                // Since 'current' already has the reverse applied for completed rowIdx,
+                // and the current row is mid-swap, we need to know what it WAS.
+                const rowData = [[1,4,7],[2,5,8],[3,6,9]][r];
+                
+                function drawFlyingSwap(cStart, cEnd, val, dir) {
+                    const sx = startX + cStart * (cellSize + gap);
+                    const sy = startY + r * (cellSize + gap);
+                    const ex = startX + cEnd * (cellSize + gap);
+                    const ey = sy;
+                    
+                    const px = sx + (ex - sx) * ease;
+                    const py = sy + Math.sin(progress * Math.PI) * 25 * dir;
+                    
+                    ctx.save();
+                    ctx.shadowColor = "rgba(0,0,0,0.3)";
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetY = 6;
+                    const s = 1 + Math.sin(progress * Math.PI) * 0.1;
+                    ctx.translate(px + cellSize/2, py + cellSize/2);
+                    ctx.scale(s, s);
+                    
+                    ctx.fillStyle = colors.bg;
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.fillStyle = colors.highlight + '33';
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.strokeStyle = colors.highlight;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+
+                    ctx.shadowColor = "transparent";
+                    ctx.fillStyle = colors.text;
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(val, 0, 0);
+                    ctx.restore();
+                }
+
+                drawFlyingSwap(0, 2, rowData[0], 1);
+                drawFlyingSwap(2, 0, rowData[2], -1);
             }
         }
 
-        // Phase 3: 4-way swap animation
+        // Phase 3: 4-way swap animation (5x5 example)
         function drawPhase3(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
@@ -841,26 +1139,47 @@
             ctx.fillStyle = colors.bg;
             ctx.fillRect(0, 0, c.width, c.height);
             
-            const n = 3;
-            const cellSize = Math.min(55, c.width / 10);
-            const gap = 6;
+            const n = 5;
+            const cellSize = Math.min(48, c.width / 12);
+            const gap = 8;
             const totalW = n * (cellSize + gap) - gap;
             const startX = (c.width - totalW) / 2;
-            const startY = (c.height - totalW) / 2 - 10;
+            const startY = (c.height - totalW) / 2;
             
-            // For a 3x3, layer 0: i=0..0, positions (0,0)(0,2)(2,2)(2,0) and (0,1)(1,2)(2,1)(1,0)
-            const swapGroups = [
-                [[0,0],[0,2],[2,2],[2,0]], // corners
-                [[0,1],[1,2],[2,1],[1,0]]  // edges
-            ];
+            // Generate swap groups for 5x5
+            const swapGroups = [];
+            for (let i = 0; i < Math.floor(n / 2); i++) {
+                for (let j = i; j < n - 1 - i; j++) {
+                    swapGroups.push([
+                        [i, j],
+                        [j, n - 1 - i],
+                        [n - 1 - i, n - 1 - j],
+                        [n - 1 - j, i]
+                    ]);
+                }
+            }
+
+            const pauseFrames = 40;
+            const groupAnimFrames = 80;
+            const groupCycle = groupAnimFrames + 10;
             
-            const groupPhase = Math.floor(f / 100);
-            const groupProgress = Math.min(1, (f % 100) / 60);
-            
-            let current = [[1,2,3],[4,5,6],[7,8,9]];
-            
-            // Apply completed swaps
-            for (let g = 0; g < Math.min(groupPhase, swapGroups.length); g++) {
+            const curF = f - pauseFrames;
+            const groupIdx = Math.floor(curF / groupCycle);
+            const groupLocalF = curF % groupCycle;
+            const progress = Math.min(1, Math.max(0, groupLocalF / groupAnimFrames));
+            const ease = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2, 2)/2;
+
+            // Generate initial 5x5 matrix data
+            let matrix = [];
+            for(let i=0; i<n; i++) {
+                matrix[i] = [];
+                for(let j=0; j<n; j++) matrix[i][j] = i * n + j + 1;
+            }
+
+            // Current state of matrix (after completed groups)
+            let current = matrix.map(r => [...r]);
+            const completedGroupsCount = (progress === 1) ? groupIdx + 1 : groupIdx;
+            for (let g = 0; g < Math.min(completedGroupsCount, swapGroups.length); g++) {
                 const grp = swapGroups[g];
                 const tmp = current[grp[0][0]][grp[0][1]];
                 current[grp[0][0]][grp[0][1]] = current[grp[3][0]][grp[3][1]];
@@ -872,22 +1191,22 @@
             ctx.fillStyle = colors.dim;
             ctx.font = `12px "Share Tech Mono"`;
             ctx.textAlign = 'center';
-            if (groupPhase < swapGroups.length) {
-                ctx.fillText(`Layer 0 — 4-Way Swap Group ${groupPhase + 1}`, c.width / 2, startY - 20);
+            if (f < pauseFrames) {
+                ctx.fillText(`4-WAY BUBBLE SWAP (In-Place)`, c.width / 2, startY - 25);
+            } else if (groupIdx < swapGroups.length) {
+                const layer = groupIdx < 4 ? 0 : 1;
+                ctx.fillText(`Layer ${layer} — 4-Way Swap Group ${groupIdx + 1}`, c.width / 2, startY - 25);
             } else {
                 ctx.fillStyle = colors.match;
-                ctx.fillText('4-WAY ROTATION COMPLETE ✓', c.width / 2, startY - 20);
+                ctx.fillText('IN-PLACE ROTATION COMPLETE ✓', c.width / 2, startY - 25);
             }
             
-            // Determine active group
-            const activeGroup = groupPhase < swapGroups.length ? swapGroups[groupPhase] : null;
+            const activeGroup = (f >= pauseFrames && groupIdx < swapGroups.length) ? swapGroups[groupIdx] : null;
             const activeSet = new Set();
-            if (activeGroup) {
-                activeGroup.forEach(([r,cc]) => activeSet.add(`${r},${cc}`));
-            }
-            
+            if (activeGroup) activeGroup.forEach(([r,cc]) => activeSet.add(`${r},${cc}`));
+
             const completedSet = new Set();
-            for (let g = 0; g < Math.min(groupPhase, swapGroups.length); g++) {
+            for (let g = 0; g < Math.min(completedGroupsCount, swapGroups.length); g++) {
                 swapGroups[g].forEach(([r,cc]) => completedSet.add(`${r},${cc}`));
             }
             
@@ -896,63 +1215,286 @@
                     const x = startX + j * (cellSize + gap);
                     const y = startY + i * (cellSize + gap);
                     const key = `${i},${j}`;
+                    
                     const isActive = activeSet.has(key);
-                    const isDone = completedSet.has(key);
+                    if (isActive && progress < 1) {
+                        ctx.fillStyle = colors.cellBg;
+                        ctx.globalAlpha = 0.1;
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                        ctx.globalAlpha = 1;
+                        continue;
+                    }
+
+                    const initialVal = i * n + j + 1;
+                    const correctVal = (n - 1 - j) * n + i + 1;
+                    const val = current[i][j];
+                    const isCorrect = val === correctVal;
+                    const isMoved = val !== initialVal;
+                    const isCenter = (i === 2 && j === 2);
                     
-                    ctx.fillStyle = isActive ? `rgba(255, 165, 0, 0.2)` : 
-                                   isDone ? `rgba(81, 207, 102, 0.1)` : colors.cellBg;
+                    ctx.fillStyle = colors.cellBg;
                     ctx.fillRect(x, y, cellSize, cellSize);
-                    
-                    ctx.strokeStyle = isActive ? '#ffa500' : isDone ? colors.match : colors.border;
-                    ctx.lineWidth = isActive ? 2.5 : 1.5;
+                    ctx.strokeStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : (isCenter ? colors.accent : colors.border));
+                    ctx.lineWidth = (isActive || isCorrect || isMoved) ? 2 : 1.5;
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
-                    ctx.fillStyle = isActive ? '#ffa500' : isDone ? colors.match : colors.text;
-                    ctx.font = `bold ${Math.max(13, cellSize * 0.35)}px "JetBrains Mono"`;
+                    ctx.fillStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : (isCenter ? colors.accent : colors.text));
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(current[i][j], x + cellSize / 2, y + cellSize / 2);
-                    
-                    // Center cell (5) is never moved
-                    if (i === 1 && j === 1 && groupPhase >= swapGroups.length) {
-                        ctx.strokeStyle = colors.match;
-                        ctx.strokeRect(x, y, cellSize, cellSize);
-                    }
+                    ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
                 }
             }
-            
-            // Draw arrows between 4 points if active
-            if (activeGroup && groupProgress > 0.1) {
-                ctx.strokeStyle = `rgba(255, 165, 0, ${groupProgress * 0.8})`;
-                ctx.lineWidth = 2;
-                ctx.setLineDash([3, 3]);
-                for (let k = 0; k < 4; k++) {
-                    const [r1, c1] = activeGroup[k];
-                    const [r2, c2] = activeGroup[(k + 1) % 4];
-                    const x1 = startX + c1 * (cellSize + gap) + cellSize / 2;
-                    const y1 = startY + r1 * (cellSize + gap) + cellSize / 2;
-                    const x2 = startX + c2 * (cellSize + gap) + cellSize / 2;
-                    const y2 = startY + r2 * (cellSize + gap) + cellSize / 2;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
+
+            // FLY LOOP for 4-way swap
+            if (activeGroup && progress < 1) {
+                // In a 4way swap grp:
+                // [0] moves to [1]
+                // [1] moves to [2]
+                // [2] moves to [3]
+                // [3] moves to [0]
+                const grp = activeGroup;
+                const vals = [current[grp[0][0]][grp[0][1]], current[grp[1][0]][grp[1][1]], current[grp[2][0]][grp[2][1]], current[grp[3][0]][grp[3][1]]];
+
+                function drawFlyingOne(fromIdx, toIdx, val, arcDir) {
+                    const [fr, fc] = grp[fromIdx];
+                    const [tr, tc] = grp[toIdx];
+                    
+                    const sx = startX + fc * (cellSize + gap);
+                    const sy = startY + fr * (cellSize + gap);
+                    const ex = startX + tc * (cellSize + gap);
+                    const ey = startY + tr * (cellSize + gap);
+                    
+                    const px = sx + (ex - sx) * ease;
+                    const py = sy + (ey - sy) * ease;
+                    
+                    // Arc perpendicular to movement direction
+                    const dx = ex - sx;
+                    const dy = ey - sy;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const nx = -dy / dist;
+                    const ny = dx / dist;
+                    const jump = Math.sin(progress * Math.PI) * 20 * arcDir;
+                    
+                    ctx.save();
+                    ctx.translate(px + cellSize/2 + nx*jump, py + cellSize/2 + ny*jump);
+                    const s = 1 + Math.sin(progress * Math.PI) * 0.15;
+                    ctx.scale(s, s);
+                    ctx.shadowColor = "rgba(0,0,0,0.3)";
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetY = 6;
+                    
+                    ctx.fillStyle = colors.bg;
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.fillStyle = colors.highlight + '33';
+                    ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    ctx.strokeStyle = colors.highlight;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                    
+                    ctx.shadowColor = "transparent";
+                    ctx.fillStyle = colors.text;
+                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(val, 0, 0);
+                    ctx.restore();
                 }
-                ctx.setLineDash([]);
+
+                // 4 cells moving simultaneously
+                // The values we are moving are the ones currently at grp positions.
+                // grp[3] moves to grp[0]
+                // grp[0] moves to grp[1]
+                // grp[1] moves to grp[2]
+                // grp[2] moves to grp[3]
+                drawFlyingOne(3, 0, current[grp[3][0]][grp[3][1]], 1);
+                drawFlyingOne(0, 1, current[grp[0][0]][grp[0][1]], 1);
+                drawFlyingOne(1, 2, current[grp[1][0]][grp[1][1]], 1);
+                drawFlyingOne(2, 3, current[grp[2][0]][grp[2][1]], 1);
             }
         }
 
         // Drawing for interactive demo canvases
-        function drawDemoCanvas(canvasId, title) {
+        function drawDemoCanvas(canvasId, type) {
             const c = document.getElementById(canvasId);
             if (!c) return;
             const ctx = c.getContext('2d');
             const colors = getColors();
-            drawMatrix(ctx, c.width, c.height, colors, title);
+            const n = demoN;
+            const cellSize = Math.min(n > 3 ? 40 : 50, (c.width - 60) / n);
+            const spacing = 8;
+            const totalW = n * (cellSize + spacing) - spacing;
+            const startX = (c.width - totalW) / 2;
+            const startY = (c.height - totalW) / 2;
+
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            const ease = demoProgress < 0.5 ? 2*demoProgress*demoProgress : 1-Math.pow(-2*demoProgress+2, 2)/2;
+
+            function getBaseMatrix() {
+                let m = [];
+                for(let i=0; i<n; i++) {
+                    m[i] = [];
+                    for(let j=0; j<n; j++) m[i][j] = i*n + j + 1;
+                }
+                return m;
+            }
+
+            let matrix = getBaseMatrix();
+            let activeCells = []; // [{r, c, val, tr, tc}]
+            let doneSet = new Set();
+
+            if (type === 'naive') {
+                let result = getBaseMatrix().map(r => r.map(() => null));
+                const writes = Math.min(demoStep, n*n);
+                for (let k = 0; k < writes; k++) {
+                    const i = Math.floor(k / n);
+                    const j = k % n;
+                    const val = matrix[i][j];
+                    const tr = j;
+                    const tc = n - 1 - i;
+                    if (k < demoStep - 1 || (k === demoStep - 1 && demoProgress === 1)) {
+                        result[tr][tc] = val;
+                        doneSet.add(`${tr},${tc}`);
+                    } else if (k === demoStep - 1) {
+                        activeCells.push({r: i, c: j, val, tr, tc});
+                    }
+                }
+                matrix = result;
+                document.getElementById('stat-naive').textContent = `Writes: ${writes}`;
+            } else if (type === 'trans') {
+                const totalSwaps = demoSwaps.length;
+                const writes = Math.min(demoStep, totalSwaps + n);
+                // Apply completed
+                for (let s = 0; s < Math.min(writes, totalSwaps); s++) {
+                    const [r1, c1] = demoSwaps[s];
+                    if (s < demoStep - 1 || (s === demoStep - 1 && demoProgress === 1)) {
+                        const tmp = matrix[r1][c1];
+                        matrix[r1][c1] = matrix[c1][r1];
+                        matrix[c1][r1] = tmp;
+                        doneSet.add(`${r1},${c1}`); 
+                        doneSet.add(`${c1},${r1}`);
+                    } else {
+                        activeCells.push({r: r1, c: c1, val: matrix[r1][c1], tr: c1, tc: r1});
+                        activeCells.push({r: c1, c: r1, val: matrix[c1][r1], tr: r1, tc: c1});
+                    }
+                }
+                for (let r = 0; r < Math.min(writes - totalSwaps, n); r++) {
+                    const curR = r + totalSwaps;
+                    if (curR < demoStep - 1 || (curR === demoStep - 1 && demoProgress === 1)) {
+                        matrix[r].reverse();
+                        for(let j=0; j<n; j++) doneSet.add(`${r},${j}`);
+                    } else if (curR === demoStep - 1) {
+                        // Full row reversal animation: every cell in row r flies to its mirror position
+                        for (let j = 0; j < n; j++) {
+                            activeCells.push({
+                                r: r, 
+                                c: j, 
+                                val: matrix[r][j], 
+                                tr: r, 
+                                tc: n - 1 - j
+                            });
+                        }
+                    }
+                }
+                document.getElementById('stat-trans').textContent = `Steps: ${writes}/${totalSwaps+n}`;
+            } else if (type === '4way') {
+                const totalG = demoGroups.length;
+                const writes = Math.min(demoStep, totalG);
+                for (let g = 0; g < writes; g++) {
+                    const grp = demoGroups[g];
+                    if (g < demoStep - 1 || (g === demoStep - 1 && demoProgress === 1)) {
+                        const tmp = matrix[grp[0][0]][grp[0][1]];
+                        matrix[grp[0][0]][grp[0][1]] = matrix[grp[3][0]][grp[3][1]];
+                        matrix[grp[3][0]][grp[3][1]] = matrix[grp[2][0]][grp[2][1]];
+                        matrix[grp[2][0]][grp[2][1]] = matrix[grp[1][0]][grp[1][1]];
+                        matrix[grp[1][0]][grp[1][1]] = tmp;
+                        grp.forEach(([r,cc]) => doneSet.add(`${r},${cc}`));
+                    } else {
+                        activeCells.push({r: grp[3][0], c: grp[3][1], val: matrix[grp[3][0]][grp[3][1]], tr: grp[0][0], tc: grp[0][1]});
+                        activeCells.push({r: grp[0][0], c: grp[0][1], val: matrix[grp[0][0]][grp[0][1]], tr: grp[1][0], tc: grp[1][1]});
+                        activeCells.push({r: grp[1][0], c: grp[1][1], val: matrix[grp[1][0]][grp[1][1]], tr: grp[2][0], tc: grp[2][1]});
+                        activeCells.push({r: grp[2][0], c: grp[2][1], val: matrix[grp[2][0]][grp[2][1]], tr: grp[3][0], tc: grp[3][1]});
+                    }
+                }
+                document.getElementById('stat-4way').textContent = `Groups: ${writes}/${totalG}`;
+            }
+
+            // Draw grid
+            for(let i=0; i<n; i++) {
+                for(let j=0; j<n; j++) {
+                    const x = startX + j*(cellSize+spacing);
+                    const y = startY + i*(cellSize+spacing);
+                    
+                    const initialVal = i * n + j + 1;
+                    const correctVal = (n - 1 - j) * n + i + 1;
+                    const val = matrix[i][j];
+
+                    let isCorrect = (val !== null && val === correctVal);
+                    let isMoved = (val !== null && val !== initialVal);
+                    
+                    // Specific case for naive: don't call it 'moved' if it was just written from null to original
+                    // Actually, let's keep it simple: if not correct but exists, it's either original or moved.
+                    // But if it IS original, it shouldn't be red.
+                    if (val === initialVal) isMoved = false;
+
+                    const isActive = activeCells.some(ac => ac.tr === i && ac.tc === j);
+
+                    ctx.fillStyle = isActive ? colors.highlight + '15' : (isCorrect ? colors.match + '22' : (isMoved ? colors.highlight + '15' : colors.cellBg));
+                    ctx.fillRect(x, y, cellSize, cellSize);
+                    ctx.strokeStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : colors.border);
+                    ctx.lineWidth = (isCorrect || isMoved || isActive) ? 2 : 1.5;
+                    ctx.strokeRect(x, y, cellSize, cellSize);
+
+                    if (val !== null) {
+                        ctx.fillStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : colors.text);
+                        ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(val, x + cellSize/2, y + cellSize/2);
+                    }
+                }
+            }
+
+            // Draw flying cells
+            activeCells.forEach(ac => {
+                const sx = startX + ac.c * (cellSize + spacing);
+                const sy = startY + ac.r * (cellSize + spacing);
+                const ex = startX + ac.tc * (cellSize + spacing);
+                const ey = startY + ac.tr * (cellSize + spacing);
+                const px = sx + (ex - sx) * ease;
+                const py = sy + (ey - sy) * ease;
+                const arc = Math.sin(demoProgress * Math.PI) * 20;
+
+                ctx.save();
+                ctx.translate(px + cellSize/2, py + cellSize/2);
+                const s = 1 + Math.sin(demoProgress * Math.PI) * 0.1;
+                ctx.scale(s, s);
+                ctx.shadowColor = "rgba(0,0,0,0.3)";
+                ctx.shadowBlur = 8;
+                
+                ctx.fillStyle = colors.bg;
+                ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                ctx.fillStyle = colors.highlight + '33';
+                ctx.fillRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                ctx.strokeStyle = colors.highlight;
+                ctx.strokeRect(-cellSize/2, -cellSize/2, cellSize, cellSize);
+                
+                ctx.shadowColor = "transparent";
+                ctx.fillStyle = colors.text;
+                ctx.fillText(ac.val, 0, 0);
+                ctx.restore();
+            });
         }
 
         function drawAll() {
             const colors = getColors();
+
+            if (demoProgress < 1) {
+                demoProgress = Math.min(1, demoProgress + 0.03);
+            }
             
             // Draw intuition phases
             [0, 1, 2, 3].forEach(n => {
@@ -963,17 +1505,19 @@
                 }
                 const drawFn = [drawPhase0, drawPhase1, drawPhase2, drawPhase3][n];
                 drawFn(phase);
+                updateNavState(n);
             });
             
             // Draw demo canvases
-            drawDemoCanvas('canvas-naive', 'NAIVE NEW MATRIX');
-            drawDemoCanvas('canvas-trans', 'TRANSPOSE + REVERSE');
-            drawDemoCanvas('canvas-4way', 'IN-PLACE 4 WAY');
+            drawDemoCanvas('canvas-naive', 'naive');
+            drawDemoCanvas('canvas-trans', 'trans');
+            drawDemoCanvas('canvas-4way', '4way');
             
             requestAnimationFrame(drawAll);
         }
 
         initPhases();
+        initDemo();
         requestAnimationFrame(drawAll);
     </script>
 </body>

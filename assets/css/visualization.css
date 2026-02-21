@@ -293,8 +293,9 @@ html[data-theme="light"] .interactive-controls-bar {
     transition: box-shadow 0.3s, border-color 0.3s;
 }
 
+.phase-canvas-wrapper.at-start canvas,
 .phase-canvas-wrapper.at-end canvas {
-    /* Slight blur and dim to indicate completion */
+    /* Slight blur and dim to indicate bounds */
     filter: blur(2px) grayscale(30%);
     opacity: 0.8;
     transition: filter 0.3s, opacity 0.3s;
