@@ -401,6 +401,7 @@ class LayoutManager {
         // Configuration for sections to detect
         const sections = [
             { id: 'section-problem', label: 'Problem', selector: '.terminal-card' },
+            { id: 'section-question', label: 'The Question', selector: 'h2', text: 'Question' },
             { id: 'section-intuition', label: 'Intuition', selector: 'h2', text: 'Intuition' },
             { id: 'section-solution', label: 'Solution', selector: 'h2', text: 'Solution' },
             { id: 'section-complexity', label: 'Complexity', selector: '.complexity-card' },

@@ -5,7 +5,8 @@ Create a new DSA problem page with the following specifications:
 ### **Design Language & Aesthetic**
 
 - **Style**: Cyberpunk/tech-inspired minimalist design with monospace typography
-- **Color Scheme**: Uses CSS variables from `variables.css` - steel blue accents (`--accent`), clean backgrounds, subtle borders
+- **Color Scheme**: Uses CSS variables from `variables.css` - steel blue accents (`--accent`), clean backgrounds, subtle borders.
+  - **Light Mode Aesthetics**: Strict adherence to a "Paper-Like" feel. Avoid pure white (`#FFF`). Use `--bg-body` (#E2DFD6) for large surfaces and `--bg-card-elevated` (#EBE8DF) for interactive elements like buttons, inputs, and player trays.
 - **Typography**:
   - Headers: 'Share Tech Mono' (monospace, uppercase, tech-style)
   - Body: 'EB Garamond' (serif, highly readable)
@@ -151,35 +152,42 @@ _Note: Close divs at end of file._
   </div>
 </div>
 
-### 5. Intuition Section with Animated Walkthrough **[CRITICAL]** >### Animated
-Intuition Section Structure > **The intuition section MUST include 4 animated,
-auto-looping phases that teach the concept step-by-step.** #### Design
-Requirements: - **4 Separate Phases**: Break intuition into Phase 1 (Brute
-Force), Phase 2 (Identify Problem), Phase 3 (Optimization), Phase 4
-(Pattern/Insight) - **Auto-looping GIFs**: Each phase loops independently with
-slow, digestible timing (4-8 seconds per loop) - **YouTube-style controls**:
-Play/Pause and ↻ Restart buttons overlay at bottom, appear on hover - **Tech
-color scheme**: - **Dark Mode**: `#1a1a2e` bg, `#2A5D9C` borders, `#4fc1ff`
-text, `#51cf66` accents - **Light Mode**: `#ffffff` bg, `#2A5D9C` borders,
-`#133e6e` text, `#51cf66` accents - **Implementation**: Use `getThemeColors()`
-helper in JS to switch dynamically - **Monospace fonts**: Share Tech Mono for
-labels, JetBrains Mono for numbers - **Smooth animations**: 60+ frames per phase
-for fluid motion - **Descriptive text**: Each phase has a title and explanation
-paragraph #### Interactive Visualization Requirements: - **Dynamic sizing**:
-Canvas adjusts to fit any valid input (1-20) - **Strict validation**:
-Auto-correct out-of-range inputs, never break or show errors - **Large number
-support**: Format large Fibonacci values (e.g., "1.6k" for 1597) - **Tech
-styling**: Adaptive themes (White/Navy for Light, Dark/Cyan for Dark) -
-**Responsive layout**: Always fits within canvas bounds regardless of input -
-**Real-time feedback**: Updates immediately on button click - **Reactivity**:
-Must update colors on every frame to support instant theme switching ### HTML
-Structure: ```html
-<!-- Intuition with 4 Auto-Looping Phases -->
+### 5. The Question Header & Examples ```html
+<section class="content-section">
+  <h2>The Question</h2>
+  <p style="margin-bottom: 40px;">[Top-level summary of the problem goal]</p>
+
+  <div class="phase-section">
+    <h3 class="phase-title">Example 1: Basic Matching</h3>
+    <p class="phase-description">[Description of Case 1]</p>
+    <div class="phase-canvas-wrapper">
+      <canvas
+        id="phase0a-canvas"
+        class="phase-canvas"
+        width="800"
+        height="400"
+      ></canvas>
+      <div class="phase-controls playing">...</div>
+    </div>
+  </div>
+</section>
+```
+
+<div class="section-divider" aria-hidden="true"></div>
+
+### 6. Intuition Section with Animated Walkthrough **[CRITICAL]** > **The
+intuition section MUST include 4-5 animated, auto-looping phases that teach the
+concept step-by-step.** #### Design Requirements: - **Phase 1-5**: Progress from
+Brute Force -> Optimization -> Final Insight. - **Auto-looping GIFs**: Each
+phase loops independently (4-8s timing). - **Player Tray UI**: Controls are
+shown in a dedicated bar *below* the canvas (Player Tray), not as an overlay. -
+**Dynamic Themes**: Must use `getColors()` helper in JS for live theme updates.
+- **Buttons**: Include Pause/Play, Restart, and Speed/Step controls. ```html
 <section class="content-section">
   <h2>Intuition</h2>
   <p>Let's break down the solution into four key phases...</p>
 
-  <!-- Phase 1: Brute Force -->
+  <!-- Phase 1: Brute Force -->>
   <div class="phase-section">
     <h3 class="phase-title">Phase 1: Brute Force Approach</h3>
     <p class="phase-description">Explanation of brute force...</p>
@@ -190,12 +198,18 @@ Structure: ```html
         width="800"
         height="400"
       ></canvas>
-      <div class="phase-controls">
+      <div class="phase-controls playing">
         <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
         <button onclick="restartPhase(1)">↻</button>
-        <button onclick="setSpeed(1, 0.5)">0.5x</button>
-        <button class="active" onclick="setSpeed(1, 1)">1x</button>
-        <button onclick="setSpeed(1, 2)">2x</button>
+        <div class="control-group speed-controls">
+          <button onclick="setSpeed(1, 0.5)">0.5x</button>
+          <button class="active" onclick="setSpeed(1, 1)">1x</button>
+          <button onclick="setSpeed(1, 2)">2x</button>
+        </div>
+        <div class="control-group nav-controls">
+          <button onclick="stepPhase(1, -1)">❮</button>
+          <button onclick="stepPhase(1, 1)">❯</button>
+        </div>
       </div>
     </div>
   </div>
@@ -211,9 +225,18 @@ Structure: ```html
         width="800"
         height="400"
       ></canvas>
-      <div class="phase-controls">
-        <button onclick="togglePhase(2)">▶ Play/Pause</button>
-        <button onclick="restartPhase(2)">↻ Restart</button>
+      <div class="phase-controls playing">
+        <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
+        <button onclick="restartPhase(2)">↻</button>
+        <div class="control-group speed-controls">
+          <button onclick="setSpeed(2, 0.5)">0.5x</button>
+          <button class="active" onclick="setSpeed(2, 1)">1x</button>
+          <button onclick="setSpeed(2, 2)">2x</button>
+        </div>
+        <div class="control-group nav-controls">
+          <button onclick="stepPhase(2, -1)">❮</button>
+          <button onclick="stepPhase(2, 1)">❯</button>
+        </div>
       </div>
     </div>
   </div>
@@ -223,31 +246,90 @@ Structure: ```html
   <p>Final insight paragraph...</p>
 </section>
 
-<!-- Interactive Demo -->
-<section class="content-section">
+<!-- Interactive Visualization (Triple Comparison) -->
+<section class="content-section" style="margin-top: 60px;">
   <h2>Interactive Visualization</h2>
-  <p>Try it yourself! Enter a number (1-20) and see how the solution grows.</p>
+  <p style="margin-bottom: 30px;">
+    Compare <b>Recursive</b>, <b>Memoized</b>, and <b>Tabulation</b> patterns
+    simultaneously.
+  </p>
 
   <div class="demo-container">
-    <div class="demo-input-group">
-      <label for="demo-input" class="demo-label">Input (n):</label>
-      <input
-        type="number"
-        id="demo-input"
-        class="demo-input"
-        min="1"
-        max="20"
-        value="5"
-      />
-      <button class="demo-btn" onclick="runDemo()">Run</button>
+    <div
+      class="demo-input-group"
+      style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center;"
+    >
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="text1-input" class="demo-label">S1:</label>
+        <input
+          type="text"
+          id="text1-input"
+          class="demo-input"
+          value="abcde"
+          maxlength="10"
+          style="width: 100px;"
+        />
+      </div>
+      <button class="demo-btn" onclick="initDemo()" style="margin-left: 0;">
+        RE-INITIALIZE
+      </button>
     </div>
 
-    <div class="demo-output">
-      <div class="demo-result">
-        <span class="result-label">RESULT:</span>
-        <span class="result-value" id="result-value">8</span>
+    <div class="comparison-grid">
+      <!-- 1. Recursive Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">1. RECURSIVE</span>
+          <span class="viz-stat" id="stat-recursive">Calls: 0</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-recursive" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">
+          Explores every path. Shows redundant work with red highlights.
+        </p>
       </div>
-      <canvas id="demo-canvas" width="900" height="450"></canvas>
+
+      <!-- 2. Memoization Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">2. MEMOIZATION</span>
+          <span class="viz-stat" id="stat-memo">Hits: 0</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-memo" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">
+          Top-down with cache. Highlights cache hits in green.
+        </p>
+      </div>
+
+      <!-- 3. Tabulation Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">3. TABULATION</span>
+          <span class="viz-stat" id="stat-tab">Idx: (0,0)</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-tab" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">
+          Bottom-up matrix filling. Systematically builds solution.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="demo-controls"
+      style="margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 15px;"
+    >
+      <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">
+        ❮
+      </button>
+      <div class="step-info" id="step-counter">STEP: 0</div>
+      <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">
+        ❯
+      </button>
     </div>
   </div>
 </section>
@@ -265,110 +347,36 @@ Structure: ```html
 
 _Use the global `visualization.css` styles. No inline CSS needed._
 
-#### Inline JavaScript for Animation:
+#### Sample JavaScript for Triple Visualization:
 
 ```javascript
-<script>
-    const canvas = document.getElementById('intuition-canvas');
-    const ctx = canvas.getContext('2d');
-    const stepCounter = document.getElementById('step-counter');
+// 1. Define State Object to track traces
+let demoState = {
+  s1: "",
+  currentStep: 0,
+  maxSteps: 0,
+  recursive: { trace: [], calls: 0 },
+  memo: { trace: [], hits: 0 },
+  tab: { trace: [] },
+};
 
-    let currentFrame = 0;
-    let isPlaying = false;
-    let animationInterval = null;
+// 2. initialize Traces (Run algorithms but RECORD steps instead of returning)
+function initDemo() {
+  // ... reset state ...
+  function traceRec(n) {
+    demoState.recursive.trace.push({ n, type: "call" });
+    // ... standard logic ...
+    demoState.recursive.trace.push({ n, type: "return", val });
+  }
+}
 
-    const FRAMES_PER_STEP = 30; // Short, clip-like animations (was 60)
-
-    const ANIMATION_STEPS = [
-        {
-            label: "Brute Force Approach",  // Used for step counter only
-            draw: (frame) => drawStep1(frame)
-        },
-        {
-            label: "Notice Repeated Work",
-            draw: (frame) => drawStep2(frame)
-        },
-        // ... more steps (3-5 total recommended)
-    ];
-
-    // Helper function to draw caption at top-left of canvas
-    function drawCaption(text) {
-        ctx.fillStyle = '#2A5D9C';
-        ctx.font = '13px "Share Tech Mono"';
-        ctx.textAlign = 'left';
-        ctx.fillText(text.toUpperCase(), 20, 30);
-    }
-
-    function drawStep1(frame) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw caption inside canvas (top-left)
-        drawCaption("Brute Force - All Possible Ways");
-
-        // Draw your visualization content below
-        // All text should be UPPERCASE, monospace style
-        // Use frame (0-29) for smooth animations within each clip
-    }
-
-    function render() {
-        const stepIndex = Math.floor(currentFrame / FRAMES_PER_STEP);
-        const step = ANIMATION_STEPS[stepIndex];
-        if (step) {
-            step.draw(currentFrame % FRAMES_PER_STEP);
-            stepCounter.textContent = `STEP ${stepIndex + 1}/${ANIMATION_STEPS.length}`;
-        }
-    }
-
-    function nextFrame() {
-        currentFrame++;
-        if (currentFrame >= ANIMATION_STEPS.length * 60) {
-            currentFrame = 0; // Loop
-        }
-        render();
-    }
-
-    function nextStep() {
-        const currentStepIndex = Math.floor(currentFrame / 60);
-        currentFrame = Math.min((currentStepIndex + 1) * 60, (ANIMATION_STEPS.length - 1) * 60);
-        render();
-    }
-
-    function prevStep() {
-        const currentStepIndex = Math.floor(currentFrame / 60);
-        currentFrame = Math.max(0, (currentStepIndex - 1) * 60);
-        render();
-    }
-
-    function play() {
-        if (isPlaying) return;
-        isPlaying = true;
-        animationInterval = setInterval(nextFrame, 50);
-    }
-
-    function pause() {
-        isPlaying = false;
-        if (animationInterval) {
-            clearInterval(animationInterval);
-        }
-    }
-
-    function restart() {
-        pause();
-        currentFrame = 0;
-        render();
-    }
-
-    // Event listeners
-    document.getElementById('play-btn').addEventListener('click', play);
-    document.getElementById('pause-btn').addEventListener('click', pause);
-    document.getElementById('prev-btn').addEventListener('click', nextStep);
-    document.getElementById('next-btn').addEventListener('click', prevStep);
-    document.getElementById('restart-btn').addEventListener('click', restart);
-
-    // Auto-start
-    render();
-    setTimeout(play, 500);
-</script>
+// 3. Render function (Finds state at DemoState.currentStep)
+function updateDemoUI() {
+  // Draw all 3 canvases based on current step
+  drawRecursive();
+  drawMemo();
+  drawTab();
+}
 ```
 
 ### 6. Section Divider
@@ -471,7 +479,9 @@ _Use the global `visualization.css` styles. No inline CSS needed._
 ✅ Section dividers with decorative pattern (`:⋮:⋮ ...`)  
 ✅ Terminal-style problem statement cards  
 ✅ Clean complexity analysis grid  
-✅ **Animated intuition walkthrough (REQUIRED)**  
+✅ **The Question Section**: Example cases and foundational concepts (REQUIRED)  
+✅ **Animated intuition walkthrough**: Step-by-step logic (REQUIRED)  
+✅ **Sidebar/Sub-Navbar TOC**: Automatically picks up H2 sections (Question, Intuition, Solution, Complexity, Interactive Visualization)  
 ✅ Dark mode support with CSS variables
 
 ---

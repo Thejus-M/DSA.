@@ -17,9 +17,9 @@
 
 /* Light Theme Input Override */
 html[data-theme="light"] .demo-input {
-    background: #ffffff;
-    color: #1e3a5f;
-    border: 2px solid #cbd5e1;
+    background: var(--bg-card-elevated);
+    color: var(--text-main);
+    border: 2px solid var(--border);
 }
 
 .demo-input:focus {
@@ -76,8 +76,8 @@ html[data-theme="light"] .demo-btn:hover {
 
 /* Light Theme Result Override */
 html[data-theme="light"] .demo-result {
-    background: #f8fafc;
-    border: 2px solid #cbd5e1;
+    background: var(--bg-card-elevated);
+    border: 2px solid var(--border);
 }
 
 .result-label {
@@ -106,14 +106,14 @@ html[data-theme="light"] .result-value {
 }
 
 html[data-theme="light"] .demo-canvas {
-    background: #f8fafc; /* Light gray for light mode */
+    background: var(--bg-body);
 }
 
 /* --- Phase Sections (The "GIFs") --- */
 .phase-section {
     margin: 50px 0;
     background: rgba(42, 93, 156, 0.03);
-    border: 1px solid rgba(42, 93, 156, 0.1);
+    border: 1px solid rgba(42, 93, 156, 0.2);
     padding: 20px;
     padding-bottom: 0;
 }
@@ -138,66 +138,113 @@ html[data-theme="light"] .demo-canvas {
 .phase-canvas-wrapper {
     position: relative;
     max-width: 800px;
-    margin: 0 auto 20px;
+    margin: 0 auto 30px;
     border-radius: 8px;
+    border: 1px solid rgba(42, 93, 156, 0.4);
+    background: var(--bg-card); /* Backdrop for controls area */
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(42, 93, 156, 0.2);
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.phase-canvas-wrapper.at-end canvas {
+    /* Slight blur and dim to indicate completion */
+    filter: blur(2px) grayscale(30%);
+    opacity: 0.8;
+    transition: filter 0.3s, opacity 0.3s;
+}
+
+.phase-canvas-wrapper.at-end {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(81, 207, 102, 0.2); /* Soft green glow */
+}
+
+/* Reset state indicator */
+.phase-canvas-wrapper.at-start::before {
+    content: "START";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(42, 93, 156, 0.9);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-family: var(--font-mono-sys);
+    font-size: 11px;
+    pointer-events: none;
+    opacity: 0.6;
+    z-index: 5;
+}
+
+/* Optional Overlay Text for End State (Pseudo-element) */
+.phase-canvas-wrapper.at-end::before {
+    content: "FINISHED";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-body); /* Match background */
+    color: var(--accent);       /* Use accent color */
+    border: 1px solid var(--accent); /* Add border */
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-family: var(--font-mono-sys);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    animation: fadeIn 0.3s forwards;
+    z-index: 5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .phase-canvas {
     display: block;
     width: 100%;
-    height: auto;
+    height: 400px;
     background: var(--bg-body);
     background-image:
         repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px),
         repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(42, 93, 156, 0.05) 49px, rgba(42, 93, 156, 0.05) 50px);
-    border-bottom: 1px solid rgba(42, 93, 156, 0.2);
 }
 
-/* --- Phase Controls (Floating) --- */
+/* --- Phase Controls (Player Tray) --- */
 .phase-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
     display: flex;
-    gap: 10px;
+    gap: 15px;
     justify-content: center;
     align-items: center;
-    padding: 8px 16px;
-    background: rgba(26, 26, 46, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(42, 93, 156, 0.3);
-    border-radius: 50px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--bg-card);
+    border-top: 1px solid rgba(42, 93, 156, 0.3);
+    opacity: 1; /* Always visible */
+    pointer-events: auto;
     z-index: 10;
 }
 
-.phase-canvas-wrapper:hover .phase-controls {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
-}
 
 /* Mobile: Always show controls */
 @media (hover: none) {
     .phase-controls {
         opacity: 1 !important;
-        transform: translateX(-50%) translateY(0) !important;
         pointer-events: auto !important;
     }
 }
 
 /* Light Theme Override */
+/* Light Theme Override */
 html[data-theme="light"] .phase-controls {
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card-elevated);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Control Buttons */
@@ -230,6 +277,11 @@ html[data-theme="light"] .phase-controls button:hover {
     color: #fff;
 }
 
+.phase-controls button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
 .phase-controls button.active {
     background: rgba(42, 93, 156, 0.3);
     font-weight: bold;
@@ -242,7 +294,23 @@ html[data-theme="light"] .phase-controls button.active {
 /* --- Responsive Helpers --- */
 @media (max-width: 600px) {
     .phase-canvas {
-        height: 250px; /* Compact height on mobile */
+        height: 250px !important;
+    }
+    .phase-controls {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    .phase-controls .nav-controls {
+        gap: 8px;
+    }
+    .phase-controls button {
+        padding: 4px 8px;
+        min-width: 28px;
+        font-size: 10px;
+    }
+    .phase-controls .nav-controls button {
+        padding: 4px 12px;
+        min-width: 45px;
     }
     .demo-input-group {
         display: flex;
@@ -260,4 +328,47 @@ html[data-theme="light"] .phase-controls button.active {
         width: 100%;
         margin: 0 !important;
     }
+}
+
+/* --- Navigable Controls (Paused State) --- */
+.phase-controls .control-group {
+    display: flex;
+    gap: 10px;
+}
+
+.phase-controls.is-paused .speed-controls {
+    display: none;
+}
+
+.phase-controls:not(.is-paused) .nav-controls {
+    display: none;
+}
+
+.phase-controls .nav-controls {
+    display: flex;
+    flex: 1; /* Allow nav controls to take available space */
+    justify-content: center;
+    gap: 15px; /* Increase gap for better touch targets */
+}
+
+/* Make Prev/Next buttons larger width but standard height */
+.phase-controls .nav-controls button {
+    padding: 4px 24px;       /* Reduced vertical padding to match other buttons */
+    font-size: 11px;         /* Standard font size */
+    min-width: 60px;         /* Keep wide minimum width */
+    font-weight: bold;
+    background: rgba(42, 93, 156, 0.15); /* Slight background to distinguish */
+}
+
+.phase-controls .nav-controls button:hover {
+    background: var(--accent);
+    transform: scale(1.1);   /* Slightly larger hover pop */
+}
+
+/* Disabled state styling for end/start of animation */
+.phase-controls button:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    border-color: transparent;
+    background: rgba(128, 128, 128, 0.1);
 }

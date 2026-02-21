@@ -615,8 +615,8 @@ pre,
   .phase-canvas,
   #demo-canvas,
   .tree-container {
-    min-width: 600px !important;
-    width: 600px !important;
+    min-width: auto !important;
+    width: 100% !important;
   }
 
   .tree-container {

@@ -30,9 +30,9 @@
 
         /* Light Theme Input Override */
         html[data-theme="light"] .demo-input {
-            background: #ffffff;
-            color: #1e3a5f;
-            border: 2px solid #cbd5e1;
+            background: var(--bg-card-elevated);
+            color: var(--text-main);
+            border: 2px solid var(--border);
         }
 
         .demo-input:focus {
@@ -88,8 +88,8 @@
 
         /* Light Theme Result Override */
         html[data-theme="light"] .demo-result {
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
+            background: var(--bg-card-elevated);
+            border: 2px solid var(--border);
         }
 
         .result-label {
@@ -118,7 +118,7 @@
         }
 
         html[data-theme="light"] #demo-canvas {
-            background: #f8fafc; /* Light gray for light mode */
+            background: var(--bg-body); /* Light paper for light mode */
         }
 
         /* Phase Sections */
@@ -206,9 +206,9 @@
 
         /* Light Theme Override */
         html[data-theme="light"] .phase-controls {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: var(--bg-card-elevated);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .phase-controls button {
