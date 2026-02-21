@@ -33,12 +33,12 @@
   --border-nav: #D9D6CD;
   --grid-line: #D4D1C9;
 
-  /* Visualization Colors */
-  --viz-balanced-bg: #eafaf1;
+  /* Visualization Colors (Paper-Mapped) */
+  --viz-balanced-bg: #D9EAD3; /* Muted Green-Paper */
   --viz-balanced-text: #27ae60;
   --viz-balanced-border: #27ae60;
 
-  --viz-unbalanced-bg: #fdedec;
+  --viz-unbalanced-bg: #F4CCCC; /* Muted Red-Paper */
   --viz-unbalanced-text: #c0392b;
   --viz-unbalanced-border: #c0392b;
 
@@ -218,11 +218,11 @@
   --grid-line: #D4D1C9;
 
   /* Visualization Colors (Force Light Mode) */
-  --viz-balanced-bg: #eafaf1;
+  --viz-balanced-bg: #D9EAD3;
   --viz-balanced-text: #27ae60;
   --viz-balanced-border: #27ae60;
 
-  --viz-unbalanced-bg: #fdedec;
+  --viz-unbalanced-bg: #F4CCCC;
   --viz-unbalanced-text: #c0392b;
   --viz-unbalanced-border: #c0392b;
 

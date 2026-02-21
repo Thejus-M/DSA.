@@ -33,7 +33,7 @@ class LayoutManager {
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
               <a href="${homeLink}" class="brand-pixel" style="text-decoration:none; color:inherit;">DSA.</a>
               <div
-                style="text-align:right;font-family:var(--tech);font-size:12px;color:#666;border-top:1px solid #ddd;padding-top:10px;">
+                style="text-align:right;font-family:var(--tech);font-size:12px;color:var(--text-sub);border-top:1px solid var(--border-sub);padding-top:10px;">
                 ${this.data.metadata.tagline}
               </div>
             </div>

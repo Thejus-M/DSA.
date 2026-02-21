@@ -408,7 +408,7 @@ h3 {
 
 .copy-btn:hover {
     background: var(--accent);
-    color: #fff;
+    color: var(--bg-body);
     border-color: var(--accent);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -427,7 +427,7 @@ h3 {
 .copy-btn.copied {
     background: var(--accent);
     border-color: var(--accent);
-    color: #fff;
+    color: var(--bg-body);
     animation: copySuccess 0.5s ease;
 }
 

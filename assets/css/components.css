@@ -14,7 +14,7 @@
   transition: all var(--transition-normal);
   border: 1px solid var(--blue);
   /* Default to blue border */
-  background-color: white;
+  background-color: var(--bg-card);
   color: var(--blue);
   font-family: var(--tech);
   text-transform: uppercase;
@@ -23,13 +23,13 @@
 
 .btn:hover {
   background-color: var(--blue);
-  color: white;
+  color: var(--bg-body);
 }
 
 /* Primary variant for buttons */
 .btn--primary {
   background-color: var(--blue);
-  color: white;
+  color: var(--bg-body);
 }
 
 .btn--primary:hover {
@@ -58,12 +58,12 @@
 
 .tech-btn:hover {
   background: var(--blue);
-  color: white;
+  color: var(--bg-body);
 }
 
 .tech-btn.primary {
   background: var(--blue);
-  color: white;
+  color: var(--bg-body);
 }
 
 /* Code Blocks */
@@ -159,7 +159,7 @@ pre {
 
 /* Small clear button, used on mini canvases */
 .btn-small-clear {
-  background: white;
+  background: var(--bg-card);
   border: 1px solid var(--blue);
   color: var(--blue);
   font-family: var(--tech);
@@ -173,14 +173,14 @@ pre {
 
 .btn-small-clear:hover {
   background: var(--blue);
-  color: white;
+  color: var(--bg-body);
 }
 
 .diagram-container {
-  border: 1px solid rgba(31, 92, 255, .12);
+  border: 1px solid rgba(42, 93, 156, .12);
   padding: var(--space-lg);
-  background-color: #f6f9ff;
-  background-image: radial-gradient(rgba(31, 92, 255, .06) .8px, transparent .8px);
+  background-color: var(--bg-card-elevated);
+  background-image: radial-gradient(rgba(42, 93, 156, .06) .8px, transparent .8px);
   background-size: 12px 12px;
   min-height: 240px;
 }
