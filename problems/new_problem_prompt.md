@@ -424,7 +424,87 @@ function updateDemoUI() {
 <section class="content-section" style="margin-top: 60px;">
   <h2>Interactive Visualization</h2>
   <p style="margin-bottom: 30px;">[Description]</p>
-  <!-- Canvas or interactive controls -->
+
+  <div class="demo-container">
+    <div class="interactive-controls-bar">
+      <!-- Input Group (Left on desktop, compact horizontal row on mobile) -->
+      <div
+        class="demo-input-group"
+        style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;"
+      >
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label for="input1" class="demo-label">IN:</label>
+          <input
+            type="text"
+            id="input1"
+            class="demo-input"
+            value="..."
+            style="width: 100px;"
+          />
+        </div>
+        <button class="demo-btn" onclick="initDemo()">RE-INITIALIZE</button>
+      </div>
+
+      <!-- Step Controls (Right on desktop, Left on Mobile, always strict single line) -->
+      <div class="demo-controls demo-step-controls">
+        <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">
+          ❮
+        </button>
+        <div class="step-info" id="step-counter">STEP: 0</div>
+        <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">
+          ❯
+        </button>
+      </div>
+    </div>
+
+    <!-- The 3 Cards grid for comparison (eg: Recursive, Memoization, Tabulation) -->
+    <div class="comparison-grid">
+      <!-- Recursive Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">1. RECURSIVE (NAIVE)</span>
+          <span class="viz-stat" id="stat-recursive">Calls: 0</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-recursive" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">Explores every path without memory.</p>
+      </div>
+
+      <!-- Memoization Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">2. MEMOIZATION</span>
+          <span class="viz-stat" id="stat-memo">Hits: 0</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-memo" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">Top-down with a cache.</p>
+      </div>
+
+      <!-- Tabulation Card -->
+      <div class="viz-card">
+        <div class="viz-header">
+          <span class="viz-title">3. TABULATION</span>
+          <span class="viz-stat" id="stat-tab">Idx: (0,0)</span>
+        </div>
+        <div class="canvas-container">
+          <canvas id="canvas-tab" width="400" height="400"></canvas>
+        </div>
+        <p class="viz-desc">Bottom-up matrix filling.</p>
+      </div>
+    </div>
+
+    <!-- Result / Conclusion Bar -->
+    <div
+      class="demo-result"
+      style="margin-top: 25px; justify-content: center; border-style: dashed; opacity: 0.9;"
+    >
+      <span class="result-label">FINAL RESULT:</span>
+      <span class="result-value" id="result-value">0</span>
+    </div>
+  </div>
 </section>
 ```
 

@@ -73,7 +73,7 @@ pre,
     max-width: 100% !important; /* Fully utilize horizontal space */
     padding-left: 15px !important;
     padding-right: 15px !important;
-    overflow-x: hidden;
+    overflow-x: clip;
     margin: 0 auto;
   }
 }
@@ -84,7 +84,7 @@ pre,
   /* Global Typography Scale */
   body {
     font-size: 18px;
-    overflow-x: hidden; /* Prevent horizontal scroll drift */
+    overflow-x: clip; /* Prevent horizontal scroll drift without breaking sticky */
   }
 
   h1,

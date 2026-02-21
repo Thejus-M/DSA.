@@ -257,9 +257,9 @@
             <h2>Intuition</h2>
             <p style="margin-bottom: 30px;">How do we efficiently find the matching characters while maintaining order?</p>
 
-            <!-- Phase 2 -->
+            <!-- Phase 1 -->
             <div class="phase-section">
-                <h3 class="phase-title">Phase 2: The Decision Tree</h3>
+                <h3 class="phase-title">Phase 1: The Decision Tree</h3>
                 <p class="phase-description">If we try a naive recursive approach, we branch out deeply. For <code>"abcde"</code> & <code>"ace"</code>, we start by matching 'a'. Then we have a subproblem <code>"bcde"</code> & <code>"ce"</code>. Since 'b' ≠ 'c', we branch twice! This leads to an explosion of states.</p>
                 <div class="phase-canvas-wrapper">
                     <canvas id="phase2-canvas" class="phase-canvas" width="800" height="600"></canvas>
@@ -279,9 +279,9 @@
                 </div>
             </div>
 
-            <!-- Phase 3 -->
+            <!-- Phase 2 -->
             <div class="phase-section">
-                <h3 class="phase-title">Phase 3: Defining The State</h3>
+                <h3 class="phase-title">Phase 2: Defining The State</h3>
                 <p class="phase-description">Instead of re-calculating, we store results in a table. <code>dp[i][j]</code> stores the LCS length for suffix <code>text1[i:]</code> and <code>text2[j:]</code>. Here is the grid for "abcde" vs "ace".</p>
                 <div class="phase-canvas-wrapper">
                     <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
@@ -301,9 +301,9 @@
                 </div>
             </div>
 
-            <!-- Phase 4 (NEW) -->
+            <!-- Phase 3 (NEW) -->
             <div class="phase-section">
-                <h3 class="phase-title">Phase 4: The Transitions (Logic)</h3>
+                <h3 class="phase-title">Phase 3: The Transitions (Logic)</h3>
                 <p class="phase-description">
                     <strong>Why Diagonal?</strong>: When characters match (e.g., 'd'=='d'), this character <em>must</em> be part of the LCS. We "consume" it from <strong>both</strong> strings (+1 to length) and check the remaining substrings (the diagonal).<br><br>
                     <strong>Why Max?</strong>: When characters differ (e.g. 'a' vs 'b'), we simply cannot match them at this position. We are forced to discard at least one to make progress. Since we don't know which path leads to a better outcome, we try <strong>both</strong> options:
@@ -329,9 +329,9 @@
                 </div>
             </div>
 
-            <!-- Phase 5 (Old Phase 4) -->
+            <!-- Phase 4 (Old Phase 4) -->
             <div class="phase-section">
-                <h3 class="phase-title">Phase 5: Filling The Table</h3>
+                <h3 class="phase-title">Phase 4: Filling The Table</h3>
                 <p class="phase-description">We fill from the bottom-right. When characters match (e.g., 'e'=='e'), we take diagonal + 1. When they differ, we take max(right, down). Watch the table fill for "abcde" and "ace".</p>
                 <div class="phase-canvas-wrapper">
                     <canvas id="phase5-canvas" class="phase-canvas" width="800" height="500"></canvas>
@@ -456,16 +456,24 @@
             <p style="margin-bottom: 30px;">Input two strings to compare <b>Recursive</b>, <b>Memoized</b>, and <b>Tabulation</b> patterns simultaneously.</p>
             
             <div class="demo-container">
-                <div class="demo-input-group" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="text1-input" class="demo-label">S1:</label>
-                        <input type="text" id="text1-input" class="demo-input" value="abcde" maxlength="10" style="width: 100px;"/>
+                <div class="interactive-controls-bar">
+                    <div class="demo-input-group" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: flex-start;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="text1-input" class="demo-label">S1:</label>
+                            <input type="text" id="text1-input" class="demo-input" value="abcde" maxlength="10" style="width: 100px;"/>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="text2-input" class="demo-label">S2:</label>
+                            <input type="text" id="text2-input" class="demo-input" value="ace" maxlength="10" style="width: 100px;"/>
+                        </div>
+                        <button class="demo-btn" onclick="initDemo()" style="margin-left: 0;">RE-INITIALIZE</button>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="text2-input" class="demo-label">S2:</label>
-                        <input type="text" id="text2-input" class="demo-input" value="ace" maxlength="10" style="width: 100px;"/>
+
+                    <div class="demo-controls demo-step-controls">
+                         <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">❮</button>
+                         <div class="step-info" id="step-counter">STEP: 0</div>
+                         <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">❯</button>
                     </div>
-                    <button class="demo-btn" onclick="initDemo()" style="margin-left: 0;">RE-INITIALIZE</button>
                 </div>
 
                 <div class="comparison-grid">
@@ -506,12 +514,7 @@
                     </div>
                 </div>
 
-                <div class="demo-controls" style="margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 15px;">
-                     <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn" style="min-width: 60px;">❮</button>
-                     <div class="step-info" id="step-counter" style="margin: 0; min-width: 100px;">STEP: 0</div>
-                     <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn" style="min-width: 60px;">❯</button>
-                </div>
-                
+                <!-- step controls moved to top -->
                 <div class="demo-result" style="margin-top: 25px; justify-content: center; border-style: dashed; opacity: 0.9;">
                     <span class="result-label">LCS LENGTH:</span>
                     <span class="result-value" id="result-value">0</span>
