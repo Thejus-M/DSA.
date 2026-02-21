@@ -13,6 +13,8 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
     transition: all 0.2s ease;
+    color-scheme: dark; /* Forces browser controls (spinners, etc.) to dark */
+    border-radius: 4px;
 }
 
 /* Light Theme Input Override */
@@ -20,6 +22,7 @@ html[data-theme="light"] .demo-input {
     background: var(--bg-card-elevated);
     color: var(--text-main);
     border: 2px solid var(--border);
+    color-scheme: light;
 }
 
 .demo-input:focus {
@@ -488,9 +491,7 @@ html[data-theme="light"] .phase-controls button.active {
 
 .phase-controls .nav-controls {
     display: flex;
-    flex: 1; /* Allow nav controls to take available space */
-    justify-content: center;
-    gap: 15px; /* Increase gap for better touch targets */
+    gap: 15px; /* Keep gap for touch targets */
 }
 
 /* Make Prev/Next buttons larger width but standard height */

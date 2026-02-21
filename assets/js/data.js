@@ -19,6 +19,12 @@ const DSA_DATA = {
                     url: "problems/search-in-rotated-sorted-array.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
+                },
+                {
+                    title: "Rotate Image",
+                    url: "problems/rotate-image.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         },

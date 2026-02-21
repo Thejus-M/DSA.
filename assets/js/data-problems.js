@@ -38,5 +38,13 @@ const problems = [
     difficulty: "medium",
     tags: ["dynamic-programming", "string", "2d-dp"],
     summary: "Find the length of the longest common subsequence between two strings."
+  },
+  {
+    id: 48,
+    title: "Rotate Image",
+    slug: "rotate-image",
+    difficulty: "medium",
+    tags: ["array", "math", "matrix"],
+    summary: "Rotate an n x n 2D matrix representing an image by 90 degrees clockwise in-place."
   }
 ];

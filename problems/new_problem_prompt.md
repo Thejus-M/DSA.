@@ -6,7 +6,7 @@ Create a new DSA problem page with the following specifications:
 
 - **Style**: Cyberpunk/tech-inspired minimalist design with monospace typography
 - **Color Scheme**: Uses CSS variables from `variables.css` - steel blue accents (`--accent`), clean backgrounds, subtle borders.
-  - **Light Mode Aesthetics**: Strict adherence to a "Paper-Like" feel. Avoid pure white (`#FFF`). Use `--bg-body` (#E2DFD6) for large surfaces and `--bg-card-elevated` (#EBE8DF) for interactive elements like buttons, inputs, and player trays.
+  - **Light Mode Aesthetics**: Strict adherence to a "Paper-Like" feel. **NEVER use pure white (`#FFF`, `#FFFFFF`, `white`) anywhere — not in CSS, not in JavaScript canvas fills, not in inline styles.** Use `--bg-body` (#E2DFD6) for large surfaces and `--bg-card-elevated` (#EBE8DF) for interactive elements like buttons, inputs, player trays, and canvas cell backgrounds.
 - **Typography**:
   - Headers: 'Share Tech Mono' (monospace, uppercase, tech-style)
   - Body: 'EB Garamond' (serif, highly readable)
@@ -54,13 +54,104 @@ Create a new DSA problem page with the following specifications:
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 
-    <!-- Problem-specific CSS inline -->
+    <!-- Problem-specific CSS inline (REQUIRED — include comparison-grid & viz-card styles) -->
     <style>
-      /* Add problem-specific styles here */
+      .article-container {
+        padding-top: 60px;
+      }
+
+      /* Comparator Tool Styles — MUST be inline, not in shared CSS */
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+      }
+      @media (max-width: 900px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .viz-card {
+        background: rgba(42, 93, 156, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.3s;
+      }
+      .viz-card:hover {
+        border-color: var(--accent);
+      }
+      .viz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .viz-title {
+        font-family: var(--font-mono-sys);
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+      .viz-stat {
+        font-family: var(--font-mono-sys);
+        font-size: 11px;
+        color: var(--text-sub);
+        background: rgba(42, 93, 156, 0.1);
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+      .canvas-container {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background: var(--bg-body);
+        border: 1px solid var(--border-sub);
+        border-radius: 4px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .canvas-container canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        image-rendering: pixelated;
+      }
+      .viz-desc {
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--text-sub);
+        margin: 0;
+        font-family: var(--font-body);
+      }
+      .demo-controls .demo-btn {
+        min-width: 120px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+      }
+      .demo-btn:disabled {
+        opacity: 0.3 !important;
+        cursor: not-allowed;
+      }
+      .step-info {
+        font-family: var(--font-mono-sys);
+        font-size: 12px;
+        color: var(--accent);
+        text-align: center;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
     <!-- Content here -->
+    <script src="../assets/js/copy-code.js"></script>
     <script src="../assets/js/problems.js"></script>
     <script src="../assets/js/data.js"></script>
     <script src="../assets/js/layout.js"></script>
@@ -81,11 +172,6 @@ Create a new DSA problem page with the following specifications:
 
 ```html
 <div id="header-mount"></div>
-<div class="header-status">
-    <span class="progress-number" id="progress-number">0.00</span>
-    <div class="progress-tick-top"></div>
-</div>
-</header>
 ```
 
 ### 2. Ruler Scale & Sidebar
@@ -177,17 +263,45 @@ _Note: Close divs at end of file._
 
 ### 6. Intuition Section with Animated Walkthrough **[CRITICAL]** > **The
 intuition section MUST include 4-5 animated, auto-looping phases that teach the
-concept step-by-step.** #### Design Requirements: - **Phase 1-5**: Progress from
-Brute Force -> Optimization -> Final Insight. - **Auto-looping GIFs**: Each
-phase loops independently (4-8s timing). - **Player Tray UI**: Controls are
-shown in a dedicated bar *below* the canvas (Player Tray), not as an overlay. -
-**Dynamic Themes**: Must use `getColors()` helper in JS for live theme updates.
-- **Buttons**: Include Pause/Play, Restart, and Speed/Step controls. ```html
+concept step-by-step.** #### Animation Architecture Animations are **NOT**
+pre-rendered GIFs or videos. They are **frame-by-frame canvas renders** driven
+by a `requestAnimationFrame` loop. Each phase has: - A `frame` counter that
+increments each tick - A `maxFrames` value after which it loops back to 0 - A
+dedicated `drawPhaseN(phase)` function that reads `phase.frame` and renders the
+current state This approach allows: - Instant theme reactivity (calls
+`getColors()` every frame) - Pause/Resume without loading any assets -
+Frame-precise stepping (❮/❯ buttons advance by ~10 frames) - Speed control
+(0.5x, 1x, 2x multiplier on frame increment) #### Player Tray UI — Control State
+Toggling The control bar below each canvas has **two mutually exclusive control
+groups**: - **Speed controls** (0.5x, 1x, 2x) — shown while **playing** - **Nav
+controls** (❮, ❯ step buttons) — shown while **paused** This is toggled via the
+CSS class `is-paused` on the `.phase-controls` container: ```css
+.phase-controls.is-paused .speed-controls { display: none; }
+.phase-controls:not(.is-paused) .nav-controls { display: none; } ``` The
+`togglePhase()` function MUST toggle this class: ```javascript function
+togglePhase(phaseNum) { const phase = phases[phaseNum]; phase.playing =
+!phase.playing; document.getElementById(`play-btn-${phaseNum}`).textContent =
+phase.playing ? '❚❚' : '▶'; const canvasEl =
+document.getElementById(`phase${phaseNum}-canvas`); if (canvasEl) { const
+controls = canvasEl.nextElementSibling; if (controls &&
+controls.classList.contains('phase-controls')) { if (phase.playing) {
+controls.classList.remove('is-paused'); } else {
+controls.classList.add('is-paused'); } } } if (phase.playing)
+animatePhase(phaseNum); } ``` #### Design Requirements - **Phase 1-4+**:
+Progress from Brute Force → Optimization → Final Insight. - **Auto-looping**:
+Each phase loops independently via `requestAnimationFrame`. - **Player Tray
+UI**: Controls are shown in a dedicated bar *below* the canvas (Player Tray),
+not as an overlay. - **Dynamic Themes**: Must use `getColors()` helper in JS for
+live theme updates. **NEVER use `#ffffff`** — use `#EBE8DF` for light-mode cell
+backgrounds. - **Buttons**: Include Pause/Play (❚❚/▶), Restart (↻), Speed
+controls (0.5x/1x/2x), and Step controls (❮/❯). - **Input `color-scheme`**: All
+`<input />` elements in dark mode MUST have `color-scheme: dark` to prevent
+white browser chrome on spinners/dropdowns. ```html
 <section class="content-section">
   <h2>Intuition</h2>
-  <p>Let's break down the solution into four key phases...</p>
+  <p>Let's break down the solution into key phases...</p>
 
-  <!-- Phase 1: Brute Force -->>
+  <!-- Phase 1 -->
   <div class="phase-section">
     <h3 class="phase-title">Phase 1: Brute Force Approach</h3>
     <p class="phase-description">Explanation of brute force...</p>
@@ -214,34 +328,7 @@ shown in a dedicated bar *below* the canvas (Player Tray), not as an overlay. -
     </div>
   </div>
 
-  <!-- Phase 2: Identifying Problem -->
-  <div class="phase-section">
-    <h3 class="phase-title">Phase 2: Identifying Repetition</h3>
-    <p class="phase-description">Notice the repeated work...</p>
-    <div class="phase-canvas-wrapper">
-      <canvas
-        id="phase2-canvas"
-        class="phase-canvas"
-        width="800"
-        height="400"
-      ></canvas>
-      <div class="phase-controls playing">
-        <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
-        <button onclick="restartPhase(2)">↻</button>
-        <div class="control-group speed-controls">
-          <button onclick="setSpeed(2, 0.5)">0.5x</button>
-          <button class="active" onclick="setSpeed(2, 1)">1x</button>
-          <button onclick="setSpeed(2, 2)">2x</button>
-        </div>
-        <div class="control-group nav-controls">
-          <button onclick="stepPhase(2, -1)">❮</button>
-          <button onclick="stepPhase(2, 1)">❯</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Phase 3 & 4: Similar structure -->
+  <!-- Phase 2+ : Same structure, increment IDs -->
 
   <p>Final insight paragraph...</p>
 </section>
@@ -516,6 +603,124 @@ function updateDemoUI() {
 
 ---
 
+## **Required JavaScript Boilerplate**
+
+Every problem page MUST include the following JavaScript patterns inline at the bottom. This ensures animations, theme support, phase controls, and the interactive demo all work consistently.
+
+```javascript
+// 1. Theme detection
+function getTheme() {
+  return document.documentElement.getAttribute("data-theme") || "dark";
+}
+
+// 2. Color palette (MUST match CSS variables for both themes)
+function getColors() {
+  const isDark = getTheme() === "dark";
+  return {
+    bg: isDark ? "#1a1a2e" : "#E2DFD6", // --bg-body
+    text: isDark ? "#4fc1ff" : "#1e3a5f",
+    accent: isDark ? "#51cf66" : "#2A5D9C",
+    border: isDark ? "#2A5D9C" : "#CFCBC2", // --border
+    highlight: isDark ? "#ff6b6b" : "#ef4444",
+    match: isDark ? "#51cf66" : "#10b981",
+    dim: isDark ? "#666" : "#94a3b8",
+    gridLine: isDark ? "#2a5d9c" : "#D4D1C9", // --grid-line
+    cellBg: isDark ? "#1e1e36" : "#EBE8DF", // NEVER use #ffffff — use paper-like tone
+  };
+}
+
+// 3. Phase state management (one entry per phase canvas)
+const phases = {
+  0: {
+    canvas: null,
+    ctx: null,
+    frame: 0,
+    playing: true,
+    speed: 1,
+    maxFrames: 300,
+  },
+  1: {
+    canvas: null,
+    ctx: null,
+    frame: 0,
+    playing: true,
+    speed: 1,
+    maxFrames: 300,
+  },
+  // ... add more phases as needed
+};
+
+// 4. Initialize canvas references
+function initPhases() {
+  Object.keys(phases).forEach((key) => {
+    phases[key].canvas = document.getElementById(`phase${key}-canvas`);
+    if (phases[key].canvas) {
+      phases[key].ctx = phases[key].canvas.getContext("2d");
+    }
+  });
+}
+
+// 5. Control functions (EXACT signatures — do not rename)
+function togglePhase(n) {
+  phases[n].playing = !phases[n].playing;
+  document.getElementById(`play-btn-${n}`).textContent = phases[n].playing
+    ? "❚❚"
+    : "▶";
+
+  // CRITICAL: Toggle is-paused class to swap speed ↔ nav controls
+  const canvasEl = document.getElementById(`phase${n}-canvas`);
+  if (canvasEl) {
+    const controls = canvasEl.nextElementSibling;
+    if (controls && controls.classList.contains("phase-controls")) {
+      controls.classList.toggle("is-paused", !phases[n].playing);
+    }
+  }
+  if (phases[n].playing) animatePhase(n);
+}
+function restartPhase(n) {
+  phases[n].frame = 0;
+  // Removed forced playing/unpausing to match LCS, just resets playhead
+}
+function setSpeed(n, speed) {
+  phases[n].speed = speed;
+}
+function stepPhase(n, dir) {
+  phases[n].playing = false;
+  document.getElementById(`play-btn-${n}`).textContent = "▶";
+  phases[n].frame = Math.max(
+    0,
+    Math.min(phases[n].maxFrames, phases[n].frame + dir * 10),
+  );
+  // Ensure is-paused is set when stepping
+  const canvasEl = document.getElementById(`phase${n}-canvas`);
+  if (canvasEl) {
+    const controls = canvasEl.nextElementSibling;
+    if (controls && controls.classList.contains("phase-controls")) {
+      controls.classList.add("is-paused");
+    }
+  }
+}
+
+// 6. Main render loop
+function drawAll() {
+  Object.keys(phases).forEach((n) => {
+    const phase = phases[n];
+    if (!phase.ctx) return;
+    if (phase.playing) {
+      phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
+    }
+    // Call the appropriate draw function per phase, e.g. drawPhase0(phase), drawPhase1(phase), etc.
+  });
+  requestAnimationFrame(drawAll);
+}
+
+// 7. Bootstrap
+initPhases();
+requestAnimationFrame(drawAll);
+```
+
+---
+
 ## **Data File Updates**
 
 ### Update `assets/js/data.js`:
@@ -575,20 +780,25 @@ function updateDemoUI() {
 - `.section-divider` - Decorative section separators
 - `.tags` / `.tag` - Difficulty and category tags
 - `.demo-btn` - Interactive demo buttons
-- `.intuition-animation` - Animation container
-- `.animation-canvas` - Canvas element for animations
-- `.animation-controls` - Control buttons container
+- `.phase-section` / `.phase-canvas-wrapper` - Phase animation container
+- `.phase-controls` - Player tray (Pause/Play, Restart, Speed, Step)
+- `.interactive-controls-bar` - Sticky controls bar for the interactive visualization
+- `.comparison-grid` / `.viz-card` - Side-by-side comparison cards
+- `.canvas-container` - Responsive canvas wrapper with 1:1 aspect ratio
+- `.demo-result` - Conclusion/result bar
 
 ---
 
 ## **Example Reference**
 
-See `climbing-stairs.html` for a complete example with:
+See `longest-common-subsequence.html` and `rotate-image.html` for complete examples with:
 
-- Inline CSS and JavaScript
-- 5-step animated intuition walkthrough
-- Looping, pausable animations
-- Interactive demo section
+- Inline CSS and JavaScript (problem-specific styles + comparison-grid)
+- Multi-phase animated intuition walkthroughs (4+ phases)
+- Looping, pausable, steppable animations with speed controls
+- Interactive visualization section with triple comparison grid
+- Sticky controls bar with step counter
+- Full theme support (dark/light)
 
 ---
 
@@ -601,3 +811,8 @@ See `climbing-stairs.html` for a complete example with:
 > - **Only centralize common CSS/JS** - keep problem-specific code inline
 > - **Animation should teach, not just illustrate** - progressive understanding
 > - **Update both data.js and data-problems.js** when adding a new problem
+> - **Body tag must be `<body>` — do NOT add a custom class like `problem-page`**
+> - **Sidebar MUST use `id="sidebar-mount"` — NOT a custom sidebar structure**
+> - **Include `theme-init.js` as the FIRST script in `<head>`**
+> - **Include `copy-code.js` BEFORE `problems.js` in the footer scripts**
+> - **The `<html>` tag must NOT have `data-theme` hardcoded — `theme-init.js` handles it**
