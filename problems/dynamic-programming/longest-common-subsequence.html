@@ -1846,8 +1846,18 @@
         }
 
         function initDemo() {
-            const s1 = document.getElementById('text1-input').value || "abc";
-            const s2 = document.getElementById('text2-input').value || "ace";
+            const el1 = document.getElementById('text1-input');
+            const el2 = document.getElementById('text2-input');
+            
+            // Limit length to 10
+            let s1 = el1.value || "abcde";
+            let s2 = el2.value || "ace";
+            
+            if (s1.length > 10) s1 = s1.substring(0, 10);
+            if (s2.length > 10) s2 = s2.substring(0, 10);
+            
+            el1.value = s1;
+            el2.value = s2;
             
             demoState = {
                 s1, s2,

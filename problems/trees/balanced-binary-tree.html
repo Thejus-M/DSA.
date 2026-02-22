@@ -288,12 +288,20 @@ class Solution:
             }
 
             buildFromInput() {
-                const input = document.getElementById('tree-input').value;
-                const arr = input.split(',').map(x => {
+                const inputEl = document.getElementById('tree-input');
+                const input = inputEl.value;
+                let arr = input.split(',').map(x => {
                     const t = x.trim();
                     if (t === 'null' || t === 'None' || t === '') return null;
-                    return parseInt(t);
+                    const val = parseInt(t);
+                    return isNaN(val) ? 0 : val;
                 });
+
+                // Limit node count to 31 (5 levels) for visualization stability
+                if (arr.length > 31) {
+                    arr = arr.slice(0, 31);
+                    inputEl.value = arr.map(x => x === null ? 'null' : x).join(',');
+                }
 
                 this.nodeMap.clear();
                 this.root = this.buildTree(arr);

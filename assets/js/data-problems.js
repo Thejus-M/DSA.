@@ -46,5 +46,13 @@ const problems = [
     difficulty: "medium",
     tags: ["math", "geometry", "matrix", "array"],
     summary: "Rotate an n x n 2D matrix representing an image by 90 degrees clockwise in-place."
+  },
+  {
+    id: 54,
+    title: "Spiral Matrix",
+    slug: "spiral-matrix",
+    difficulty: "medium",
+    tags: ["math", "geometry", "matrix", "array"],
+    summary: "Return all elements of an m x n matrix in spiral order."
   }
 ];

@@ -112,13 +112,37 @@
             cursor: not-allowed;
         }
 
-        /* Small touch for step indicator */
-        .step-info {
-            font-family: var(--font-mono-sys);
-            font-size: 12px;
-            color: var(--accent);
-            text-align: center;
-            margin-top: 10px;
+        /* Mobile Improvements: Enlarged Text & Robust Scaling */
+        @media (max-width: 600px) {
+            .phase-title {
+                font-size: 20px !important;
+                margin-bottom: 12px;
+            }
+
+            .phase-description {
+                font-size: 18px !important;
+                line-height: 1.4;
+            }
+
+            .phase-canvas {
+                height: auto !important;
+                min-height: 350px !important;
+                aspect-ratio: 1 / 1.1;
+            }
+
+            .canvas-container {
+                height: auto !important;
+                min-height: 350px !important;
+                aspect-ratio: 1 / 1.1;
+            }
+
+            .viz-title {
+                font-size: 16px !important;
+            }
+
+            .viz-desc {
+                font-size: 16px !important;
+            }
         }
     </style>
 </head>
@@ -459,6 +483,17 @@
             };
         }
 
+        function syncCanvasSize(canvas) {
+          if (!canvas) return;
+          const rect = canvas.getBoundingClientRect();
+          if (canvas.width !== Math.floor(rect.width) || canvas.height !== Math.floor(rect.height)) {
+            canvas.width = Math.floor(rect.width);
+            canvas.height = Math.floor(rect.height);
+            return true;
+          }
+          return false;
+        }
+
         const phases = {
             0: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 960 },
             1: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 380 },
@@ -569,7 +604,15 @@
 
         function initDemo() {
             const input = document.getElementById('demo-size');
-            demoN = parseInt(input.value) || 3;
+            let n = parseInt(input.value) || 3;
+            
+            // Clamp values
+            const min = parseInt(input.min) || 2;
+            const max = parseInt(input.max) || 5;
+            n = Math.max(min, Math.min(max, n));
+            input.value = n;
+
+            demoN = n;
             demoStep = 0;
             demoProgress = 1;
             demoMaxSteps = demoN * demoN;
@@ -610,14 +653,15 @@
         function drawPhase0(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
+            syncCanvasSize(c);
             const colors = getColors();
-            const f = phase.frame; // maxFrames is 860
+            const f = phase.frame;
             
             ctx.clearRect(0, 0, c.width, c.height);
             ctx.fillStyle = colors.bg;
             ctx.fillRect(0, 0, c.width, c.height);
 
-            function drawMatrixPair(n, centerX, centerY, scale, localF) {
+            function drawMatrixPair(n, localF) {
                 const original = [];
                 const rotated = [];
                 for (let i = 0; i < n; i++) {
@@ -634,17 +678,22 @@
                     }
                 }
 
-                const cellSize = 32 * scale;
-                const gap = 4 * scale;
+                // Adaptive Scaling
+                const scale = Math.min(1.0, c.width / 700);
+                const cellSize = Math.min(c.width / 14, 50);
+                const gap = Math.max(4, 8 * scale);
                 const matrixSpan = n * (cellSize + gap) - gap;
-                const pairGap = 60 * scale; 
                 
-                const leftStartX = centerX - matrixSpan - (pairGap / 2);
-                const rightStartX = centerX + (pairGap / 2);
+                const centerX = c.width / 2;
+                const centerY = c.height / 2 - 10;
+                const horizontalSplit = c.width * 0.15 + (matrixSpan / 2);
+                
+                const leftStartX = centerX - horizontalSplit - (matrixSpan / 2);
+                const rightStartX = centerX + horizontalSplit - (matrixSpan / 2);
                 const topY = centerY - (matrixSpan / 2);
 
                 ctx.fillStyle = colors.dim;
-                ctx.font = `${16 * scale}px "Share Tech Mono"`;
+                ctx.font = `${Math.max(14, 16 * scale)}px "Share Tech Mono"`;
                 ctx.textAlign = 'center';
                 ctx.fillText(`${n}x${n} MATRIX`, centerX, topY - 40 * scale);
 
@@ -687,7 +736,7 @@
                             ctx.strokeRect(x, y, cellSize, cellSize);
                             
                             ctx.fillStyle = isHighlight ? colors.accent : colors.text;
-                            ctx.font = `${isHighlight ? 'bold' : ''} ${15 * scale}px "JetBrains Mono"`;
+                            ctx.font = `${isHighlight ? 'bold' : ''} ${Math.max(12, 15 * scale)}px "JetBrains Mono"`;
                             ctx.textBaseline = 'middle';
                             ctx.fillText(original[i][j], x + cellSize / 2, y + cellSize / 2);
                         }
@@ -725,7 +774,7 @@
                             ctx.strokeRect(x, y, cellSize, cellSize);
                             
                             ctx.fillStyle = isHighlight ? colors.accent : colors.text;
-                            ctx.font = `${isHighlight ? 'bold' : ''} ${15 * scale}px "JetBrains Mono"`;
+                            ctx.font = `${isHighlight ? 'bold' : ''} ${Math.max(12, 15 * scale)}px "JetBrains Mono"`;
                             ctx.textBaseline = 'middle';
                             ctx.fillText(rotated[i][j], x + cellSize / 2, y + cellSize / 2);
                         } else {
@@ -746,7 +795,6 @@
                         const startX = leftStartX + j * (cellSize + gap);
                         const startY = topY + activeRow * (cellSize + gap);
                         
-                        // rotated[i][j] where i=j, j=n-1-activeRow
                         const endI = j;
                         const endJ = n - 1 - activeRow;
                         const endX = rightStartX + endJ * (cellSize + gap);
@@ -756,14 +804,12 @@
                         const currX = startX + (endX - startX) * p;
                         const currY = startY + (endY - startY) * p;
 
-                        // Add flight arc
                         const arcHeight = 40 * scale;
                         const arcY = Math.sin(p * Math.PI) * arcHeight;
                         
                         const sx = currX;
                         const sy = currY - arcY;
 
-                        // pop-out scale
                         const s = 1 + Math.sin(p * Math.PI) * 0.15;
                         const drawX = sx + cellSize/2 - (cellSize*s)/2;
                         const drawY = sy + cellSize/2 - (cellSize*s)/2;
@@ -785,7 +831,7 @@
                         ctx.shadowColor = "transparent";
                         
                         ctx.fillStyle = colors.text;
-                        ctx.font = `bold ${15 * scale * s}px "JetBrains Mono"`;
+                        ctx.font = `bold ${Math.max(12, 15 * scale * s)}px "JetBrains Mono"`;
                         ctx.textBaseline = 'middle';
                         ctx.textAlign = 'center';
                         ctx.fillText(original[activeRow][j], drawX + (cellSize*s) / 2, drawY + (cellSize*s) / 2);
@@ -820,15 +866,10 @@
                 }
             }
 
-            // 4x4 total: start(60) + anim(320) + end(60) = 440
-            // 5x5 total: start(60) + anim(400) + end(60) = 520
-            // maxFrames = 960
             if (f < 440) {
-                // localF runs from -60 to 380
-                drawMatrixPair(4, c.width * 0.5, c.height * 0.5, 1.2, f - 60);
+                drawMatrixPair(4, f - 60);
             } else {
-                // localF runs from -60 to 460
-                drawMatrixPair(5, c.width * 0.5, c.height * 0.5, 1.05, f - 440 - 60);
+                drawMatrixPair(5, f - 440 - 60);
             }
         }
 
@@ -836,6 +877,7 @@
         function drawPhase1(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
+            syncCanvasSize(c);
             const colors = getColors();
             const f = phase.frame;
             
@@ -877,7 +919,7 @@
             
             // Draw title
             ctx.fillStyle = colors.dim;
-            ctx.font = `12px "Share Tech Mono"`;
+            ctx.font = `${Math.max(12, cellSize * 0.3)}px "Share Tech Mono"`;
             ctx.textAlign = 'center';
             if (f < pauseFrames) {
                 ctx.fillText(`TRANSPOSE: Flipping across diagonal`, c.width / 2, startY - 25);
@@ -937,7 +979,7 @@
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
                     ctx.fillStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : colors.text);
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
@@ -982,7 +1024,7 @@
                     
                     ctx.shadowColor = "transparent";
                     ctx.fillStyle = colors.text;
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, 0, 0);
@@ -1000,6 +1042,7 @@
         function drawPhase2(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
+            syncCanvasSize(c);
             const colors = getColors();
             const f = phase.frame;
             
@@ -1074,7 +1117,7 @@
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
                     ctx.fillStyle = isCorrect ? colors.match : (isMoved ? colors.highlight : colors.text);
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
@@ -1116,7 +1159,7 @@
 
                     ctx.shadowColor = "transparent";
                     ctx.fillStyle = colors.text;
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, 0, 0);
@@ -1132,6 +1175,7 @@
         function drawPhase3(phase) {
             const ctx = phase.ctx;
             const c = phase.canvas;
+            syncCanvasSize(c);
             const colors = getColors();
             const f = phase.frame;
             
@@ -1140,13 +1184,13 @@
             ctx.fillRect(0, 0, c.width, c.height);
             
             const n = 5;
-            const cellSize = Math.min(48, c.width / 12);
-            const gap = 8;
+            const cellSize = Math.min(45, c.width / 12);
+            const gap = 6;
             const totalW = n * (cellSize + gap) - gap;
+            
             const startX = (c.width - totalW) / 2;
             const startY = (c.height - totalW) / 2;
             
-            // Generate swap groups for 5x5
             const swapGroups = [];
             for (let i = 0; i < Math.floor(n / 2); i++) {
                 for (let j = i; j < n - 1 - i; j++) {
@@ -1169,14 +1213,12 @@
             const progress = Math.min(1, Math.max(0, groupLocalF / groupAnimFrames));
             const ease = progress < 0.5 ? 2*progress*progress : 1-Math.pow(-2*progress+2, 2)/2;
 
-            // Generate initial 5x5 matrix data
             let matrix = [];
             for(let i=0; i<n; i++) {
                 matrix[i] = [];
                 for(let j=0; j<n; j++) matrix[i][j] = i * n + j + 1;
             }
 
-            // Current state of matrix (after completed groups)
             let current = matrix.map(r => [...r]);
             const completedGroupsCount = (progress === 1) ? groupIdx + 1 : groupIdx;
             for (let g = 0; g < Math.min(completedGroupsCount, swapGroups.length); g++) {
@@ -1189,7 +1231,7 @@
             }
             
             ctx.fillStyle = colors.dim;
-            ctx.font = `12px "Share Tech Mono"`;
+            ctx.font = `${Math.max(12, cellSize * 0.3)}px "Share Tech Mono"`;
             ctx.textAlign = 'center';
             if (f < pauseFrames) {
                 ctx.fillText(`4-WAY BUBBLE SWAP (In-Place)`, c.width / 2, startY - 25);
@@ -1205,11 +1247,6 @@
             const activeSet = new Set();
             if (activeGroup) activeGroup.forEach(([r,cc]) => activeSet.add(`${r},${cc}`));
 
-            const completedSet = new Set();
-            for (let g = 0; g < Math.min(completedGroupsCount, swapGroups.length); g++) {
-                swapGroups[g].forEach(([r,cc]) => completedSet.add(`${r},${cc}`));
-            }
-            
             for (let i = 0; i < n; i++) {
                 for (let j = 0; j < n; j++) {
                     const x = startX + j * (cellSize + gap);
@@ -1239,20 +1276,14 @@
                     ctx.strokeRect(x, y, cellSize, cellSize);
                     
                     ctx.fillStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : (isCenter ? colors.accent : colors.text));
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
                 }
             }
 
-            // FLY LOOP for 4-way swap
             if (activeGroup && progress < 1) {
-                // In a 4way swap grp:
-                // [0] moves to [1]
-                // [1] moves to [2]
-                // [2] moves to [3]
-                // [3] moves to [0]
                 const grp = activeGroup;
                 const vals = [current[grp[0][0]][grp[0][1]], current[grp[1][0]][grp[1][1]], current[grp[2][0]][grp[2][1]], current[grp[3][0]][grp[3][1]]];
 
@@ -1268,7 +1299,6 @@
                     const px = sx + (ex - sx) * ease;
                     const py = sy + (ey - sy) * ease;
                     
-                    // Arc perpendicular to movement direction
                     const dx = ex - sx;
                     const dy = ey - sy;
                     const dist = Math.sqrt(dx*dx + dy*dy);
@@ -1294,19 +1324,13 @@
                     
                     ctx.shadowColor = "transparent";
                     ctx.fillStyle = colors.text;
-                    ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                    ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(val, 0, 0);
                     ctx.restore();
                 }
 
-                // 4 cells moving simultaneously
-                // The values we are moving are the ones currently at grp positions.
-                // grp[3] moves to grp[0]
-                // grp[0] moves to grp[1]
-                // grp[1] moves to grp[2]
-                // grp[2] moves to grp[3]
                 drawFlyingOne(3, 0, current[grp[3][0]][grp[3][1]], 1);
                 drawFlyingOne(0, 1, current[grp[0][0]][grp[0][1]], 1);
                 drawFlyingOne(1, 2, current[grp[1][0]][grp[1][1]], 1);
@@ -1318,11 +1342,12 @@
         function drawDemoCanvas(canvasId, type) {
             const c = document.getElementById(canvasId);
             if (!c) return;
+            syncCanvasSize(c);
             const ctx = c.getContext('2d');
             const colors = getColors();
             const n = demoN;
-            const cellSize = Math.min(n > 3 ? 40 : 50, (c.width - 60) / n);
-            const spacing = 8;
+            const cellSize = Math.min(n > 3 ? 40 : 55, (c.width - 60) / n);
+            const spacing = Math.max(4, 8 * (c.width / 400));
             const totalW = n * (cellSize + spacing) - spacing;
             const startX = (c.width - totalW) / 2;
             const startY = (c.height - totalW) / 2;
@@ -1450,7 +1475,7 @@
 
                     if (val !== null) {
                         ctx.fillStyle = isCorrect ? colors.match : (isMoved || isActive ? colors.highlight : colors.text);
-                        ctx.font = `bold ${cellSize * 0.35}px "JetBrains Mono"`;
+                        ctx.font = `bold ${Math.max(12, cellSize * 0.35)}px "JetBrains Mono"`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillText(val, x + cellSize/2, y + cellSize/2);

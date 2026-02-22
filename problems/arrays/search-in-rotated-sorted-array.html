@@ -433,12 +433,30 @@
 
             attachEventListeners() {
                 document.getElementById('demo-update-btn-search').addEventListener('click', () => {
-                    const arrayInput = document.getElementById('demo-array-input-search').value;
-                    const targetInput = document.getElementById('demo-target-input').value;
+                    const arrayInputEl = document.getElementById('demo-array-input-search');
+                    const targetInputEl = document.getElementById('demo-target-input');
+                    const arrayInput = arrayInputEl.value;
+                    const targetInput = targetInputEl.value;
 
                     try {
-                        this.nums = arrayInput.split(',').map(n => parseInt(n.trim()));
-                        this.target = parseInt(targetInput);
+                        let newNums = arrayInput.split(',').map(n => {
+                            const val = parseInt(n.trim());
+                            return isNaN(val) ? 0 : val;
+                        });
+                        
+                        // Limit size
+                        if (newNums.length > 15) {
+                            newNums = newNums.slice(0, 15);
+                        }
+                        
+                        this.nums = newNums;
+                        arrayInputEl.value = this.nums.join(',');
+                        
+                        let target = parseInt(targetInput);
+                        if (isNaN(target)) target = 0;
+                        this.target = target;
+                        targetInputEl.value = this.target;
+                        
                         this.currentStep = 0;
                         this.generateSteps();
                         this.updateVisualization();

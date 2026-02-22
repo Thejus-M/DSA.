@@ -391,10 +391,23 @@
 
             attachEventListeners() {
                 document.getElementById('demo-update-btn-min').addEventListener('click', () => {
-                    const arrayInput = document.getElementById('demo-array-input-min').value;
+                    const inputEl = document.getElementById('demo-array-input-min');
+                    const arrayInput = inputEl.value;
 
                     try {
-                        this.nums = arrayInput.split(',').map(n => parseInt(n.trim()));
+                        let newNums = arrayInput.split(',').map(n => {
+                            const val = parseInt(n.trim());
+                            return isNaN(val) ? 0 : val;
+                        });
+                        
+                        // Limit size to prevent UI breaking
+                        if (newNums.length > 15) {
+                            newNums = newNums.slice(0, 15);
+                        }
+                        
+                        this.nums = newNums;
+                        inputEl.value = this.nums.join(',');
+                        
                         this.currentStep = 0;
                         this.generateSteps();
                         this.updateVisualization();

@@ -69,6 +69,12 @@ const DSA_DATA = {
                     url: "problems/math-geometry/rotate-image.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
+                },
+                {
+                    title: "Spiral Matrix",
+                    url: "problems/math-geometry/spiral-matrix.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         }
