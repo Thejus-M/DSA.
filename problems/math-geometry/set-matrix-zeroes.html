@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/problems.css" />
+    <link rel="stylesheet" href="../../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../../assets/css/visualization.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Set Matrix Zeroes | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <style>
+      .article-container {
+        padding-top: 60px;
+      }
+
+      /* Comparator Tool Styles */
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+      }
+      @media (max-width: 900px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .viz-card {
+        background: rgba(42, 93, 156, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.3s;
+      }
+      .viz-card:hover {
+        border-color: var(--accent);
+      }
+      .viz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .viz-title {
+        font-family: var(--font-mono-sys);
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+      .viz-stat {
+        font-family: var(--font-mono-sys);
+        font-size: 10px;
+        color: var(--text-sub);
+        background: rgba(42, 93, 156, 0.1);
+        padding: 2px 8px;
+        border-radius: 4px;
+        max-width: 65%;
+        text-align: right;
+        line-height: 1.2;
+      }
+      .canvas-container {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background: var(--bg-body);
+        border: 1px solid var(--border-sub);
+        border-radius: 4px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .canvas-container canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .viz-desc {
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--text-sub);
+        margin: 0;
+        font-family: var(--font-body);
+      }
+
+      /* Mobile Improvements */
+      @media (max-width: 600px) {
+        .phase-title {
+          font-size: 20px !important;
+          margin-bottom: 12px;
+        }
+        .phase-description {
+          font-size: 18px !important;
+          line-height: 1.4;
+        }
+        .phase-canvas {
+          height: auto !important;
+          min-height: 350px !important;
+          aspect-ratio: 1 / 1.1;
+        }
+        .canvas-container {
+          height: auto !important;
+          min-height: 350px !important;
+          aspect-ratio: 1 / 1.1;
+        }
+        .viz-title {
+          font-size: 16px !important;
+        }
+        .viz-desc {
+          font-size: 16px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-mount"></div>
+    <div class="ruler-scale" id="ruler-scale"></div>
+    <div class="page-wrapper">
+      <aside class="sidebar" id="sidebar-mount"></aside>
+      <main class="main-content">
+        <div class="article-container">
+          <header class="article-header">
+            <div class="article-meta">DSA LEARNING</div>
+            <h1 class="article-title">Set Matrix Zeroes</h1>
+            <div class="tags">
+              <span class="tag">Medium</span>
+              <span class="tag">Array</span>
+              <span class="tag">Math & Geometry</span>
+              <span class="tag">Matrix</span>
+            </div>
+          </header>
+
+          <div class="divider"></div>
+
+            <div class="terminal-card">
+              <div class="terminal-row">
+                <span class="terminal-label">PROB:</span>
+                <div class="terminal-content serif">
+                  <p style="margin-top: 0;">Given an <code>m x n</code> integer matrix <code>matrix</code>, if an element is <code>0</code>, set its entire row and column to <code>0</code>'s.</p>
+                  <p>You must do it <strong>in-place</strong>.</p>
+                </div>
+              </div>
+              <div class="terminal-row">
+                <span class="terminal-label">CONST:</span>
+                <div class="terminal-content mono">
+                  <ul class="terminal-constraints-list">
+                    <li><code>m == matrix.length</code></li>
+                    <li><code>n == matrix[0].length</code></li>
+                    <li><code>1 <= m, n <= 200</code></li>
+                    <li><code>-2<sup>31</sup> <= matrix[i][j] <= 2<sup>31</sup> - 1</code></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="terminal-row">
+                <span class="terminal-label">EXAMPLE:</span>
+                <div class="terminal-content mono">
+                  <ul class="terminal-examples-list">
+                    <li class="terminal-example-item">
+                      <span class="terminal-example-bullet">•</span>
+                      <div class="terminal-example-label">INPUT</div>
+                      <div class="terminal-example-value">matrix = [[1,1,1],[1,0,1],[1,1,1]]</div>
+                      <div class="terminal-example-label">OUTPUT</div>
+                      <div class="terminal-example-value">[[1,0,1],[0,0,0],[1,0,1]]</div>
+                    </li>
+                    <li class="terminal-example-item">
+                      <span class="terminal-example-bullet">•</span>
+                      <div class="terminal-example-label">INPUT</div>
+                      <div class="terminal-example-value">matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]</div>
+                      <div class="terminal-example-label">OUTPUT</div>
+                      <div class="terminal-example-value">[[0,0,0,0],[0,4,5,0],[0,3,1,0]]</div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <section class="content-section">
+            <h2>The Question</h2>
+            <p style="margin-bottom: 40px;">How can we "infect" cells with zero-ness without causing a chain reaction that resets the entire matrix? We must distinguish original zeroes from those we created.</p>
+
+            <div class="phase-section">
+              <h3 class="phase-title">The "Infection" Visualization</h3>
+              <p class="phase-description">Watch how zeroes spread. If we simply zero-out as we go, we lose the original state. We need a way to <strong>remember</strong> where the zeroes were first.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase0-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-0" onclick="togglePhase(0)">❚❚</button>
+                  <button onclick="restartPhase(0)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(0, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(0, 1)">1x</button>
+                    <button onclick="setSpeed(0, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(0, -1)">❮</button>
+                    <button onclick="stepPhase(0, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <section class="content-section">
+            <h2>Intuition</h2>
+            
+            <!-- Phase 1: Naive External -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 1: The External Tracker (O(M+N) Space)</h3>
+              <p class="phase-description">Simple: use two boolean arrays to <strong>record</strong> which rows and columns contain a zero. Then do a second pass to <strong>fill</strong> them in.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase1-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
+                  <button onclick="restartPhase(1)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(1, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(1, 1)">1x</button>
+                    <button onclick="setSpeed(1, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(1, -1)">❮</button>
+                    <button onclick="stepPhase(1, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2A: Reuse Matrix Edges -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 2A: Reuse Matrix Edges</h3>
+              <p class="phase-description">The trackers from Phase 1 are integrated directly into the <strong>First Row</strong> and <strong>First Column</strong> of the matrix. They act as our specialized storage zones.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2a-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2a" onclick="togglePhase('2a')">❚❚</button>
+                  <button onclick="restartPhase('2a')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('2a', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('2a', 1)">1x</button>
+                    <button onclick="setSpeed('2a', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('2a', -1)">❮</button>
+                    <button onclick="stepPhase('2a', 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2B: Marking Trackers -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 2B: Marking Trackers (Row & Col)</h3>
+              <p class="phase-description">Scanning the interior: if we find a zero at <code>(i, j)</code>, we "project" it by marking both <strong>matrix[0][j]</strong> and <strong>matrix[i][0]</strong> to remember this specific row and column must be zeroed later.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2b-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2b" onclick="togglePhase('2b')">❚❚</button>
+                  <button onclick="restartPhase('2b')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('2b', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('2b', 1)">1x</button>
+                    <button onclick="setSpeed('2b', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('2b', -1)">❮</button>
+                    <button onclick="stepPhase('2b', 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2D: Overlap & rowZero -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 2D: The Overlap & rowZero</h3>
+              <p class="phase-description">Wait! Cell <code>(0,0)</code> is shared by both trackers. We let it track the first column, and use a separate <code>rowZero</code> boolean to protect the first row's original state.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2d-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2d" onclick="togglePhase('2d')">❚❚</button>
+                  <button onclick="restartPhase('2d')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('2d', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('2d', 1)">1x</button>
+                    <button onclick="setSpeed('2d', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('2d', -1)">❮</button>
+                    <button onclick="stepPhase('2d', 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2E: Full Interior Traversal -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 2E: Full Interior Traversal</h3>
+              <p class="phase-description">Putting it all together: watch the scan move through the interior (skipping the trackers initially). See how every zero found "projects" its coordinates onto the first row/column.</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2e-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2e" onclick="togglePhase('2e')">❚❚</button>
+                  <button onclick="restartPhase('2e')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('2e', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('2e', 1)">1x</button>
+                    <button onclick="setSpeed('2e', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('2e', -1)">❮</button>
+                    <button onclick="stepPhase('2e', 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 3: Cleanup -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 3: The Orderly Cleanup</h3>
+              <p class="phase-description">Clean up in specific order: 1. Interior cells using markers, 2. First Column tracker, 3. First Row tracker (rowZero). <strong>Wait, why this order?</strong> Because the trackers are needed to calculate the interior, and (0,0) is needed for the first column cleanup!</p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-3" onclick="togglePhase(3)">❚❚</button>
+                  <button onclick="restartPhase(3)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(3, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(3, 1)">1x</button>
+                    <button onclick="setSpeed(3, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(3, -1)">❮</button>
+                    <button onclick="stepPhase(3, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <section class="content-section">
+            <h2>Solution</h2>
+            <div class="code-block-wrapper">
+              <span class="code-label">Python Solution</span>
+              <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+              <pre><code class="language-python">class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        rows, cols = len(matrix), len(matrix[0])
+        rowZero = False  # Extra variable for first row overlap
+
+        # Phase 2: Mark — use first row/col as storage
+        for r in range(rows):
+            for c in range(cols):
+                if matrix[r][c] == 0:
+                    matrix[0][c] = 0       # First row tracks columns
+                    if r > 0:
+                        matrix[r][0] = 0   # First col tracks rows
+                    else:
+                        rowZero = True     # Separate flag for row 0
+
+        # Phase 3: Cleanup — order matters!
+        # Step 1: Fill interior
+        for r in range(1, rows):
+            for c in range(1, cols):
+                if matrix[0][c] == 0 or matrix[r][0] == 0:
+                    matrix[r][c] = 0
+
+        # Step 2: Fill first column
+        if matrix[0][0] == 0:
+            for r in range(rows):
+                matrix[r][0] = 0
+
+        # Step 3: Fill first row
+        if rowZero:
+            for c in range(cols):
+                matrix[0][c] = 0</code></pre>
+            </div>
+
+            <div class="complexity-card">
+              <h3>Complexity Analysis</h3>
+              <div class="complexity-grid">
+                <div class="complexity-item">
+                  <div class="complexity-label">Time Complexity</div>
+                  <div class="complexity-value">O(M × N)</div>
+                  <div class="complexity-note">Two full passes over the grid.</div>
+                </div>
+                <div class="complexity-item">
+                  <div class="complexity-label">Space Complexity</div>
+                  <div class="complexity-value">O(1)</div>
+                  <div class="complexity-note">Storage is folded into the matrix itself, plus one boolean.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Interactive Visualization -->
+          <section class="content-section">
+            <h2>Interactive Visualization</h2>
+            <p style="margin-bottom: 30px;">Compare how different algorithms handle the same matrix. Enter a 2D array or click cells in STEP 0 to customize the input.</p>
+
+            <div class="demo-container">
+              <div class="interactive-controls-bar">
+                <div class="demo-input-group" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: flex-start;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="matrix-input" class="demo-label">INPUT:</label>
+                    <input type="text" id="matrix-input" class="demo-input" value="[[1,1,1,1],[1,0,1,1],[1,1,1,1],[1,1,1,1]]" style="width: 250px; font-family: var(--font-mono-sys); font-size: 11px;"/>
+                  </div>
+                  <button class="demo-btn" onclick="initDemo()">RUN</button>
+                </div>
+
+                <div class="demo-controls demo-step-controls">
+                  <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">❮</button>
+                  <div class="step-info" id="step-counter">STEP: 0</div>
+                  <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">❯</button>
+                </div>
+              </div>
+
+              <div class="comparison-grid">
+                <!-- O(M+N) Space Card -->
+                <div class="viz-card">
+                  <div class="viz-header">
+                    <span class="viz-title">1. O(M+N) SPACE (ARRAYS)</span>
+                    <span class="viz-stat" id="stat-arrays">Markers Used</span>
+                  </div>
+                  <div class="canvas-container">
+                    <canvas id="canvas-arrays" width="400" height="400"></canvas>
+                  </div>
+                  <p class="viz-desc">Uses two separate boolean arrays to keep track of which rows and columns need zeroing.</p>
+                </div>
+
+                <!-- O(1) Space Card -->
+                <div class="viz-card">
+                  <div class="viz-header">
+                    <span class="viz-title">2. O(1) SPACE (OPTIMIZED)</span>
+                    <span class="viz-stat" id="stat-inplace">In-Place</span>
+                  </div>
+                  <div class="canvas-container">
+                    <canvas id="canvas-inplace" width="400" height="400"></canvas>
+                  </div>
+                  <p class="viz-desc">Folds those arrays into the matrix's own first row/column and uses a <code>rowZero</code> boolean.</p>
+                </div>
+              </div>
+              
+            </div>
+          </section>
+
+          <footer id="footer-mount"></footer>
+        </div>
+      </main>
+    </div>
+
+    <script src="../../assets/js/copy-code.js"></script>
+    <script src="../../assets/js/problems.js"></script>
+    <script src="../../assets/js/data.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+
+    <script>
+      // ===== Theme & Colors =====
+      function getTheme() {
+        return document.documentElement.getAttribute("data-theme") || "dark";
+      }
+
+      function getColors() {
+        const isDark = getTheme() === "dark";
+        return {
+          bg: isDark ? "#1a1a2e" : "#E2DFD6",
+          text: isDark ? "#ffffff" : "#1e3a5f",
+          accent: isDark ? "#f0932b" : "#2A5D9C",
+          border: isDark ? "#2A5D9C" : "#CFCBC2",
+          highlight: isDark ? "#eb4d4b" : "#ef4444",
+          match: isDark ? "#6ab04c" : "#10b981",
+          dim: isDark ? "#a1a1a1" : "#94a3b8",
+          gridLine: isDark ? "rgba(42,93,156,0.3)" : "#D4D1C9",
+          cellBg: isDark ? "#1e1e36" : "#EBE8DF",
+        };
+      }
+
+      // ===== Canvas Sync =====
+      function syncCanvasSize(canvas) {
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if (canvas.width !== Math.floor(rect.width) || canvas.height !== Math.floor(rect.height)) {
+          canvas.width = Math.floor(rect.width);
+          canvas.height = Math.floor(rect.height);
+          return true;
+        }
+        return false;
+      }
+
+      // ===== Phase State =====
+      const phases = {
+        0: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 450 },
+        1: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 700 },
+        "2a": { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 300 },
+        "2b": { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 500 },
+        "2d": { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 400 },
+        "2e": { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 950 },
+        3: { canvas: null, ctx: null, frame: 0, playing: true, speed: 1, maxFrames: 1000 },
+      };
+
+      function initPhases() {
+        Object.keys(phases).forEach((key) => {
+          phases[key].canvas = document.getElementById(`phase${key}-canvas`);
+          if (phases[key].canvas) {
+            phases[key].ctx = phases[key].canvas.getContext("2d");
+          }
+        });
+      }
+
+      // ===== Controls (Exact rotate-image.html pattern) =====
+      function togglePhase(n) {
+        const phase = phases[n];
+        phase.playing = !phase.playing;
+        document.getElementById(`play-btn-${n}`).textContent = phase.playing ? "❚❚" : "▶";
+
+        // CRITICAL: Toggle is-paused class to swap speed ↔ nav controls
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls && controls.classList.contains("phase-controls")) {
+            controls.classList.toggle("is-paused", !phase.playing);
+          }
+        }
+        updateNavState(n);
+      }
+
+      function restartPhase(n) {
+        phases[n].frame = 0;
+        updateNavState(n);
+      }
+
+      function setSpeed(n, speed) {
+        phases[n].speed = speed;
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (!canvasEl) return;
+        const controls = canvasEl.nextElementSibling;
+        if (controls && controls.classList.contains("phase-controls")) {
+          const btns = controls.querySelectorAll("button");
+          btns.forEach((b) => {
+            if (b.textContent.includes("x")) {
+              b.classList.remove("active");
+              if (b.textContent.trim() === `${speed}x`) {
+                b.classList.add("active");
+              }
+            }
+          });
+        }
+      }
+
+      function stepPhase(n, dir) {
+        phases[n].playing = false;
+        document.getElementById(`play-btn-${n}`).textContent = "▶";
+        phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + (dir * 20)));
+        // Ensure is-paused is set when stepping
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls && controls.classList.contains("phase-controls")) {
+            controls.classList.add("is-paused");
+          }
+        }
+        updateNavState(n);
+      }
+
+      function updateNavState(n) {
+        const phase = phases[n];
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (!canvasEl) return;
+
+        // Manage wrapper state for visual feedback (START/FINISHED badges + blur)
+        const wrapper = canvasEl.parentElement;
+        if (wrapper && wrapper.classList.contains("phase-canvas-wrapper")) {
+          if (phase.frame <= 0) wrapper.classList.add("at-start");
+          else wrapper.classList.remove("at-start");
+
+          if (phase.frame >= phase.maxFrames) wrapper.classList.add("at-end");
+          else wrapper.classList.remove("at-end");
+        }
+
+        const controls = canvasEl.nextElementSibling;
+        if (controls) {
+          const prevBtn = controls.querySelector('button[onclick*="-1"]');
+          const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+          if (prevBtn) prevBtn.disabled = (phase.frame <= 0);
+          if (nextBtn) nextBtn.disabled = (phase.frame >= phase.maxFrames);
+        }
+      }
+
+      // ===== Drawing Helpers =====
+      function drawMatrix(ctx, matrix, x, y, cellSize, colors, highlights, borderHighlights) {
+        const rows = matrix.length;
+        const cols = matrix[0].length;
+        highlights = highlights || {};
+        borderHighlights = borderHighlights || {};
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const val = matrix[r][c];
+            const cellX = x + c * cellSize;
+            const cellY = y + r * cellSize;
+
+            // Background
+            ctx.fillStyle = highlights[`${r},${c}`] || colors.cellBg;
+            ctx.fillRect(cellX, cellY, cellSize, cellSize);
+
+            // Border
+            ctx.strokeStyle = borderHighlights[`${r},${c}`] || colors.gridLine;
+            ctx.lineWidth = borderHighlights[`${r},${c}`] ? 2.5 : 1;
+            ctx.strokeRect(cellX, cellY, cellSize, cellSize);
+
+            // Text
+            ctx.fillStyle = val === 0 ? colors.highlight : colors.text;
+            ctx.font = `bold ${Math.max(12, cellSize * 0.38)}px "JetBrains Mono"`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(val, cellX + cellSize / 2, cellY + cellSize / 2);
+          }
+        }
+      }
+
+      function drawLabel(ctx, text, x, y, color, fontSize) {
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.font = `${fontSize || 13}px "Share Tech Mono"`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      }
+
+      // ===== Phase 0: Infection =====
+      function drawPhase0(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const n = 5;
+        const cellSize = Math.min(50, c.width / (n + 2));
+        const startX = (c.width - n * cellSize) / 2;
+        const startY = (c.height - n * cellSize) / 2;
+        const matrix = [[1,1,1,1,1],[1,1,0,1,1],[1,1,1,1,1],[1,0,1,1,1],[1,1,1,1,1]];
+
+        const f = phase.frame;
+        const highlights = {};
+        let label = "INITIAL STATE";
+
+        if (f > 80 && f < 230) {
+          label = "1ST ZERO AT (1,2) INFECTS ROW 1 & COL 2";
+          for (let i = 0; i < n; i++) {
+            highlights[`1,${i}`] = colors.highlight + "22";
+            highlights[`${i},2`] = colors.highlight + "22";
+          }
+          if (f > 180) { for (let i = 0; i < n; i++) { matrix[1][i] = 0; matrix[i][2] = 0; } }
+        } else if (f >= 230) {
+          label = "2ND ZERO AT (3,1) INFECTS ROW 3 & COL 1";
+          for (let i = 0; i < n; i++) { matrix[1][i] = 0; matrix[i][2] = 0; }
+          for (let i = 0; i < n; i++) {
+            highlights[`3,${i}`] = colors.highlight + "22";
+            highlights[`${i},1`] = colors.highlight + "22";
+          }
+          if (f > 350) { for (let i = 0; i < n; i++) { matrix[3][i] = 0; matrix[i][1] = 0; } }
+        }
+
+        drawMatrix(ctx, matrix, startX, startY, cellSize, colors, highlights);
+        drawLabel(ctx, label, c.width / 2, startY - 28, colors.accent);
+      }
+
+      // ===== Phase 1: External Tracker (Clear text) =====
+      function drawPhase1(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const n = 4;
+        const cellSize = Math.min(45, c.width / (n + 7));
+        const startX = (c.width - n * cellSize) / 2 + 30;
+        const startY = (c.height - n * cellSize) / 2 + 30;
+
+        const original = [[1,0,1,1],[1,1,1,1],[0,1,1,1],[1,1,1,1]];
+        const displayMatrix = original.map(r => [...r]);
+        const f = phase.frame;
+        const highlights = {};
+        const rowArr = [false, false, false, false];
+        const colArr = [false, false, false, false];
+
+        if (f < 350) {
+          // SCAN
+          drawLabel(ctx, "SCAN: Find zeroes → mark row[] & col[]", c.width / 2, startY - 80, colors.accent, 14);
+          const scanIdx = Math.min(15, Math.floor((f / 350) * 16));
+          const sr = Math.floor(scanIdx / 4), sc = scanIdx % 4;
+          highlights[`${sr},${sc}`] = colors.accent + "55";
+          for (let i = 0; i <= scanIdx; i++) {
+            const ir = Math.floor(i / 4), ic = i % 4;
+            if (original[ir][ic] === 0) { rowArr[ir] = true; colArr[ic] = true; }
+          }
+        } else {
+          // FILL
+          drawLabel(ctx, "FILL: Zero out every marked row & column", c.width / 2, startY - 80, colors.match, 14);
+          for (let ir = 0; ir < 4; ir++) for (let ic = 0; ic < 4; ic++) {
+            if (original[ir][ic] === 0) { rowArr[ir] = true; colArr[ic] = true; }
+          }
+          const fillIdx = Math.min(16, Math.floor(((f - 350) / 350) * 17));
+          for (let i = 0; i < fillIdx; i++) {
+            const ir = Math.floor(i / 4), ic = i % 4;
+            if (rowArr[ir] || colArr[ic]) {
+              displayMatrix[ir][ic] = 0;
+              highlights[`${ir},${ic}`] = colors.match + "22";
+            }
+          }
+        }
+
+        // Draw row_array (left side)
+        ctx.font = `${Math.max(9, cellSize * 0.22)}px "Share Tech Mono"`;
+        ctx.textAlign = "right";
+        ctx.fillStyle = colors.dim;
+        ctx.fillText("row[]", startX - 8, startY - 10);
+        for (let i = 0; i < n; i++) {
+          const bx = startX - 30, by = startY + i * cellSize;
+          ctx.fillStyle = rowArr[i] ? colors.highlight : colors.cellBg;
+          ctx.fillRect(bx, by, 22, cellSize);
+          ctx.strokeStyle = colors.gridLine;
+          ctx.strokeRect(bx, by, 22, cellSize);
+          ctx.fillStyle = rowArr[i] ? "#fff" : colors.text;
+          ctx.textAlign = "center";
+          ctx.font = `bold ${Math.max(10, cellSize * 0.28)}px "JetBrains Mono"`;
+          ctx.fillText(rowArr[i] ? "T" : "F", bx + 11, by + cellSize / 2 + 4);
+        }
+
+        // Draw col_array (top side)
+        ctx.font = `${Math.max(9, cellSize * 0.22)}px "Share Tech Mono"`;
+        ctx.textAlign = "center";
+        ctx.fillStyle = colors.dim;
+        ctx.fillText("col[]", startX + (n * cellSize) / 2, startY - 50);
+        for (let i = 0; i < n; i++) {
+          const bx = startX + i * cellSize, by = startY - 35;
+          ctx.fillStyle = colArr[i] ? colors.highlight : colors.cellBg;
+          ctx.fillRect(bx, by, cellSize, 22);
+          ctx.strokeStyle = colors.gridLine;
+          ctx.strokeRect(bx, by, cellSize, 22);
+          ctx.fillStyle = colArr[i] ? "#fff" : colors.text;
+          ctx.font = `bold ${Math.max(10, cellSize * 0.28)}px "JetBrains Mono"`;
+          ctx.fillText(colArr[i] ? "T" : "F", bx + cellSize / 2, by + 15);
+        }
+
+        drawMatrix(ctx, displayMatrix, startX, startY, cellSize, colors, highlights);
+      }
+
+      // ===== Phase 2A: Reuse Matrix Edges =====
+      function drawPhase2a(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const matrix = [[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]];
+        const n = 4;
+        const cellSize = Math.min(48, c.width / (n + 6));
+        const startX = (c.width - n * cellSize) / 2 - 20;
+        const startY = (c.height - n * cellSize) / 2 + 15;
+        const f = phase.frame;
+        const highlights = {};
+        const borders = {};
+
+        drawLabel(ctx, "REUSING MATRIX EDGES AS TRACKERS", c.width / 2, startY - 55, colors.accent, 12);
+        
+        // Animated highlight sequence
+        const progress = (f / phase.maxFrames) * 2; // 0 to 2
+        
+        if (progress > 0.2) {
+          // Highlight rows/cols being designated
+          for (let i = 0; i < n; i++) {
+            if (progress > 0.3 + (i * 0.1)) {
+              highlights[`0,${i}`] = colors.accent + "33";
+              borders[`0,${i}`] = colors.accent;
+            }
+            if (progress > 1.0 + (i * 0.1)) {
+              highlights[`${i},0`] = colors.accent + "33";
+              borders[`${i},0`] = colors.accent;
+            }
+          }
+        }
+
+        const msg = progress < 1 ? "First Row = Column Trackers" : "First Column = Row Trackers";
+        drawLabel(ctx, msg, c.width / 2, startY + n * cellSize + 40, colors.text, 11);
+
+        drawMatrix(ctx, matrix, startX, startY, cellSize, colors, highlights, borders);
+      }
+
+      // ===== Phase 2B: Marking Trackers =====
+      function drawPhase2b(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const matrix = [[1,1,1,1],[1,1,0,1],[1,1,1,1],[1,1,1,1]];
+        const n = 4;
+        const cellSize = Math.min(48, c.width / (n + 6));
+        const startX = (c.width - n * cellSize) / 2 - 20;
+        const startY = (c.height - n * cellSize) / 2 + 15;
+        const f = phase.frame;
+        const highlights = {};
+        const borders = {};
+
+        drawLabel(ctx, "PHASE 2B: MARKING BOTH TRACKERS", c.width / 2, startY - 55, colors.accent, 12);
+        drawLabel(ctx, "Found zero at (1,2) → mark Col 2 (Top) and Row 1 (Left)", c.width / 2, startY - 38, colors.text, 10);
+
+        for (let i = 0; i < n; i++) {
+          borders[`0,${i}`] = colors.accent;
+          borders[`${i},0`] = colors.accent;
+        }
+
+        const progress = Math.min(1, f / phase.maxFrames);
+        highlights["1,2"] = colors.highlight + "33";
+        
+        drawMatrix(ctx, matrix, startX, startY, cellSize, colors, highlights, borders);
+
+        if (progress > 0.3) {
+          const arrowProgress = Math.min(1, (progress - 0.3) / 0.7);
+          
+          const fromX = startX + 2 * cellSize + cellSize / 2;
+          const fromY = startY + 1 * cellSize + cellSize / 2;
+          
+          ctx.strokeStyle = colors.highlight;
+          ctx.setLineDash([4, 2]);
+          ctx.lineWidth = 3;
+
+          // Arrow to TOP Row (Col Tracker)
+          const targetTopY = startY + cellSize/2;
+          const currentTopY = fromY + (targetTopY - fromY) * arrowProgress;
+          ctx.beginPath();
+          ctx.moveTo(fromX, fromY);
+          ctx.lineTo(fromX, currentTopY);
+          // Arrow head
+          if (arrowProgress > 0.9) {
+             ctx.moveTo(fromX - 5, currentTopY + 8); ctx.lineTo(fromX, currentTopY); ctx.lineTo(fromX + 5, currentTopY + 8);
+          }
+          ctx.stroke();
+
+          // Arrow to LEFT Column (Row Tracker)
+          const targetLeftX = startX + cellSize/2;
+          const currentLeftX = fromX + (targetLeftX - fromX) * arrowProgress;
+          ctx.beginPath();
+          ctx.moveTo(fromX, fromY);
+          ctx.lineTo(currentLeftX, fromY);
+           // Arrow head
+           if (arrowProgress > 0.9) {
+             ctx.moveTo(currentLeftX + 8, fromY - 5); ctx.lineTo(currentLeftX, fromY); ctx.lineTo(currentLeftX + 8, fromY + 5);
+          }
+          ctx.stroke();
+          
+          ctx.setLineDash([]);
+          ctx.lineWidth = 1;
+        }
+      }
+
+      // ===== Phase 2D: Overlap & rowZero =====
+      function drawPhase2d(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const matrix = [[1,0,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]];
+        const n = 4;
+        const cellSize = Math.min(48, (c.width - 140) / n);
+        const startX = Math.floor((c.width - n * cellSize) / 2 - 50);
+        const startY = Math.floor((c.height - n * cellSize) / 2 + 15);
+        const f = phase.frame;
+        const highlights = {};
+        const borders = {};
+        let rowZero = false;
+
+        drawLabel(ctx, "STEP 2D: THE OVERLAP & rowZero", c.width / 2, startY - 55, colors.highlight, 12);
+        
+        // Scan animation
+        const totalScanFrames = phase.maxFrames * 0.4;
+        const scanIdx = Math.min(n - 1, Math.floor((f / totalScanFrames) * n));
+        
+        for (let i = 0; i < n; i++) {
+           borders[`0,${i}`] = colors.accent;
+           borders[`${i},0`] = colors.accent;
+        }
+
+        // Display scan progress
+        for (let i = 0; i <= scanIdx; i++) {
+            highlights[`0,${i}`] = colors.dim + "33";
+        }
+        highlights[`0,${scanIdx}`] = colors.accent + "66";
+
+        // Trigger rowZero AS SOON AS we hit index 1
+        if (scanIdx >= 1) {
+            rowZero = true;
+            highlights["0,1"] = colors.highlight + "88";
+            borders["0,1"] = colors.highlight;
+        }
+
+        let status = scanIdx < 1 ? `Scanning first row: checking cell (0, ${scanIdx})...` : 
+                     (f < totalScanFrames ? "Found original zero at (0, 1)!" : "rowZero flag is now TRUE.");
+        
+        drawLabel(ctx, status, c.width / 2, startY + n * cellSize + 55, colors.text, 10);
+
+        drawMatrix(ctx, matrix, startX, startY, cellSize, colors, highlights, borders);
+
+        // Draw rowZero variable box
+        const boxX = startX + n * cellSize + 15;
+        const boxY = startY + 30;
+        ctx.fillStyle = rowZero ? colors.highlight : colors.cellBg;
+        ctx.fillRect(boxX, boxY, 100, 35);
+        ctx.strokeStyle = rowZero ? colors.highlight : colors.gridLine;
+        ctx.lineWidth = rowZero ? 2 : 1;
+        ctx.strokeRect(boxX, boxY, 100, 35);
+        ctx.fillStyle = rowZero ? "#fff" : colors.text;
+        ctx.font = '11px "Share Tech Mono"';
+        ctx.textAlign = "center";
+        ctx.fillText(`rowZero: ${rowZero}`, boxX + 50, boxY + 22);
+        ctx.lineWidth = 1;
+      }
+
+      // ===== Phase 2E: Full Interior Traversal =====
+      function drawPhase2e(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const n = 4;
+        const cellSize = Math.min(48, (c.width - 140) / n);
+        const startX = Math.floor((c.width - n * cellSize) / 2 - 50);
+        const startY = Math.floor((c.height - n * cellSize) / 2 + 15);
+        const f = phase.frame;
+        
+        const original = [[1,1,0,1],[1,0,1,1],[0,1,1,1],[1,1,1,0]];
+        const display = [[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]];
+        // Sync original zeroes to display initially
+        for(let r=0; r<n; r++) for(let co=0; co<n; co++) if(original[r][co] === 0) display[r][co] = 0;
+
+        const highlights = {};
+        const borders = {};
+        let rowZero = false;
+        let status = "Scanning interior cells...";
+
+        // Pre-highlight trackers
+        for (let i = 0; i < n; i++) {
+          borders[`0,${i}`] = colors.accent;
+          borders[`${i},0`] = colors.accent;
+        }
+
+        const totalSteps = n * n;
+        const scanFrames = phase.maxFrames - 150; // Buffer at end
+        const stepIndex = Math.floor((f / scanFrames) * totalSteps);
+        const stepProgress = Math.min(1, (f / scanFrames) * totalSteps - stepIndex);
+        
+        for (let i = 0; i < Math.min(stepIndex, totalSteps); i++) {
+          const r = Math.floor(i / n);
+          const co = i % n;
+          if (original[r][co] === 0) {
+            display[0][co] = 0;
+            if (r > 0) display[r][0] = 0; else rowZero = true;
+          }
+          highlights[`${r},${co}`] = colors.dim + "33";
+        }
+
+        if (stepIndex < totalSteps) {
+          const r = Math.floor(stepIndex / n);
+          const co = stepIndex % n;
+          highlights[`${r},${co}`] = colors.accent + "44";
+          status = `Checking cell (${r}, ${co})...`;
+          
+          if (original[r][co] === 0) {
+            status = `Found original zero at (${r}, ${co})! Marking trackers.`;
+            ctx.setLineDash([4, 2]);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = colors.highlight;
+            
+            const cellCenterX = startX + co * cellSize + cellSize/2;
+            const cellCenterY = startY + r * cellSize + cellSize/2;
+            
+            const targetTopY = startY + cellSize/2;
+            const currentTopY = cellCenterY + (targetTopY - cellCenterY) * stepProgress;
+            ctx.beginPath();
+            ctx.moveTo(cellCenterX, cellCenterY);
+            ctx.lineTo(cellCenterX, currentTopY);
+            ctx.stroke();
+
+            if (r > 0) {
+              const targetLeftX = startX + cellSize/2;
+              const currentLeftX = cellCenterX + (targetLeftX - cellCenterX) * stepProgress;
+              ctx.beginPath();
+              ctx.moveTo(cellCenterX, cellCenterY);
+              ctx.lineTo(currentLeftX, cellCenterY);
+              ctx.stroke();
+            } else {
+              const targetFlagX = startX + n * cellSize + 20;
+              const currentFlagX = cellCenterX + (targetFlagX - cellCenterX) * stepProgress;
+              ctx.beginPath();
+              ctx.moveTo(cellCenterX, cellCenterY);
+              ctx.lineTo(currentFlagX, cellCenterY);
+              ctx.stroke();
+            }
+            ctx.setLineDash([]);
+            ctx.lineWidth = 1;
+
+            if (stepProgress > 0.8) {
+              borders[`0,${co}`] = colors.highlight;
+              if (r > 0) borders[`${r},0`] = colors.highlight;
+              else borders["rowZero"] = colors.highlight;
+            }
+          }
+        } else {
+          status = "Interior scan complete. All trackers marked ✓";
+          rowZero = original[0].includes(0); // Ensure final state is accurate
+        }
+
+        drawLabel(ctx, "PHASE 2E: COMPLETE INTERIOR SCAN", c.width / 2, startY - 55, colors.accent, 12);
+        drawLabel(ctx, status, c.width / 2, startY + n * cellSize + 55, colors.text, 10);
+        drawMatrix(ctx, display, startX, startY, cellSize, colors, highlights, borders);
+
+        // rowZero box
+        const boxX = startX + n * cellSize + 20;
+        const boxY = startY + 20;
+        ctx.fillStyle = rowZero ? colors.highlight : colors.cellBg;
+        ctx.fillRect(boxX, boxY, 90, 35);
+        ctx.strokeStyle = borders["rowZero"] || colors.gridLine;
+        ctx.strokeRect(boxX, boxY, 90, 35);
+        ctx.fillStyle = rowZero ? "#fff" : colors.text;
+        ctx.font = '10px "Share Tech Mono"';
+        ctx.textAlign = "center";
+        ctx.fillText(`rowZero: ${rowZero}`, boxX + 45, boxY + 20);
+      }
+
+      // ===== Phase 3: Orderly Cleanup (Gradual & Crisp) =====
+      function drawPhase3(phase) {
+        const ctx = phase.ctx;
+        const c = phase.canvas;
+        syncCanvasSize(c);
+        const colors = getColors();
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        const n = 4;
+        const cellSize = Math.min(48, (c.width - 140) / n);
+        const startX = Math.floor((c.width - n * cellSize) / 2 - 50);
+        const startY = Math.floor((c.height - n * cellSize) / 2 + 10);
+        const f = phase.frame;
+        const highlights = {};
+        const borders = {};
+        const rowZeroFlag = true;
+
+        // Base matrix state for Phase 3
+        const matrix = [[0,0,0,0],[0,1,1,1],[0,1,1,1],[0,1,1,0]];
+
+        // Gradual State Mutation based on Frame
+        const cells = [];
+        for (let r = 1; r < n; r++) for (let co = 1; co < n; co++) cells.push([r, co]);
+
+        // Step 1: Interior Sync (0-300)
+        let progress1 = Math.min(cells.length, Math.floor((f / 300) * (cells.length + 1)));
+        for (let i = 0; i < Math.min(progress1, cells.length); i++) {
+          const [r, co] = cells[i];
+          matrix[r][co] = 0;
+        }
+
+        // Step 2: Col 0 Cleanup (320-580)
+        // 320-400: Check (0,0)
+        // 400-580: Clean
+        const progress2 = Math.min(n, Math.floor(((f - 400) / 180) * (n + 1)));
+        if (f >= 400) {
+          for (let i = 0; i < Math.min(Math.max(0, progress2), n); i++) matrix[i][0] = 0;
+        }
+
+        // Step 3: Row 0 Cleanup (620-880)
+        // 620-700: Check rowZero
+        // 700-880: Clean
+        const progress3 = Math.min(n, Math.floor(((f - 700) / 180) * (n + 1)));
+        if (f >= 700 && rowZeroFlag) {
+          for (let i = 1; i < Math.min(Math.max(0, progress3), n); i++) matrix[0][i] = 0;
+          if (progress3 >= n) matrix[0][0] = 0; // Final cleanup of (0,0) if rowZero is true
+        }
+
+        // Visual highlights for pulsing "active" cleaning square
+        if (f >= 400 && f < 580 && progress2 < n && progress2 >= 0) {
+          const pulse = 0.5 + 0.3 * Math.sin(f / 5);
+          highlights[`${progress2},0`] = colors.highlight + Math.floor(pulse * 255).toString(16).padStart(2, '0');
+        }
+        if (f >= 720 && f < 880 && progress3 < n && progress3 >= 0 && rowZeroFlag) {
+          const pulse = 0.5 + 0.3 * Math.sin(f / 5);
+          highlights[`0,${progress3}`] = colors.match + Math.floor(pulse * 255).toString(16).padStart(2, '0');
+        }
+
+        // Draw Matrix Base with our calculated mutations and highlights
+        drawMatrix(ctx, matrix, startX, startY, cellSize, colors, highlights, borders);
+
+        if (f < 300) {
+          drawLabel(ctx, "STEP 1: SYNC INTERIOR WITH MARKERS", c.width / 2, startY - 45, colors.accent, 13);
+          if (progress1 < cells.length) {
+            const [cr, cc] = cells[progress1];
+            ctx.setLineDash([2, 2]); ctx.strokeStyle = colors.accent; ctx.beginPath();
+            ctx.moveTo(startX + cc * cellSize + cellSize/2, startY + cellSize/2);
+            ctx.lineTo(startX + cc * cellSize + cellSize/2, startY + cr * cellSize + cellSize/2);
+            ctx.moveTo(startX + cellSize/2, startY + cr * cellSize + cellSize/2);
+            ctx.lineTo(startX + cc * cellSize + cellSize/2, startY + cr * cellSize + cellSize/2); ctx.stroke(); ctx.setLineDash([]);
+          }
+        } else if (f < 400) {
+          drawLabel(ctx, "IF (0,0) IS 0 ⮕ CLEAN COL 0", c.width / 2, startY - 45, colors.highlight, 13);
+          const pulse = 0.4 + 0.4 * Math.sin(f / 4);
+          ctx.strokeStyle = colors.highlight + Math.floor(pulse * 255).toString(16).padStart(2, '0');
+          ctx.lineWidth = 4;
+          ctx.strokeRect(startX, startY, cellSize, cellSize);
+          
+          const arrowProg = (f - 300) / 100;
+          ctx.setLineDash([4, 2]); ctx.beginPath();
+          ctx.moveTo(startX + cellSize/2, startY + cellSize/2);
+          ctx.lineTo(startX + cellSize/2, startY + cellSize/2 + (n-1)*cellSize*arrowProg);
+          ctx.stroke(); ctx.setLineDash([]);
+        } else if (f < 600) {
+          drawLabel(ctx, "STEP 2: CLEANING LEFT COLUMN (Col 0)...", c.width / 2, startY - 45, colors.highlight, 13);
+          ctx.strokeStyle = colors.highlight + "cc"; ctx.lineWidth = 6; ctx.beginPath();
+          ctx.moveTo(startX + cellSize/2, startY + cellSize/6); ctx.lineTo(startX + cellSize/2, startY + n * cellSize - cellSize/6); ctx.stroke();
+        } else if (f < 700) {
+          drawLabel(ctx, "IF rowZero IS TRUE ⮕ CLEAN ROW 0", c.width / 2, startY - 45, colors.match, 13);
+          const arrowProgress = Math.min(1, (f - 600) / 100);
+          ctx.strokeStyle = colors.match; ctx.lineWidth = 4; ctx.beginPath();
+          ctx.moveTo(startX - 15, startY + cellSize/2);
+          ctx.lineTo(startX - 15 + (n * cellSize + 30) * arrowProgress, startY + cellSize/2); ctx.stroke();
+        } else if (f < 900) {
+          drawLabel(ctx, "STEP 3: CLEANING TOP ROW (Row 0)...", c.width / 2, startY - 45, colors.match, 13);
+          ctx.strokeStyle = colors.match + "cc"; ctx.lineWidth = 6; ctx.beginPath();
+          ctx.moveTo(startX - 15, startY + cellSize/2); ctx.lineTo(startX + n * cellSize + 15, startY + cellSize/2); ctx.stroke();
+        } else {
+          drawLabel(ctx, "ORDERLY CLEANUP COMPLETE ✓", c.width / 2, startY - 45, colors.match, 14);
+        }
+
+        // rowZero flag indicator box
+        const boxX = startX + n * cellSize + 15;
+        const boxY = startY;
+        const isActive = (f >= 600 && f < 850); 
+        ctx.fillStyle = isActive ? (f >= 700 ? colors.match : colors.highlight) : colors.cellBg;
+        ctx.fillRect(boxX, boxY, 90, 35);
+        ctx.strokeStyle = isActive ? (f >= 700 ? colors.match : colors.highlight) : colors.gridLine;
+        ctx.lineWidth = isActive ? 2 : 1;
+        ctx.strokeRect(boxX, boxY, 90, 35);
+        ctx.fillStyle = isActive ? "#fff" : colors.text;
+        ctx.font = '10px "Share Tech Mono"';
+        ctx.textAlign = "center";
+        ctx.fillText(`rowZero`, boxX + 45, boxY + 14);
+        ctx.fillText(`${rowZeroFlag}`, boxX + 45, boxY + 28);
+        ctx.lineWidth = 1;
+      }
+
+      // ===== Interactive Visualization =====
+      let demoState = {
+        rows: 4,
+        cols: 4,
+        matrix: [],
+        step: 0,
+        maxSteps: 0,
+        canvases: { arrays: null, inplace: null },
+        ctxs: { arrays: null, inplace: null }
+      };
+
+      function getStepInfo(step, rows, cols, matrix) {
+        const info = { arrays: null, inplace: null };
+        
+        // --- ARRAYS VERSION PATH ---
+        let currentA = 0;
+        if (step === 0) info.arrays = { phase: "INIT", msg: "Setup/Idle" };
+        else {
+          currentA++;
+          const totalCells = rows * cols;
+          if (step < currentA + totalCells) {
+             const s = step - currentA;
+             info.arrays = { phase: "SCAN", r: Math.floor(s/cols), c: s%cols, msg: `SCAN: Setting independent trackers.` };
+          } else if (step < currentA + 2*totalCells) {
+             const s = step - (currentA + totalCells);
+             info.arrays = { phase: "CLEAN", r: Math.floor(s/cols), c: s%cols, msg: `CLEANUP: Using trackers.` };
+          } else {
+             info.arrays = { phase: "FINAL", msg: "Final state." };
+          }
+        }
+
+        // --- IN-PLACE VERSION PATH ---
+        let currentI = 0;
+        if (step === 0) info.inplace = { phase: "INIT", msg: "Setup/Idle" };
+        else {
+          currentI++;
+          const totalScan = rows * cols;
+          if (step < currentI + totalScan) {
+             const s = step - currentI;
+             const r = Math.floor(s/cols);
+             const c = s%cols;
+             let extra = "";
+             if (r === 0 && matrix[r][c] === 0) extra = " (Marks <b>rowZero</b> flag)";
+             else if (c === 0 && matrix[r][c] === 0) extra = " (Marks <b>(0,0)</b> for Col 0)";
+             info.inplace = { phase: "MARK", r, c, msg: `SCAN: (${r}, ${c})${extra}` };
+          } else {
+            currentI += totalScan;
+            const totalInt = (rows - 1) * (cols - 1);
+            if (step < currentI + totalInt) {
+               const r = Math.floor((step - currentI)/(cols-1)) + 1;
+               const c = ((step - currentI)%(cols-1)) + 1;
+               info.inplace = { phase: "INT", r, c, msg: `CLEAN: Interior uses row/col edge markers.` };
+            } else {
+              currentI += totalInt;
+              if (step < currentI + rows) {
+                const r = step - currentI;
+                info.inplace = { phase: "COL0", r, c: 0, msg: `CLEAN: Row ${r} uses <b>(0,0) Col Tracker</b>.` };
+              } else {
+                currentI += rows;
+                if (step < currentI + cols) {
+                  const c = step - currentI;
+                  info.inplace = { phase: "ROW0", r: 0, c, msg: `CLEAN: Col ${c} uses <b>rowZero flag</b>.` };
+                } else {
+                  info.inplace = { phase: "FINAL", msg: "Optimized state." };
+                }
+              }
+            }
+          }
+        }
+
+        return info;
+      }
+
+      function initDemo() {
+        try {
+          const inputEl = document.getElementById('matrix-input');
+          const val = JSON.parse(inputEl.value);
+          if (Array.isArray(val) && Array.isArray(val[0])) {
+            demoState.matrix = val;
+            demoState.rows = val.length;
+            demoState.cols = val[0].length;
+          }
+        } catch(e) {
+          console.error("Invalid matrix input");
+        }
+        
+        const { rows, cols } = demoState;
+        const maxA = 1 + (rows * cols) + (rows * cols) + 1;
+        const maxI = 1 + (rows * cols) + (rows - 1) * (cols - 1) + rows + cols + 1;
+        demoState.maxSteps = Math.max(maxA, maxI);
+        demoState.step = 0;
+        
+        demoState.canvases.arrays = document.getElementById('canvas-arrays');
+        demoState.canvases.inplace = document.getElementById('canvas-inplace');
+        demoState.ctxs.arrays = demoState.canvases.arrays.getContext('2d');
+        demoState.ctxs.inplace = demoState.canvases.inplace.getContext('2d');
+        
+        if (!demoState.listenersAdded) {
+          demoState.canvases.arrays.onclick = (e) => handleCanvasClick(e, 'arrays');
+          demoState.canvases.inplace.onclick = (e) => handleCanvasClick(e, 'inplace');
+          demoState.listenersAdded = true;
+        }
+
+        updateDemoUI();
+        drawDemo();
+      }
+
+      function stepDemo(dir) {
+        demoState.step = Math.max(0, Math.min(demoState.maxSteps, demoState.step + dir));
+        updateDemoUI();
+        drawDemo();
+      }
+
+      function updateDemoUI() {
+        const info = getStepInfo(demoState.step, demoState.rows, demoState.cols, demoState.matrix);
+        document.getElementById('step-counter').textContent = `STEP: ${demoState.step}`;
+        document.getElementById('prev-step-btn').disabled = demoState.step === 0;
+        document.getElementById('next-step-btn').disabled = demoState.step >= demoState.maxSteps - 1;
+        
+        // Update individual stat badges instead of bottom box
+        const statA = document.getElementById('stat-arrays');
+        const statI = document.getElementById('stat-inplace');
+        if (statA) statA.innerHTML = info.arrays.msg;
+        if (statI) statI.innerHTML = info.inplace.msg;
+      }
+
+      function handleCanvasClick(e, type) {
+        if (demoState.step !== 0) return;
+        const canvas = demoState.canvases[type];
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        
+        const cellSize = Math.min(35, (canvas.width * 0.7) / demoState.cols);
+        const startX = (canvas.width - demoState.cols * cellSize) / 2 - 20;
+        const startY = (canvas.height - demoState.rows * cellSize) / 2 - 20;
+        
+        const col = Math.floor((x - startX) / cellSize);
+        const row = Math.floor((y - startY) / cellSize);
+        
+        if (row >= 0 && row < demoState.rows && col >= 0 && col < demoState.cols) {
+          demoState.matrix[row][col] = demoState.matrix[row][col] === 0 ? 1 : 0;
+          document.getElementById('matrix-input').value = JSON.stringify(demoState.matrix);
+          drawDemo();
+        }
+      }
+
+      function drawDemo() {
+        const colors = getColors();
+        const { rows, cols, matrix, step } = demoState;
+        const info = getStepInfo(step, rows, cols, matrix);
+
+        // --- CALC ARRAYS VERSION ---
+        let rowMarkersA = Array(rows).fill(false);
+        let colMarkersA = Array(cols).fill(false);
+        let displayA = matrix.map(r => [...r]);
+        let highlightsA = {};
+        
+        let stepCount = 0;
+        if (step > 0) {
+          stepCount++;
+          // Scan RC
+          for(let r=0; r<rows; r++) {
+            for(let c=0; c<cols; c++) {
+              if (stepCount <= step) {
+                if (matrix[r][c] === 0) { rowMarkersA[r] = true; colMarkersA[c] = true; }
+                if (stepCount === step) highlightsA[`${r},${c}`] = colors.accent + "88";
+              }
+              stepCount++;
+            }
+          }
+          // Cleanup RC
+          for(let r=0; r<rows; r++) {
+            for(let c=0; c<cols; c++) {
+              if (stepCount <= step) {
+                if (rowMarkersA[r] || colMarkersA[c]) displayA[r][c] = 0;
+                if (stepCount === step) highlightsA[`${r},${c}`] = colors.match + "88";
+              }
+              stepCount++;
+            }
+          }
+        }
+
+        // --- CALC IN-PLACE VERSION ---
+        let displayI = matrix.map(r => [...r]);
+        let rz = false;
+        let highlightsI = {};
+        let bordersI = {};
+        for (let i=0; i<rows; i++) bordersI[`${i},0`] = colors.accent;
+        for (let i=0; i<cols; i++) bordersI[`0,${i}`] = colors.accent;
+
+        stepCount = 0;
+        if (step > 0) {
+          stepCount++;
+          // Pass 1: Scan RC
+          for (let r=0; r<rows; r++) {
+            for (let c=0; c<cols; c++) {
+              if (stepCount <= step) {
+                if (matrix[r][c] === 0) {
+                  if (r === 0) rz = true;
+                  else { displayI[r][0] = 0; displayI[0][c] = 0; }
+                }
+                if (stepCount === step) {
+                    highlightsI[`${r},${c}`] = colors.accent + "88";
+                    if (r === 0 && matrix[r][c] === 0) highlightsI["rowZeroHighlight"] = true;
+                }
+              }
+              stepCount++;
+            }
+          }
+          // Pass 2: Interior (1,1)
+          for (let r=1; r<rows; r++) {
+            for (let c=1; c<cols; c++) {
+              if (stepCount <= step) {
+                if (displayI[r][0] === 0 || displayI[0][c] === 0) displayI[r][c] = 0;
+                if (stepCount === step) highlightsI[`${r},${c}`] = colors.match + "88";
+              }
+              stepCount++;
+            }
+          }
+          // Pass 3: Col 0
+          for (let r=0; r<rows; r++) {
+            if (stepCount <= step) {
+              if (displayI[0][0] === 0) displayI[r][0] = 0;
+              if (stepCount === step) highlightsI[`${r},0`] = colors.highlight + "88";
+            }
+            stepCount++;
+          }
+          // Pass 4: Row 0
+          for (let c=0; c<cols; c++) {
+            if (stepCount <= step) {
+              if (rz) displayI[0][c] = 0;
+              if (stepCount === step) {
+                 highlightsI[`0,${c}`] = colors.match + "88";
+                 highlightsI["rowZeroCleaning"] = true;
+              }
+            }
+            stepCount++;
+          }
+        }
+
+        const cellSize = Math.min(35, (demoState.canvases.arrays.width * 0.7) / cols);
+        const startX = (demoState.canvases.arrays.width - cols * cellSize) / 2 - 20;
+        const startY = (demoState.canvases.arrays.height - rows * cellSize) / 2 - 20;
+
+        // Render A
+        const ctxA = demoState.ctxs.arrays;
+        syncCanvasSize(demoState.canvases.arrays);
+        ctxA.clearRect(0, 0, ctxA.canvas.width, ctxA.canvas.height);
+        drawMatrix(ctxA, displayA, startX, startY, cellSize, colors, highlightsA, {});
+        for (let r=0; r<rows; r++) {
+          const x = startX + cols * cellSize + 10, y = startY + r * cellSize;
+          ctxA.fillStyle = rowMarkersA[r] ? colors.highlight : colors.cellBg;
+          ctxA.fillRect(x, y, cellSize * 0.6, cellSize);
+          ctxA.strokeStyle = colors.gridLine; ctxA.strokeRect(x, y, cellSize * 0.6, cellSize);
+          if (rowMarkersA[r]) { ctxA.fillStyle = "#fff"; ctxA.font = "8px monospace"; ctxA.textAlign = "center"; ctxA.fillText("T", x + cellSize * 0.3, y + cellSize * 0.7); }
+        }
+        for (let c=0; c<cols; c++) {
+          const x = startX + c * cellSize, y = startY + rows * cellSize + 10;
+          ctxA.fillStyle = colMarkersA[c] ? colors.highlight : colors.cellBg;
+          ctxA.fillRect(x, y, cellSize, cellSize * 0.6);
+          ctxA.strokeStyle = colors.gridLine; ctxA.strokeRect(x, y, cellSize, cellSize * 0.6);
+          if (colMarkersA[c]) { ctxA.fillStyle = "#fff"; ctxA.font = "8px monospace"; ctxA.textAlign = "center"; ctxA.fillText("T", x + cellSize/2, y + cellSize * 0.4); }
+        }
+
+        // Render I
+        const ctxI = demoState.ctxs.inplace;
+        syncCanvasSize(demoState.canvases.inplace);
+        ctxI.clearRect(0, 0, ctxI.canvas.width, ctxI.canvas.height);
+        drawMatrix(ctxI, displayI, startX, startY, cellSize, colors, highlightsI, bordersI);
+        
+        const rzX = startX + cols * cellSize + 15, rzY = startY;
+        const rzIndicator = (highlightsI["rowZeroCleaning"] || highlightsI["rowZeroHighlight"] || (step > 0 && info.inplace && info.inplace.phase === "MARK" && rz));
+        ctxI.fillStyle = rzIndicator ? colors.highlight : colors.cellBg;
+        ctxI.fillRect(rzX, rzY, 75, 35);
+        ctxI.strokeStyle = rzIndicator ? colors.highlight : colors.gridLine;
+        ctxI.strokeRect(rzX, rzY, 75, 35);
+        ctxI.fillStyle = rzIndicator ? "#fff" : colors.text;
+        ctxI.font = '10px "Share Tech Mono"'; ctxI.textAlign = "center";
+        ctxI.fillText(`rowZero`, rzX+37, rzY+14); ctxI.fillText(`${rz}`, rzX+37, rzY+28);
+
+        // Visual intent labels for (0,0) tracker
+        if (info.inplace && (info.inplace.phase === "COL0" || info.inplace.phase === "MARK")) {
+            ctxI.strokeStyle = colors.accent;
+            ctxI.lineWidth = 2;
+            ctxI.strokeRect(startX, startY, cellSize, cellSize);
+            if (info.inplace.phase === "COL0") {
+                ctxI.strokeStyle = colors.highlight; ctxI.lineWidth = 2; ctxI.setLineDash([4, 2]);
+                ctxI.beginPath(); ctxI.moveTo(startX + cellSize/2, startY + cellSize/2); ctxI.lineTo(startX + cellSize/2, startY + rows * cellSize); ctxI.stroke();
+                ctxI.setLineDash([]);
+            }
+        }
+
+        if (highlightsI["rowZeroCleaning"]) {
+            ctxI.strokeStyle = colors.match; ctxI.lineWidth = 2; ctxI.setLineDash([4, 2]);
+            ctxI.beginPath(); ctxI.moveTo(rzX, rzY + 17); ctxI.lineTo(startX + cols * cellSize, rzY + 17); ctxI.stroke();
+            ctxI.setLineDash([]);
+        }
+      }
+
+      // ===== Main Render Loop =====
+      function drawAll() {
+        Object.keys(phases).forEach((n) => {
+          const phase = phases[n];
+          if (!phase.ctx) return;
+          if (phase.playing) {
+            phase.frame = phase.frame + phase.speed;
+            if (phase.frame > phase.maxFrames) phase.frame = 0;
+          }
+          if (n == 0) drawPhase0(phase);
+          if (n == 1) drawPhase1(phase);
+          if (n == "2a") drawPhase2a(phase);
+          if (n == "2b") drawPhase2b(phase);
+          if (n == "2d") drawPhase2d(phase);
+          if (n == "2e") drawPhase2e(phase);
+          if (n == 3) drawPhase3(phase);
+          updateNavState(n);
+        });
+        requestAnimationFrame(drawAll);
+      }
+
+      // ===== Bootstrap =====
+      window.onload = () => {
+        initPhases();
+        initDemo();
+        requestAnimationFrame(drawAll);
+      };
+    </script>
+  </body>
+
+
+</html>

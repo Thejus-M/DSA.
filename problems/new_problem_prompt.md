@@ -335,7 +335,33 @@ pointers) and completion messages are enlarged and centered on small screens. -
 
 <div class="section-divider" aria-hidden="true"></div>
 
-### 7. Interactive Visualization **[OPTIONAL]** ```html
+### 7. Solution Code ```html
+<section class="content-section">
+  <h2>Solution</h2>
+  <div class="code-block-wrapper">
+    <span class="code-label">Python Solution</span>
+    <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+    <pre><code class="language-python">[Python code]</code></pre>
+  </div>
+</section>
+``` ### 8. Complexity Analysis ```html
+<div class="complexity-card">
+  <h3>Complexity Analysis</h3>
+  <div class="complexity-grid">
+    <div class="complexity-item">
+      <div class="complexity-label">Time Complexity</div>
+      <div class="complexity-value">O(...)</div>
+      <div class="complexity-note">[Explanation]</div>
+    </div>
+    <div class="complexity-item">
+      <div class="complexity-label">Space Complexity</div>
+      <div class="complexity-value">O(...)</div>
+      <div class="complexity-note">[Explanation]</div>
+    </div>
+  </div>
+</div>
+``` ### 9. Interactive Visualization ```html
+l
 <section class="content-section" style="margin-top: 60px;">
   <h2>Interactive Visualization</h2>
   <p style="margin-bottom: 30px;">[Description]</p>
@@ -433,31 +459,40 @@ pointers) and completion messages are enlarged and centered on small screens. -
 
 <div class="section-divider" aria-hidden="true"></div>
 
-### 8. Solution Code ```html
-<section class="content-section">
-  <h2>Solution: [Approach Name]</h2>
-  <div class="code-block-wrapper">
-    <span class="code-label">Python Solution</span>
-    <button class="copy-btn" onclick="copyCode(this)">COPY</button>
-    <pre><code class="language-python">[Python code]</code></pre>
+# or depending on the  question the below one
+
+<section class="content-section" style="margin-top: 60px;">
+  <h2>Interactive Visualization</h2>
+  <p style="margin-bottom: 30px;">[Description]</p>
+
+  <div class="demo-container">
+    <div class="interactive-controls-bar">
+      <div class="demo-input-group">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label for="matrix-input" class="demo-label">INPUT:</label>
+          <input
+            type="text"
+            id="matrix-input"
+            class="demo-input"
+            value="[[1,1],[1,0]]"
+            style="width: 200px;"
+          />
+        </div>
+        <button class="demo-btn" onclick="initDemo()">RUN</button>
+      </div>
+      <div class="demo-controls demo-step-controls">
+        <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">
+          ❮
+        </button>
+        <div class="step-info" id="step-counter">STEP: 0</div>
+        <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">
+          ❯
+        </button>
+      </div>
+    </div>
+    <div class="comparison-grid">...</div>
   </div>
 </section>
-``` ### 9. Complexity Analysis ```html
-<div class="complexity-card">
-  <h3>Complexity Analysis</h3>
-  <div class="complexity-grid">
-    <div class="complexity-item">
-      <div class="complexity-label">Time Complexity</div>
-      <div class="complexity-value">O(...)</div>
-      <div class="complexity-note">[Explanation]</div>
-    </div>
-    <div class="complexity-item">
-      <div class="complexity-label">Space Complexity</div>
-      <div class="complexity-value">O(...)</div>
-      <div class="complexity-note">[Explanation]</div>
-    </div>
-  </div>
-</div>
 ``` ``` ### 10. Footer Mount ```html
 <footer id="footer-mount"></footer>
 ``` --- ## **Required JavaScript Boilerplate** Every problem page MUST include

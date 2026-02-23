@@ -234,7 +234,6 @@ html[data-theme="light"] .interactive-controls-bar {
         line-height: 1; /* Ensure perfect vertical center */
     }
 
-    /* Override the generic .demo-btn full-width behavior for these specific buttons */
     .interactive-controls-bar .demo-step-controls .demo-btn {
         width: auto !important;
         min-width: 32px !important;
@@ -247,6 +246,16 @@ html[data-theme="light"] .interactive-controls-bar {
         border-radius: 3px;
         font-size: 12px;
         background: var(--bg-card); /* Make buttons stand out against tinted background */
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Fix: Ensure arrow stays visible on mobile touch/hover */
+    .interactive-controls-bar .demo-step-controls .demo-btn:hover,
+    .interactive-controls-bar .demo-step-controls .demo-btn:active,
+    .interactive-controls-bar .demo-step-controls .demo-btn:focus {
+        background: var(--accent) !important;
+        color: #fff !important;
+        outline: none;
     }
     
     html[data-theme="light"] .interactive-controls-bar .demo-step-controls .demo-btn {

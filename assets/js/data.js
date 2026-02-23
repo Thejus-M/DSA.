@@ -75,6 +75,12 @@ const DSA_DATA = {
                     url: "problems/math-geometry/spiral-matrix.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
+                },
+                {
+                    title: "Set Matrix Zeroes",
+                    url: "problems/math-geometry/set-matrix-zeroes.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         }

@@ -54,5 +54,13 @@ const problems = [
     difficulty: "medium",
     tags: ["math", "geometry", "matrix", "array"],
     summary: "Return all elements of an m x n matrix in spiral order."
+  },
+  {
+    id: 73,
+    title: "Set Matrix Zeroes",
+    slug: "set-matrix-zeroes",
+    difficulty: "medium",
+    tags: ["matrix", "array", "math", "geometry"],
+    summary: "If an element in an m x n matrix is 0, set its entire row and column to 0 in-place."
   }
 ];
