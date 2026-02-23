@@ -70,5 +70,13 @@ const problems = [
     difficulty: "easy",
     tags: ["math", "two-pointers", "hash-table"],
     summary: "Determine if a number reaches 1 by repeatedly replacing it with the sum of the squares of its digits."
+  },
+  {
+    id: 66,
+    title: "Plus One",
+    slug: "plus-one",
+    difficulty: "easy",
+    tags: ["math", "array"],
+    summary: "Increment a large integer represented as an array of digits by one."
   }
 ];

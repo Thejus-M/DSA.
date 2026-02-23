@@ -273,6 +273,10 @@
                     <button class="active" onclick="setSpeed(1, 1)">1x</button>
                     <button onclick="setSpeed(1, 2)">2x</button>
                   </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(1, -1)">❮</button>
+                    <button onclick="stepPhase(1, 1)">❯</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -293,6 +297,10 @@
                     <button onclick="setSpeed(2, 0.5)">0.5x</button>
                     <button class="active" onclick="setSpeed(2, 1)">1x</button>
                     <button onclick="setSpeed(2, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(2, -1)">❮</button>
+                    <button onclick="stepPhase(2, 1)">❯</button>
                   </div>
                 </div>
               </div>
@@ -316,6 +324,10 @@
                     <button class="active" onclick="setSpeed(3, 1)">1x</button>
                     <button onclick="setSpeed(3, 2)">2x</button>
                   </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(3, -1)">❮</button>
+                    <button onclick="stepPhase(3, 1)">❯</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -337,6 +349,10 @@
                     <button onclick="setSpeed(4, 0.5)">0.5x</button>
                     <button class="active" onclick="setSpeed(4, 1)">1x</button>
                     <button onclick="setSpeed(4, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(4, -1)">❮</button>
+                    <button onclick="stepPhase(4, 1)">❯</button>
                   </div>
                 </div>
               </div>
@@ -559,10 +575,12 @@
           const controls = canvasEl.nextElementSibling;
           if (controls) controls.classList.toggle("is-paused", !phase.playing);
         }
+        updateNavState(n);
       }
 
       function restartPhase(n) {
         phases[n].frame = 0;
+        updateNavState(n);
       }
 
       function setSpeed(n, speed) {
@@ -577,6 +595,7 @@
             if (b.textContent.trim() === `${speed}x`) b.classList.add("active");
           });
         }
+        updateNavState(n);
       }
 
       function stepPhase(n, dir) {
@@ -587,6 +606,30 @@
         if (canvasEl) {
           const controls = canvasEl.nextElementSibling;
           if (controls) controls.classList.add("is-paused");
+        }
+        updateNavState(n);
+      }
+
+      function updateNavState(n) {
+        const phase = phases[n];
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (!canvasEl) return;
+
+        const wrapper = canvasEl.parentElement;
+        if (wrapper && wrapper.classList.contains('phase-canvas-wrapper')) {
+          if (phase.frame <= 0 && !phase.playing) wrapper.classList.add('at-start');
+          else wrapper.classList.remove('at-start');
+
+          if (phase.frame >= phase.maxFrames && !phase.playing) wrapper.classList.add('at-end');
+          else wrapper.classList.remove('at-end');
+        }
+
+        const controls = canvasEl.nextElementSibling;
+        if (controls) {
+          const prevBtn = controls.querySelector('button[onclick*="-1"]');
+          const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+          if (prevBtn) prevBtn.disabled = (phase.frame <= 0);
+          if (nextBtn) nextBtn.disabled = (phase.frame >= phase.maxFrames);
         }
       }
 
@@ -1079,6 +1122,7 @@
           }
           const fns = [drawPhase0, drawPhase1, drawPhase2, drawPhase3, drawPhase4];
           if (fns[n]) fns[n](phase);
+          updateNavState(n);
         });
         requestAnimationFrame(drawAll);
       }

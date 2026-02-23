@@ -1181,10 +1181,12 @@
             controls.classList.toggle("is-paused", !phase.playing);
           }
         }
+        updateNavState(n);
       }
 
       function restartPhase(n) {
         phases[n].frame = 0;
+        updateNavState(n);
       }
 
       function setSpeed(n, speed) {
@@ -1194,6 +1196,7 @@
           btn.classList.remove("active");
           if (btn.textContent === `${speed}x`) btn.classList.add("active");
         });
+        updateNavState(n);
       }
 
       function stepPhase(n, dir) {
@@ -1205,6 +1208,30 @@
         );
         const controls = phases[n].canvas.nextElementSibling;
         controls.classList.add("is-paused");
+        updateNavState(n);
+      }
+
+      function updateNavState(n) {
+        const phase = phases[n];
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (!canvasEl) return;
+
+        const wrapper = canvasEl.parentElement;
+        if (wrapper && wrapper.classList.contains("phase-canvas-wrapper")) {
+          if (phase.frame <= 0 && !phase.playing) wrapper.classList.add("at-start");
+          else wrapper.classList.remove("at-start");
+
+          if (phase.frame >= phase.maxFrames && !phase.playing) wrapper.classList.add("at-end");
+          else wrapper.classList.remove("at-end");
+        }
+
+        const controls = canvasEl.nextElementSibling;
+        if (controls) {
+          const prevBtn = controls.querySelector('button[onclick*="-1"]');
+          const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+          if (prevBtn) prevBtn.disabled = (phase.frame <= 0);
+          if (nextBtn) nextBtn.disabled = (phase.frame >= phase.maxFrames);
+        }
       }
 
       function drawAll() {
@@ -1219,6 +1246,7 @@
           if (phase.playing) {
             phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
           }
+          updateNavState(n);
         });
 
         requestAnimationFrame(drawAll);

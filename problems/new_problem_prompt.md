@@ -7,11 +7,15 @@ Create a new DSA problem page with the following specifications:
 - **Style**: Cyberpunk/tech-inspired minimalist design with monospace typography
 - **Color Scheme**: Uses CSS variables from `variables.css` - steel blue accents (`--accent`), clean backgrounds, subtle borders.
   - **Light Mode Aesthetics**: Strict adherence to a "Paper-Like" feel. **NEVER use pure white (`#FFF`, `#FFFFFF`, `white`) anywhere — not in CSS, not in JavaScript canvas fills, not in inline styles.** Use `--bg-body` (#E2DFD6) for large surfaces and `--bg-card-elevated` (#EBE8DF) for interactive elements like buttons, inputs, player trays, and canvas cell backgrounds.
+- **Theme Synchronization**: JavaScript `getColors()` functions MUST NOT use hardcoded hex values. Instead, use `getComputedStyle(document.documentElement).getPropertyValue('--var-name')` to ensure canvas elements perfectly match the CSS theme.
 - **Typography**:
   - Headers: 'Share Tech Mono' (monospace, uppercase, tech-style)
   - Body: 'EB Garamond' (serif, highly readable)
   - Code: 'JetBrains Mono' (monospace)
   - Pixel art logo: 'Press Start 2P'
+- **Iconography**:
+  - **Prioritize themed icons**, CSS shapes, or custom-drawn canvas elements (e.g., a stylized "S" circle for Slow pointer, "F" for Fast).
+  - **Emojis are permitted ONLY if they match the theme** (minimalist, tech-inspired). Avoid bright, multi-colored standard emojis that clash with the steel-blue or paper-like palette.
 
 ### **Mobile Responsiveness**
 
@@ -21,6 +25,9 @@ Create a new DSA problem page with the following specifications:
 - **Tablet Smoothing**: Layout adapts gracefully between 900px-1100px (reduced padding, smaller sidebar)
 - **Canvas Animations**: On small screens (< 700px), canvases should adapt their size and font scaling. Use `aspect-ratio` to maintain a taller, more readable grid on mobile.
 - **Adaptive Typography**: Increase font sizes for phase titles, descriptions, and canvas labels on mobile to ensure readability.
+- **Track Responsiveness**: For visualizations with horizontal tracks/grids (like pointers or queues), `cellSize` and `spacing` MUST be calculated dynamically based on `canvas.width` and the number of items to prevent overflow.
+- **DPI Scaling**: Always use `window.devicePixelRatio` (dpr) for crisp rendering. Scale `lineWidth` and `font` relative to `dpr`.
+- **Dynamic Font Scaling**: Use relative font sizes based on canvas width (e.g., `${Math.max(12, canvas.width * 0.03)}px`) to ensure labels remain readable on small devices.
 
 ---
 
@@ -271,33 +278,36 @@ Frame-precise stepping (❮/❯ buttons advance by ~10 frames) - Speed control
 Toggling The control bar below each canvas has **two mutually exclusive control
 groups**: - **Speed controls** (0.5x, 1x, 2x) — shown while **playing** - **Nav
 controls** (❮, ❯ step buttons) — shown while **paused** This is toggled via the
-CSS class `is-paused` on the `.phase-controls` container: ```css
-.phase-controls.is-paused .speed-controls { display: none; }
-.phase-controls:not(.is-paused) .nav-controls { display: none; } ``` The
-`togglePhase()` function MUST toggle this class: ```javascript function
-togglePhase(phaseNum) { const phase = phases[phaseNum]; phase.playing =
-!phase.playing; document.getElementById(`play-btn-${phaseNum}`).textContent =
-phase.playing ? '❚❚' : '▶'; const canvasEl =
-document.getElementById(`phase${phaseNum}-canvas`); if (canvasEl) { const
-controls = canvasEl.nextElementSibling; if (controls &&
-controls.classList.contains('phase-controls')) { if (phase.playing) {
-controls.classList.remove('is-paused'); } else {
-controls.classList.add('is-paused'); } } } if (phase.playing)
-animatePhase(phaseNum); } ``` #### Design Requirements - **Phase 1-4+**:
-Progress from Brute Force → Optimization → Final Insight. - **Auto-looping**:
-Each phase loops independently via `requestAnimationFrame`. - **Player Tray
-UI**: Controls are shown in a dedicated bar *below* the canvas (Player Tray),
-not as an overlay. - **Dynamic Themes**: Must use `getColors()` helper in JS for
-live theme updates. **NEVER use `#ffffff`** — use `#EBE8DF` for light-mode cell
-backgrounds. - **Buttons**: Include Pause/Play (❚❚/▶), Restart (↻), Speed
+CSS class `is-paused` on the `.phase-controls` container. Additionally, the
+`.phase-canvas-wrapper` uses the classes `.at-start` and `.at-end` to show
+**START** and **FINISHED** badges. **CRITICAL RULE**: The START/FINISHED badges
+MUST only be visible when the animation is **PAUSED**. ```javascript // Example
+helper for UI state function updateNavState(n) { const phase = phases[n]; const
+canvasEl = document.getElementById(`phase${n}-canvas`); if (!canvasEl) return;
+const wrapper = canvasEl.parentElement; if (wrapper &&
+wrapper.classList.contains('phase-canvas-wrapper')) { // Show badges ONLY when
+paused and at the boundaries if (phase.frame <= 0 && !phase.playing)
+wrapper.classList.add('at-start'); else wrapper.classList.remove('at-start'); if
+(phase.frame >= phase.maxFrames && !phase.playing)
+wrapper.classList.add('at-end'); else wrapper.classList.remove('at-end'); }
+const controls = canvasEl.nextElementSibling; if (controls) { const prevBtn =
+controls.querySelector('button[onclick*="-1"]'); const nextBtn =
+controls.querySelector('button[onclick*=" 1)"]'); if (prevBtn) prevBtn.disabled
+= (phase.frame <= 0); if (nextBtn) nextBtn.disabled = (phase.frame >=
+phase.maxFrames); } } ``` #### Design Requirements - **Phase 1-4+**: Progress
+from Brute Force → Optimization → Final Insight. - **Auto-looping**: Each phase
+loops independently via `requestAnimationFrame`. - **Player Tray UI**: Controls
+are shown in a dedicated bar *below* the canvas (Player Tray), not as an
+overlay. - **Dynamic Themes**: Must use `getColors()` helper in JS for live
+theme updates. **NEVER use `#ffffff`** — use `--bg-card-elevated` for light-mode
+cell backgrounds. - **Buttons**: Include Pause/Play (❚❚/▶), Restart (↻), Speed
 controls (0.5x/1x/2x), and Step controls (❮/❯). - **Responsive Scaling**:
 Implement `syncCanvasSize(canvas)` to match logical pixels to CSS pixels. Always
-calculate `cellSize` and `font` based on the canvas width (e.g., `Math.min(50,
-canvas.width / cols)`). - **Mobile Readability**: Ensure canvas labels (top/left
-pointers) and completion messages are enlarged and centered on small screens. -
-**Input `color-scheme`**: All `<input />` elements in dark mode MUST have
-`color-scheme: dark` to prevent white browser chrome on spinners/dropdowns.
-```html
+calculate `cellSize`, `spacing`, and `font` based on the canvas width and `dpr`.
+- **Mobile Readability**: Ensure canvas labels (top/left pointers) and
+completion messages are enlarged and centered on small screens. - **Input
+`color-scheme`**: All `<input />` elements in dark mode MUST have `color-scheme:
+dark`. ```html
 <section class="content-section">
   <h2>Intuition</h2>
   <p>Let's break down the solution into key phases...</p>
@@ -360,8 +370,7 @@ pointers) and completion messages are enlarged and centered on small screens. -
     </div>
   </div>
 </div>
-``` ### 9. Interactive Visualization ```html
-l
+``` ### 9. Interactive Visualization ```html l
 <section class="content-section" style="margin-top: 60px;">
   <h2>Interactive Visualization</h2>
   <p style="margin-bottom: 30px;">[Description]</p>
@@ -459,7 +468,7 @@ l
 
 <div class="section-divider" aria-hidden="true"></div>
 
-# or depending on the  question the below one
+# or depending on the question the below one
 
 <section class="content-section" style="margin-top: 60px;">
   <h2>Interactive Visualization</h2>
@@ -522,20 +531,19 @@ phases[key].canvas = document.getElementById(`phase${key}-canvas`); if
 }); } // 5. Control functions (EXACT signatures — do not rename) function
 togglePhase(n) { const phase = phases[n]; phase.playing = !phase.playing;
 document.getElementById(`play-btn-${n}`).textContent = phase.playing ? "❚❚" :
-"▶"; // CRITICAL: Toggle is-paused class to swap speed ↔ nav controls const
-canvasEl = document.getElementById(`phase${n}-canvas`); if (canvasEl) { const
-controls = canvasEl.nextElementSibling; if (controls &&
+"▶"; const canvasEl = document.getElementById(`phase${n}-canvas`); if (canvasEl)
+{ const controls = canvasEl.nextElementSibling; if (controls &&
 controls.classList.contains("phase-controls")) {
-controls.classList.toggle("is-paused", !phase.playing); } } updateNavState(n);
-if (phase.playing) animatePhase(n); } function restartPhase(n) { phases[n].frame
-= 0; updateNavState(n); } function setSpeed(n, speed) { phases[n].speed = speed;
-const canvasEl = document.getElementById(`phase${n}-canvas`); if (!canvasEl)
-return; const controls = canvasEl.nextElementSibling; if (controls &&
+controls.classList.toggle("is-paused", !phase.playing); } } updateNavState(n); }
+function restartPhase(n) { phases[n].frame = 0; updateNavState(n); } function
+setSpeed(n, speed) { phases[n].speed = speed; const canvasEl =
+document.getElementById(`phase${n}-canvas`); if (!canvasEl) return; const
+controls = canvasEl.nextElementSibling; if (controls &&
 controls.classList.contains("phase-controls")) { const btns =
 controls.querySelectorAll("button"); btns.forEach((b) => { if
 (b.textContent.includes("x")) { b.classList.remove("active"); if
-(b.textContent.trim() === `${speed}x`) { b.classList.add("active"); } } }); } }
-function stepPhase(n, dir) { phases[n].playing = false;
+(b.textContent.trim() === `${speed}x`) { b.classList.add("active"); } } }); }
+updateNavState(n); } function stepPhase(n, dir) { phases[n].playing = false;
 document.getElementById(`play-btn-${n}`).textContent = "▶"; phases[n].frame =
 Math.max( 0, Math.min(phases[n].maxFrames, phases[n].frame + dir * 20), ); //
 Ensure is-paused is set when stepping const canvasEl =
@@ -547,9 +555,10 @@ updateNavState(n) { const phase = phases[n]; const canvasEl =
 document.getElementById(`phase${n}-canvas`); if (!canvasEl) return; // Manage
 wrapper state for visual feedback (START/FINISHED badges + blur) const wrapper =
 canvasEl.parentElement; if (wrapper &&
-wrapper.classList.contains("phase-canvas-wrapper")) { if (phase.frame <= 0)
-wrapper.classList.add("at-start"); else wrapper.classList.remove("at-start"); if
-(phase.frame >= phase.maxFrames) wrapper.classList.add("at-end"); else
+wrapper.classList.contains("phase-canvas-wrapper")) { if (phase.frame <= 0 &&
+!phase.playing) wrapper.classList.add("at-start"); else
+wrapper.classList.remove("at-start"); if (phase.frame >= phase.maxFrames &&
+!phase.playing) wrapper.classList.add("at-end"); else
 wrapper.classList.remove("at-end"); } const controls =
 canvasEl.nextElementSibling; if (controls) { const prevBtn =
 controls.querySelector('button[onclick*="-1"]'); const nextBtn =
@@ -557,8 +566,9 @@ controls.querySelector('button[onclick*=" 1)"]'); if (prevBtn) prevBtn.disabled
 = phase.frame <= 0; if (nextBtn) nextBtn.disabled = phase.frame >=
 phase.maxFrames; } } // 6. Main render loop function drawAll() {
 Object.keys(phases).forEach((n) => { const phase = phases[n]; if (!phase.ctx)
-return; if (phase.playing) { phase.frame = (phase.frame + phase.speed) %
-phase.maxFrames; } // CUSTOM_DRAW_FUNCTION(phase); updateNavState(n); });
+return; syncCanvasSize(phase.canvas); // REQUIRED: Auto-sync every frame if
+(phase.playing) { phase.frame = (phase.frame + phase.speed) % phase.maxFrames; }
+// CUSTOM_DRAW_FUNCTION(phase); updateNavState(n); });
 requestAnimationFrame(drawAll); } // 7. Bootstrap initPhases();
 requestAnimationFrame(drawAll); ``` --- ## **Data File Updates** ### Update
 `assets/js/data.js`: ```javascript { title: "[CATEGORY NAME]", problems: [ {

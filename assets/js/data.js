@@ -87,6 +87,12 @@ const DSA_DATA = {
                     url: "problems/math-geometry/happy-number.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
+                },
+                {
+                    title: "Plus One",
+                    url: "problems/math-geometry/plus-one.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
                 }
             ]
         }
