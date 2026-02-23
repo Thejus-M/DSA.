@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/problems.css" />
+    <link rel="stylesheet" href="../../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../../assets/css/visualization.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Master the Happy Number problem (LeetCode 202) with interactive visualisations. Learn cycle detection using Floyd's Tortoise and Hare algorithm." />
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Happy Number | DSA Learning" />
+    <meta property="og:description" content="Interactive guide to solving the Happy Number problem using cycle detection algorithms." />
+    <meta property="og:type" content="article" />
+    <title>Happy Number | DSA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <style>
+      .article-container {
+        padding-top: 60px;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+      }
+      @media (max-width: 900px) {
+        .comparison-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .viz-card {
+        background: rgba(42, 93, 156, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.3s;
+      }
+      .viz-card:hover {
+        border-color: var(--accent);
+      }
+      .viz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .viz-title {
+        font-family: var(--font-mono-sys);
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+      .viz-stat {
+        font-family: var(--font-mono-sys);
+        font-size: 10px;
+        color: var(--text-sub);
+        background: rgba(42, 93, 156, 0.1);
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+      .canvas-container {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: var(--bg-body);
+        border: 1px solid var(--border-sub);
+        border-radius: 4px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        position: relative;
+      }
+      .canvas-container canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .viz-desc {
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text-sub);
+        margin: 0;
+      }
+
+      @media (max-width: 600px) {
+        .phase-title {
+          font-size: 20px !important;
+          margin-bottom: 12px;
+        }
+        .phase-description {
+          font-size: 18px !important;
+          line-height: 1.4;
+        }
+        .phase-canvas {
+          height: auto !important;
+          min-height: 350px !important;
+          aspect-ratio: 1 / 1.1;
+        }
+        .canvas-container {
+          height: auto !important;
+          min-height: 300px !important;
+          aspect-ratio: 1 / 1;
+        }
+        .viz-title {
+          font-size: 16px !important;
+        }
+        .viz-desc {
+          font-size: 16px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-mount"></div>
+    <div class="ruler-scale" id="ruler-scale"></div>
+    <div class="page-wrapper">
+      <aside class="sidebar" id="sidebar-mount"></aside>
+      <main class="main-content">
+        <div class="article-container">
+          <header class="article-header">
+            <div class="article-meta">DSA LEARNING</div>
+            <h1 class="article-title">Happy Number</h1>
+            <div class="tags">
+              <span class="tag">Easy</span>
+              <span class="tag">Math</span>
+              <span class="tag">Two Pointers</span>
+              <span class="tag">Hash Table</span>
+            </div>
+          </header>
+
+          <div class="divider"></div>
+
+          <!-- Section 1: Problem -->
+          <div class="terminal-card">
+            <div class="terminal-row">
+              <span class="terminal-label">PROB:</span>
+              <div class="terminal-content serif">
+                <p style="margin-top: 0;">
+                  Write an algorithm to determine if a number <code>n</code> is
+                  <strong>happy</strong>.
+                </p>
+                <p>A happy number is a number defined by the following process:</p>
+                <ul>
+                  <li>
+                    Starting with any positive integer, replace the number by
+                    the sum of the squares of its digits.
+                  </li>
+                  <li>
+                    Repeat the process until the number equals 1 (where it will
+                    stay), or it <strong>loops endlessly in a cycle</strong>
+                    which does not include 1.
+                  </li>
+                  <li>
+                    Those numbers for which this process <strong>ends in 1</strong>
+                    are happy.
+                  </li>
+                </ul>
+                <p>Return <code>true</code> if <code>n</code> is a happy number, and <code>false</code> if not.</p>
+              </div>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-label">CONST:</span>
+              <div class="terminal-content mono">
+                <ul class="terminal-constraints-list">
+                  <li><code>1 <= n <= 2<sup>31</sup> - 1</code></li>
+                </ul>
+              </div>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-label">EXAMPLE:</span>
+              <div class="terminal-content mono">
+                <ul class="terminal-examples-list">
+                  <li class="terminal-example-item">
+                    <div class="terminal-example-label">INPUT</div>
+                    <div class="terminal-example-value">n = 19</div>
+                    <div class="terminal-example-label">OUTPUT</div>
+                    <div class="terminal-example-value">true</div>
+                    <div class="terminal-example-explanation">
+                      Explanation: 1² + 9² = 82 → 8² + 2² = 68 → 6² + 8² = 100 → 1² + 0² + 0² = 1
+                    </div>
+                  </li>
+                  <li class="terminal-example-item">
+                    <div class="terminal-example-label">INPUT</div>
+                    <div class="terminal-example-value">n = 2</div>
+                    <div class="terminal-example-label">OUTPUT</div>
+                    <div class="terminal-example-value">false</div>
+                    <div class="terminal-example-explanation">
+                      Explanation: 2 → 4 → 16 → 37 → 58 → 89 → 145 → 42 → 20 → 4 (Infinite Loop)
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Section 2: The Question -->
+          <section class="content-section">
+            <h2>The Question</h2>
+            <p style="margin-bottom: 40px;">
+              Can we find a mathematical end-state for every integer? Every number
+              under the "Sum of Squares" operation will eventually reach 1 or fall
+              into a repeating cycle. The goal is to detect that 1 early or catch
+               the cycle before we run out of time (or memory).
+            </p>
+
+            <div class="phase-section">
+              <h3 class="phase-title">Example: The Evolution of 19</h3>
+              <p class="phase-description">
+                Watch how 19 transforms step-by-step. Each digit is isolated,
+                squared, and then added to compute the next value in the chain.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase0-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-0" onclick="togglePhase(0)">❚❚</button>
+                  <button onclick="restartPhase(0)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(0, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(0, 1)">1x</button>
+                    <button onclick="setSpeed(0, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(0, -1)">❮</button>
+                    <button onclick="stepPhase(0, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Section 3: Intuition -->
+          <section class="content-section">
+            <h2>Intuition</h2>
+            <p>
+              Think of the sequence of numbers as a path through a dark forest. A
+              "Happy" path eventually leads to an exit (the value 1). An "Unhappy"
+              path leads into a swampy loop where you walk past the same trees
+              forever.
+            </p>
+
+            <!-- Phase 1: Squaring Logic -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 1: The Digit Engine</h3>
+              <p class="phase-description">
+                Everything starts with the <code>get_next</code> function. We 
+                strip digits using modulo 10, square them, and sum them up.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase1-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
+                  <button onclick="restartPhase(1)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(1, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(1, 1)">1x</button>
+                    <button onclick="setSpeed(1, 2)">2x</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2: The Path to Happiness -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 2: The Success Chain</h3>
+              <p class="phase-description">
+                For a Happy Number, the chain of values is linear. It moves
+                swiftly toward 1, where it stalls forever.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
+                  <button onclick="restartPhase(2)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(2, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(2, 1)">1x</button>
+                    <button onclick="setSpeed(2, 2)">2x</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 3: The Infinite Loop -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 3: The Dark Cycle</h3>
+              <p class="phase-description">
+                Unhappy numbers are trapped in a fixed loop. Mathematically, 
+                any sequence that doesn't reach 1 will eventually hit the 
+                number 4, starting a cycle that never exits.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-3" onclick="togglePhase(3)">❚❚</button>
+                  <button onclick="restartPhase(3)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(3, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(3, 1)">1x</button>
+                    <button onclick="setSpeed(3, 2)">2x</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 4: Floyd's Detection -->
+            <div class="phase-section" style="margin-top: 60px;">
+              <h3 class="phase-title">Phase 4: Two-Pointer Cycle Discovery</h3>
+              <p class="phase-description">
+                Floyd's Cycle-Finding Algorithm (Two Pointers) detects the loop 
+                in O(1) space. The fast pointer (Hare) will eventually lap the 
+                slow pointer (Tortoise) inside the cycle.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase4-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-4" onclick="togglePhase(4)">❚❚</button>
+                  <button onclick="restartPhase(4)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(4, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(4, 1)">1x</button>
+                    <button onclick="setSpeed(4, 2)">2x</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Section 4: Solution -->
+          <section class="content-section">
+            <h2>Solution</h2>
+            
+            <div class="code-block-wrapper">
+              <span class="code-label">Python - Hash Set (Intuitive)</span>
+              <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+              <pre><code class="language-python">class Solution:
+    def isHappy(self, n: int) -> bool:
+        def get_next(number):
+            total_sum = 0
+            while number > 0:
+                number, digit = divmod(number, 10)
+                total_sum += digit ** 2
+            return total_sum
+
+        seen = set()
+        while n != 1 and n not in seen:
+            seen.add(n)
+            n = get_next(n)
+
+        return n == 1</code></pre>
+            </div>
+
+            <div class="code-block-wrapper" style="margin-top: 40px;">
+              <span class="code-label">Python - Floyd's Cycle Detection (Space Optimized)</span>
+              <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+              <pre><code class="language-python">class Solution:
+    def isHappy(self, n: int) -> bool:
+        def get_next(number):
+            total_sum = 0
+            while number > 0:
+                number, digit = divmod(number, 10)
+                total_sum += digit ** 2
+            return total_sum
+
+        slow = n
+        fast = get_next(n)
+        
+        while fast != 1 and slow != fast:
+            slow = get_next(slow)
+            fast = get_next(get_next(fast))
+            
+        return fast == 1</code></pre>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Section 5: Complexity -->
+          <div class="complexity-card">
+            <h3>Complexity Analysis</h3>
+            <div class="complexity-grid">
+              <div class="complexity-item">
+                <div class="complexity-label">Approach A (Hash Set)</div>
+                <div class="complexity-value">
+                  Time: O(log n) <br />
+                  Space: O(log n)
+                </div>
+                <div class="complexity-note">
+                  Number of digits in <code>n</code> is <code>log(n)</code>. Space grows with the number of unique integers seen.
+                </div>
+              </div>
+              <div class="complexity-item">
+                <div class="complexity-label">Approach B (Floyd's)</div>
+                <div class="complexity-value">
+                  Time: O(log n) <br />
+                  Space: O(1)
+                </div>
+                <div class="complexity-note">
+                  Matches the time complexity but eliminates the <code>set</code> entirely by using two pointers.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Section 6: Interactive Visualization -->
+          <section class="content-section" style="margin-top: 60px;">
+            <h2>Interactive Visualization</h2>
+            <p style="margin-bottom: 30px;">
+              Test any initial value of <code>n</code> and compare the efficiency
+              of Hash Set tracking against Floyd's cycle discovery.
+            </p>
+
+            <div class="demo-container">
+              <div class="interactive-controls-bar">
+                <div class="demo-input-group">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="n-input" class="demo-label">N:</label>
+                    <input
+                      type="number"
+                      id="n-input"
+                      class="demo-input"
+                      value="19"
+                      min="1"
+                      max="1000"
+                      style="width: 80px;"
+                    />
+                  </div>
+                  <button class="demo-btn" onclick="initDemo()">RE-INITIALIZE</button>
+                </div>
+                <div class="demo-controls demo-step-controls">
+                  <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">❮</button>
+                  <div class="step-info" id="step-counter">STEP: 0</div>
+                  <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">❯</button>
+                </div>
+              </div>
+
+              <div class="comparison-grid">
+                <!-- Method A Card -->
+                <div class="viz-card">
+                  <div class="viz-header">
+                    <span class="viz-title">1. HASH SET (TRACKING)</span>
+                    <span class="viz-stat" id="stat-set">Seen: 0</span>
+                  </div>
+                  <div class="canvas-container">
+                    <canvas id="canvas-set" width="400" height="225"></canvas>
+                  </div>
+                  <p class="viz-desc">Stores every visited state in a hash set to detect repeats.</p>
+                </div>
+
+                <!-- Method B Card -->
+                <div class="viz-card">
+                  <div class="viz-header">
+                    <span class="viz-title">2. FLOYD'S (TWO POINTERS)</span>
+                    <span class="viz-stat" id="stat-floyd">Steps: 0</span>
+                  </div>
+                  <div class="canvas-container">
+                    <canvas id="canvas-floyd" width="400" height="225"></canvas>
+                  </div>
+                  <p class="viz-desc">Computes future states at different speeds to force a collision.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <footer id="footer-mount"></footer>
+        </div>
+      </main>
+    </div>
+
+    <script src="../../assets/js/copy-code.js"></script>
+    <script src="../../assets/js/problems.js"></script>
+    <script src="../../assets/js/data.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+
+    <script>
+      // 1. Theme detection
+      function getTheme() {
+        return document.documentElement.getAttribute("data-theme") || "dark";
+      }
+
+      // 2. Color palette (Sync with CSS variables)
+      function getColors() {
+        const style = getComputedStyle(document.documentElement);
+        return {
+          bg: style.getPropertyValue('--bg-body').trim(),
+          text: style.getPropertyValue('--text-main').trim(),
+          accent: style.getPropertyValue('--accent').trim(),
+          border: style.getPropertyValue('--border').trim(),
+          highlight: style.getPropertyValue('--viz-unbalanced-text').trim() || "#ef4444",
+          match: style.getPropertyValue('--viz-balanced-text').trim() || "#10b981",
+          gridLine: style.getPropertyValue('--grid-line').trim(),
+          cellBg: style.getPropertyValue('--bg-card-elevated').trim(),
+          dim: style.getPropertyValue('--text-sub').trim(),
+        };
+      }
+
+      // 3. Responsive Scaling Helper
+      function syncCanvasSize(canvas) {
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if (
+          canvas.width !== Math.floor(rect.width) ||
+          canvas.height !== Math.floor(rect.height)
+        ) {
+          canvas.width = Math.floor(rect.width);
+          canvas.height = Math.floor(rect.height);
+          return true;
+        }
+        return false;
+      }
+
+      // 4. Phase state management
+      const phases = {
+        0: { frame: 0, playing: true, speed: 1, maxFrames: 400 },
+        1: { frame: 0, playing: true, speed: 1, maxFrames: 300 },
+        2: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
+        3: { frame: 0, playing: true, speed: 1, maxFrames: 600 },
+        4: { frame: 0, playing: true, speed: 1, maxFrames: 600 },
+      };
+
+      function initPhases() {
+        Object.keys(phases).forEach((key) => {
+          const canvas = document.getElementById(`phase${key}-canvas`);
+          if (canvas) {
+            phases[key].ctx = canvas.getContext("2d");
+            phases[key].canvas = canvas;
+          }
+        });
+      }
+
+      // 5. Control functions
+      function togglePhase(n) {
+        const phase = phases[n];
+        phase.playing = !phase.playing;
+        document.getElementById(`play-btn-${n}`).textContent = phase.playing ? "❚❚" : "▶";
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls) controls.classList.toggle("is-paused", !phase.playing);
+        }
+      }
+
+      function restartPhase(n) {
+        phases[n].frame = 0;
+      }
+
+      function setSpeed(n, speed) {
+        phases[n].speed = speed;
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (!canvasEl) return;
+        const controls = canvasEl.nextElementSibling;
+        if (controls) {
+          const btns = controls.querySelectorAll(".speed-controls button");
+          btns.forEach((b) => {
+            b.classList.remove("active");
+            if (b.textContent.trim() === `${speed}x`) b.classList.add("active");
+          });
+        }
+      }
+
+      function stepPhase(n, dir) {
+        phases[n].playing = false;
+        document.getElementById(`play-btn-${n}`).textContent = "▶";
+        phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + dir * 20));
+        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls) controls.classList.add("is-paused");
+        }
+      }
+
+      // --- RENDERING LOGIC ---
+
+      // Phase 0: Evolution of 19
+      function drawPhase0(p) {
+        const { ctx, canvas, frame } = p;
+        syncCanvasSize(canvas);
+        const colors = getColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const seq = [19, 82, 68, 100, 1];
+        const stepFrames = p.maxFrames / seq.length;
+        const currentIdx = Math.floor(frame / stepFrames);
+        const localProgress = (frame % stepFrames) / stepFrames;
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(40, canvas.width / 15);
+
+        // Draw chain
+        for (let i = 0; i < seq.length; i++) {
+          const x = (canvas.width / (seq.length + 1)) * (i + 1);
+          const active = i <= currentIdx;
+          
+            // Connection line
+            if (i < seq.length - 1) {
+                const nextX = (canvas.width / (seq.length + 1)) * (i + 2);
+                ctx.beginPath();
+                ctx.setLineDash(i < currentIdx ? [] : [5, 5]);
+                ctx.moveTo(x + radius, centerY);
+                ctx.lineTo(nextX - radius, centerY);
+                ctx.strokeStyle = i < currentIdx ? colors.match : colors.dim;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Calculation overlay during transition
+                if (i === currentIdx && localProgress > 0.1 && i < seq.length - 1) {
+                    const midX = x + (nextX - x) * localProgress;
+                    const digits = String(seq[i]).split('');
+                    const calcStr = digits.map(d => `${d}²`).join(' + ');
+                    
+                    ctx.save();
+                    ctx.globalAlpha = Math.sin(localProgress * Math.PI);
+                    ctx.fillStyle = colors.accent;
+                    ctx.font = '12px var(--font-mono-sys)';
+                    ctx.fillText(calcStr, midX, centerY - radius - 10);
+                    ctx.restore();
+                }
+            }
+
+          // Node
+          ctx.beginPath();
+          ctx.arc(x, centerY, radius, 0, Math.PI * 2);
+          ctx.fillStyle = active ? (seq[i] === 1 ? colors.match + '33' : colors.accent + '22' ) : colors.cellBg;
+          ctx.fill();
+          ctx.strokeStyle = active ? (seq[i] === 1 ? colors.match : colors.accent) : colors.border;
+          ctx.lineWidth = active ? 3 : 1;
+          ctx.stroke();
+
+          ctx.fillStyle = active ? colors.text : colors.dim;
+          ctx.font = `bold ${radius * 0.8}px var(--font-mono-sys)`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(seq[i], x, centerY);
+        }
+
+        if (currentIdx === seq.length - 1) {
+          ctx.fillStyle = colors.match;
+          ctx.font = '14px var(--font-mono-sys)';
+          ctx.fillText("HAPPY!", centerX, centerY + radius + 30);
+        }
+      }
+
+      // Phase 1: Squaring Logic (19 -> 1^2 + 9^2 = 82)
+      function drawPhase1(p) {
+        const { ctx, canvas, frame } = p;
+        syncCanvasSize(canvas);
+        const colors = getColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const y = canvas.height * 0.4;
+        const x1 = canvas.width * 0.35;
+        const x2 = canvas.width * 0.65;
+        
+        // Anim stages: 0-100: Digits separate, 100-200: Squaring, 200-300: Summing
+        const stage1 = Math.min(100, frame) / 100;
+        const stage2 = Math.max(0, Math.min(100, frame - 100)) / 100;
+        const stage3 = Math.max(0, Math.min(100, frame - 200)) / 100;
+
+        ctx.font = 'bold 40px var(--font-mono-sys)';
+        ctx.textAlign = 'center';
+        
+        // Digit 1
+        ctx.save();
+        ctx.translate(canvas.width / 2 - (canvas.width * 0.15 * stage1), y);
+        ctx.fillStyle = colors.text;
+        ctx.fillText("1", 0, 0);
+        if (stage2 > 0) {
+          ctx.font = '20px var(--font-mono-sys)';
+          ctx.fillStyle = colors.accent;
+          ctx.fillText("²", 15, -15);
+        }
+        ctx.restore();
+
+        // Plus
+        ctx.globalAlpha = stage1;
+        ctx.fillStyle = colors.text;
+        ctx.fillText("+", canvas.width/2, y);
+        ctx.globalAlpha = 1;
+
+        // Digit 9
+        ctx.save();
+        ctx.translate(canvas.width / 2 + (canvas.width * 0.15 * stage1), y);
+        ctx.fillStyle = colors.text;
+        ctx.fillText("9", 0, 0);
+        if (stage2 > 0) {
+          ctx.font = '20px var(--font-mono-sys)';
+          ctx.fillStyle = colors.accent;
+          ctx.fillText("²", 15, -15);
+        }
+        ctx.restore();
+
+        // Equal and result
+        if (stage3 > 0) {
+          ctx.globalAlpha = stage3;
+          ctx.fillText("= 82", canvas.width/2, y + 80);
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      // Phase 2: Success Chain
+      function drawPhase2(p) { drawPhase0(p); }
+
+      // Phase 3: The Dark Cycle (2 -> 4 -> ... -> 4)
+      function drawPhase3(p) {
+        const { ctx, canvas, frame } = p;
+        syncCanvasSize(canvas);
+        const colors = getColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cycle = [4, 16, 37, 58, 89, 145, 42, 20];
+        const stepFrames = p.maxFrames / (cycle.length + 2);
+        const currentIdx = Math.floor(frame / stepFrames);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(120, canvas.height * 0.35);
+
+        cycle.forEach((val, i) => {
+          const angle = (i / cycle.length) * Math.PI * 2 - Math.PI / 2;
+          const x = centerX + Math.cos(angle) * radius;
+          const y = centerY + Math.sin(angle) * radius;
+          const active = i <= currentIdx;
+
+          // Arrow to next
+          const nextAngle = ((i + 1) / cycle.length) * Math.PI * 2 - Math.PI / 2;
+          const nx = centerX + Math.cos(nextAngle) * radius;
+          const ny = centerY + Math.sin(nextAngle) * radius;
+
+          ctx.beginPath();
+          ctx.setLineDash(active && i < currentIdx ? [] : [5, 5]);
+          ctx.moveTo(centerX + Math.cos(angle) * (radius - 20), centerY + Math.sin(angle) * (radius - 20));
+          ctx.lineTo(centerX + Math.cos(nextAngle) * (radius - 20), centerY + Math.sin(nextAngle) * (radius - 20));
+          ctx.strokeStyle = active && i < currentIdx ? colors.highlight : colors.dim;
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.beginPath();
+          ctx.arc(x, y, 22, 0, Math.PI * 2);
+          ctx.fillStyle = active ? colors.highlight + '22' : colors.cellBg;
+          ctx.fill();
+          ctx.strokeStyle = active ? colors.highlight : colors.border;
+          ctx.stroke();
+
+          ctx.fillStyle = active ? colors.text : colors.dim;
+          ctx.font = 'bold 14px var(--font-mono-sys)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(val, x, y);
+        });
+
+        if (currentIdx >= cycle.length) {
+          ctx.fillStyle = colors.highlight;
+          ctx.font = 'bold 16px var(--font-mono-sys)';
+          ctx.fillText("CYCLE DETECTED!", centerX, centerY);
+        }
+      }
+
+      // Phase 4: Tortoise vs Hare
+      function drawPhase4(p) {
+        const { ctx, canvas, frame } = p;
+        syncCanvasSize(canvas);
+        const colors = getColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cycleLength = 8;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const orbitRadius = 100;
+
+        // Draw track
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = colors.gridLine;
+        ctx.setLineDash([10, 10]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const tAngle = (frame / 200) * Math.PI * 2 - Math.PI / 2;
+        const hAngle = (frame / 100) * Math.PI * 2 - Math.PI / 2;
+
+        const tx = centerX + Math.cos(tAngle) * orbitRadius;
+        const ty = centerY + Math.sin(tAngle) * orbitRadius;
+        const hx = centerX + Math.cos(hAngle) * orbitRadius;
+        const hy = centerY + Math.sin(hAngle) * orbitRadius;
+
+        // Slow Pointer (Themed Icon)
+        ctx.beginPath();
+        ctx.arc(tx, ty, 15, 0, Math.PI * 2);
+        ctx.fillStyle = colors.accent + '33';
+        ctx.fill();
+        ctx.strokeStyle = colors.accent;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 12px var(--font-mono-sys)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText("S", tx, ty);
+        
+        ctx.font = '10px var(--font-mono-sys)';
+        ctx.fillText("SLOW", tx, ty + 25);
+
+        // Fast Pointer (Themed Icon)
+        ctx.beginPath();
+        ctx.arc(hx, hy, 15, 0, Math.PI * 2);
+        ctx.fillStyle = colors.match + '33';
+        ctx.fill();
+        ctx.strokeStyle = colors.match;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = colors.text;
+        ctx.fillText("F", hx, hy);
+        
+        ctx.font = '10px var(--font-mono-sys)';
+        ctx.fillText("FAST", hx, hy + 25);
+      }
+
+      // --- INTERACTIVE DEMO LOGIC ---
+
+      let demoStep = 0;
+      let demoN = 19;
+      let setMethodData = [];
+      let floydMethodData = { slow: [], fast: [] };
+
+      function initDemo() {
+        const input = document.getElementById("n-input");
+        let n = parseInt(input.value) || 19;
+        n = Math.max(1, Math.min(1000, n));
+        input.value = n;
+
+        demoN = n;
+        demoStep = 0;
+        
+        // Reset sequences
+        setMethodData = [n];
+        floydMethodData = { 
+          slow: [n], 
+          fast: [getNext(n)] 
+        };
+
+        updateDemoUI();
+        drawDemo();
+      }
+
+      function getNext(num) {
+        let total = 0;
+        while (num > 0) {
+          total += (num % 10) ** 2;
+          num = Math.floor(num / 10);
+        }
+        return total;
+      }
+
+      function stepDemo(dir) {
+        if (dir > 0) {
+          const lastSet = setMethodData[setMethodData.length - 1];
+          const isSetRepeat = data => data.slice(0, -1).includes(data[data.length - 1]);
+          const setFinished = lastSet === 1 || isSetRepeat(setMethodData);
+
+          const lastSlow = floydMethodData.slow[floydMethodData.slow.length - 1];
+          const lastFast = floydMethodData.fast[floydMethodData.fast.length - 1];
+          const floydFinished = lastFast === 1 || (floydMethodData.slow.length >= 2 && lastSlow === lastFast);
+
+          if (!setFinished || !floydFinished) {
+            if (!setFinished) {
+              setMethodData.push(getNext(lastSet));
+            }
+            if (!floydFinished) {
+              floydMethodData.slow.push(getNext(lastSlow));
+              floydMethodData.fast.push(getNext(getNext(lastFast)));
+            }
+            demoStep++;
+          }
+        } else if (demoStep > 0) {
+          demoStep--;
+          setMethodData.pop();
+          floydMethodData.slow.pop();
+          floydMethodData.fast.pop();
+        }
+        updateDemoUI();
+        drawDemo();
+      }
+
+      function hasRepeat(arr) {
+        const last = arr[arr.length - 1];
+        return arr.slice(0, -1).includes(last);
+      }
+
+      function updateDemoUI() {
+        const colors = getColors();
+        document.getElementById("step-counter").textContent = `STEP: ${demoStep}`;
+        
+        const lastSet = setMethodData[setMethodData.length - 1];
+        const isSetRepeat = data => data.slice(0, -1).includes(data[data.length - 1]);
+        const setRepeat = isSetRepeat(setMethodData);
+        
+        const statSetEl = document.getElementById("stat-set");
+        if (lastSet === 1) {
+            statSetEl.textContent = "HAPPY! (Found 1)";
+            statSetEl.style.color = colors.match;
+        } else if (setRepeat) {
+            statSetEl.textContent = `CYCLE! ${lastSet} already in Set`;
+            statSetEl.style.color = colors.highlight;
+        } else {
+            statSetEl.textContent = `Seen: ${setMethodData.length}`;
+            statSetEl.style.color = "";
+        }
+
+        const lastSlow = floydMethodData.slow[floydMethodData.slow.length-1];
+        const lastFast = floydMethodData.fast[floydMethodData.fast.length-1];
+        const floydCollision = floydMethodData.slow.length >= 2 && lastSlow === lastFast;
+        
+        const statFloydEl = document.getElementById("stat-floyd");
+        if (lastFast === 1) {
+            statFloydEl.textContent = "HAPPY! (Hare hit 1)";
+            statFloydEl.style.color = colors.match;
+        } else if (floydCollision) {
+            statFloydEl.textContent = `CYCLE! Slow == Fast (${lastSlow})`;
+            statFloydEl.style.color = colors.highlight;
+        } else {
+            statFloydEl.textContent = `S:${lastSlow} | F:${lastFast}`;
+            statFloydEl.style.color = "";
+        }
+        
+        document.getElementById("prev-step-btn").disabled = demoStep === 0;
+        
+        // Disable next if both reached end
+        const setFinished = lastSet === 1 || setRepeat;
+        const floydFinished = lastFast === 1 || floydCollision;
+        document.getElementById("next-step-btn").disabled = setFinished && floydFinished;
+      }
+
+      function drawDemo() {
+        drawDemoCanvas("canvas-set", setMethodData, "set");
+        drawDemoCanvas("canvas-floyd", floydMethodData, "floyd");
+      }
+
+      function drawDemoCanvas(id, data, type) {
+        const canvas = document.getElementById(id);
+        if (!canvas) return;
+        syncCanvasSize(canvas);
+        const ctx = canvas.getContext("2d");
+        const colors = getColors();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 20;
+        const availableWidth = canvas.width - padding * 2;
+        
+        if (type === "set") {
+          // Draw "Set Space"
+          const setX = padding + availableWidth * 0.4;
+          const setY = padding + 20;
+          const setW = availableWidth * 0.55;
+          const setH = canvas.height - padding * 2 - 40;
+
+          // Header for Set Space
+          ctx.fillStyle = colors.dim;
+          ctx.font = '10px var(--font-mono-sys)';
+          ctx.fillText("SEEN VALUES (HASH SET)", setX, setY - 5);
+          
+          ctx.strokeStyle = colors.border;
+          ctx.setLineDash([5, 5]);
+          ctx.strokeRect(setX, setY, setW, setH);
+          ctx.setLineDash([]);
+
+          // Current Value
+          const currentVal = data[data.length - 1];
+          ctx.fillStyle = colors.accent;
+          ctx.font = 'bold 24px var(--font-mono-sys)';
+          ctx.textAlign = 'center';
+          ctx.fillText(currentVal, padding + availableWidth * 0.2, canvas.height / 2);
+          ctx.font = '10px var(--font-mono-sys)';
+          ctx.fillStyle = colors.dim;
+          ctx.fillText("CURRENT N", padding + availableWidth * 0.2, canvas.height / 2 + 25);
+
+          // Seen Items in Set
+          const cellSize = 25;
+          const cols = Math.floor(setW / (cellSize + 5));
+          data.forEach((val, i) => {
+            const ix = setX + 10 + (i % cols) * (cellSize + 5);
+            const iy = setY + 10 + Math.floor(i / cols) * (cellSize + 5);
+            const isMatch = val === data[data.length - 1] && i < data.length - 1;
+            
+            ctx.fillStyle = isMatch ? colors.highlight + '44' : colors.cellBg;
+            ctx.fillRect(ix, iy, cellSize, cellSize);
+            ctx.strokeStyle = isMatch ? colors.highlight : colors.border;
+            ctx.strokeRect(ix, iy, cellSize, cellSize);
+            ctx.fillStyle = colors.text;
+            ctx.font = isMatch ? 'bold 10px var(--font-mono-sys)' : '9px var(--font-mono-sys)';
+            ctx.fillText(val, ix + cellSize / 2, iy + cellSize / 2 + 3);
+          });
+        } else {
+          // Floyd's: Draw two tracks with better alignment and responsiveness
+          const maxItems = Math.max(data.slow.length, data.fast.length, 5);
+          const minCellSize = 25;
+          const maxCellSize = 35;
+          const spacing = 5;
+          
+          const trackXStart = padding + (canvas.width < 500 ? 50 : 70);
+          const availableTrackWidth = canvas.width - trackXStart - padding;
+          
+          // Calculate cell size that fits
+          let cellSize = Math.min(maxCellSize, Math.max(minCellSize, (availableTrackWidth / maxItems) - spacing));
+          
+          const drawTrack = (seq, yOffset, label, color) => {
+            ctx.textAlign = 'right';
+            ctx.fillStyle = colors.dim;
+            ctx.font = (canvas.width < 500 ? '9px' : '10px') + ' var(--font-mono-sys)';
+            ctx.fillText(label, trackXStart - 10, yOffset + cellSize / 2 + 4);
+            
+            ctx.textAlign = 'center';
+            seq.forEach((val, i) => {
+              const x = trackXStart + i * (cellSize + spacing);
+              // Avoid drawing beyond canvas
+              if (x + cellSize > canvas.width - padding / 2) return;
+
+              const isLast = i === seq.length - 1;
+              ctx.fillStyle = isLast ? color + '44' : colors.cellBg;
+              ctx.fillRect(x, yOffset, cellSize, cellSize);
+              ctx.strokeStyle = isLast ? color : colors.border;
+              ctx.strokeRect(x, yOffset, cellSize, cellSize);
+              ctx.fillStyle = colors.text;
+              ctx.font = (cellSize < 30 ? '9px' : '11px') + ' var(--font-mono-sys)';
+              ctx.fillText(val, x + cellSize/2, yOffset + cellSize/2 + 4);
+            });
+          };
+          
+          const trackSpacing = canvas.height < 200 ? 50 : 60;
+          
+          // Track rails (drawn behind)
+          ctx.beginPath();
+          ctx.strokeStyle = colors.gridLine;
+          ctx.setLineDash([5, 5]);
+          const railY1 = padding + 20 + cellSize / 2;
+          const railY2 = padding + 20 + trackSpacing + cellSize / 2;
+          ctx.moveTo(trackXStart, railY1);
+          ctx.lineTo(canvas.width - padding, railY1);
+          ctx.moveTo(trackXStart, railY2);
+          ctx.lineTo(canvas.width - padding, railY2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          drawTrack(data.slow, padding + 20, "SLOW 1x", colors.accent);
+          drawTrack(data.fast, padding + 20 + trackSpacing, "FAST 2x", colors.match);
+        }
+      }
+
+      function drawAll() {
+        Object.keys(phases).forEach((n) => {
+          const phase = phases[n];
+          if (!phase.ctx) return;
+          if (phase.playing) {
+            phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
+          }
+          const fns = [drawPhase0, drawPhase1, drawPhase2, drawPhase3, drawPhase4];
+          if (fns[n]) fns[n](phase);
+        });
+        requestAnimationFrame(drawAll);
+      }
+
+      initPhases();
+      initDemo();
+      requestAnimationFrame(drawAll);
+    </script>
+  </body>
+</html>

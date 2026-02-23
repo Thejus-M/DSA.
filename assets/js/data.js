@@ -81,6 +81,12 @@ const DSA_DATA = {
                     url: "problems/math-geometry/set-matrix-zeroes.html",
                     difficulty: "MEDIUM",
                     difficultyClass: "medium"
+                },
+                {
+                    title: "Happy Number",
+                    url: "problems/math-geometry/happy-number.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
                 }
             ]
         }

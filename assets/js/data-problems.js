@@ -62,5 +62,13 @@ const problems = [
     difficulty: "medium",
     tags: ["matrix", "array", "math", "geometry"],
     summary: "If an element in an m x n matrix is 0, set its entire row and column to 0 in-place."
+  },
+  {
+    id: 202,
+    title: "Happy Number",
+    slug: "happy-number",
+    difficulty: "easy",
+    tags: ["math", "two-pointers", "hash-table"],
+    summary: "Determine if a number reaches 1 by repeatedly replacing it with the sum of the squares of its digits."
   }
 ];
