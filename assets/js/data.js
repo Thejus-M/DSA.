@@ -93,6 +93,12 @@ const DSA_DATA = {
                     url: "problems/math-geometry/plus-one.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
+                },
+                {
+                    title: "Pow(x, n)",
+                    url: "problems/math-geometry/pow-x-n.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         }

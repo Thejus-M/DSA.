@@ -78,5 +78,13 @@ const problems = [
     difficulty: "easy",
     tags: ["math", "array"],
     summary: "Increment a large integer represented as an array of digits by one."
+  },
+  {
+    id: 50,
+    title: "Pow(x, n)",
+    slug: "pow-x-n",
+    difficulty: "medium",
+    tags: ["math", "binary-search"],
+    summary: "Implement pow(x, n), which calculates x raised to the power n."
   }
 ];
