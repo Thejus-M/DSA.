@@ -193,6 +193,8 @@ _Note: Close divs at end of file._
 
 ### 3. Article Header
 
+**IMPORTANT**: Always add `<div class="divider"></div>` immediately after the closing `</header>` tag, before the terminal card.
+
 ```html
 <header class="article-header">
   <div class="article-meta">DSA LEARNING</div>
@@ -203,6 +205,8 @@ _Note: Close divs at end of file._
     <span class="tag">[Category 2]</span>
   </div>
 </header>
+
+<div class="divider"></div>
 ```
 
 ### 4. Problem Statement (Terminal Card) **[REQUIRED FIRST]**
@@ -241,22 +245,38 @@ _Note: Close divs at end of file._
   </div>
 </div>
 
-### 5. The Question Header & Examples ```html
+### 5. The Question Header & GIF Animation **[MANDATORY]** The "Question"
+section MUST always include a canvas-based animated visualization that shows the
+problem visually. This helps the reader immediately understand the problem
+before reading the intuition. ```html
 <section class="content-section">
   <h2>The Question</h2>
   <p style="margin-bottom: 40px;">[Top-level summary of the problem goal]</p>
 
+  <!-- MANDATORY: Question GIF — visual animation of the problem -->
   <div class="phase-section">
-    <h3 class="phase-title">Example 1: Basic Matching</h3>
-    <p class="phase-description">[Description of Case 1]</p>
+    <h3 class="phase-title">Visualizing the Problem</h3>
+    <p class="phase-description">[What we are seeing in the animation]</p>
     <div class="phase-canvas-wrapper">
       <canvas
-        id="phase0a-canvas"
+        id="question-canvas"
         class="phase-canvas"
         width="800"
         height="400"
       ></canvas>
-      <div class="phase-controls playing">...</div>
+      <div class="phase-controls playing">
+        <button id="play-btn-q" onclick="togglePhase('q')">❚❚</button>
+        <button onclick="restartPhase('q')">↻</button>
+        <div class="control-group speed-controls">
+          <button onclick="setSpeed('q', 0.5)">0.5x</button>
+          <button class="active" onclick="setSpeed('q', 1)">1x</button>
+          <button onclick="setSpeed('q', 2)">2x</button>
+        </div>
+        <div class="control-group nav-controls">
+          <button onclick="stepPhase('q', -1)">❮</button>
+          <button onclick="stepPhase('q', 1)">❯</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -264,11 +284,47 @@ _Note: Close divs at end of file._
 
 <div class="section-divider" aria-hidden="true"></div>
 
-### 6. Intuition Section with Animated Walkthrough **[CRITICAL]** > **The
-intuition section MUST include 4-5 animated, auto-looping phases that teach the
-concept step-by-step.** #### Animation Architecture Animations are **NOT**
-pre-rendered GIFs or videos. They are **frame-by-frame canvas renders** driven
-by a `requestAnimationFrame` loop. Each phase has: - A `frame` counter that
+### 5b. Tree / Graph Rendering Style **[MANDATORY for Tree/Graph Problems]**
+When rendering binary trees, graphs, or any node-based structures on canvas, you
+MUST follow this blueprint-style rendering: #### Canvas Blueprint Background
+Draw a subtle grid on the canvas background matching the blueprint aesthetic:
+```javascript function drawBlueprintGrid(ctx, canvas, colors) { const dpr =
+window.devicePixelRatio || 1; const gridSize = 25 * dpr; ctx.strokeStyle =
+colors.gridLine; ctx.lineWidth = 0.5 * dpr; for (let x = 0; x < canvas.width; x
++= gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+ctx.stroke(); } for (let y = 0; y < canvas.height; y += gridSize) {
+ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+} ``` #### Node Style - **Circle**: Thin border (`2px`), `colors.accent` stroke,
+transparent or `colors.bg` fill - **Text**: Centered, JetBrains Mono bold,
+`colors.text` - **Vector Anchors**: 4 small squares (`4×4px`) at top-left,
+top-right, bottom-left, bottom-right corners of each node's bounding box. Fill:
+`colors.bg`, Border: `colors.accent` ```javascript function
+drawVectorAnchors(ctx, x, y, nodeR, colors, dpr) { const sz = 4 * dpr; const
+positions = [ [x - nodeR - sz/2, y - nodeR - sz/2], // top-left [x + nodeR -
+sz/2, y - nodeR - sz/2], // top-right [x - nodeR - sz/2, y + nodeR - sz/2], //
+bottom-left [x + nodeR - sz/2, y + nodeR - sz/2], // bottom-right ];
+positions.forEach(([ax, ay]) => { ctx.fillStyle = colors.bg; ctx.fillRect(ax,
+ay, sz, sz); ctx.strokeStyle = colors.accent; ctx.lineWidth = 1 * dpr;
+ctx.strokeRect(ax, ay, sz, sz); }); } ``` #### Tree Layout — Recursive
+Positioning **CRITICAL**: Left children MUST be positioned to the LEFT, right
+children to the RIGHT. Use recursive layout: ```javascript function
+layoutBinaryTree(nodes, canvasWidth, canvasHeight) { const positions = new
+Array(nodes.length).fill(null); const maxDepth = Math.max(...nodes.map(n =>
+n.depth), 0); function assign(id, depth, x, spread) { if (id < 0 || id >=
+nodes.length || positions[id]) return; positions[id] = { x, y: (depth + 0.8) *
+(canvasHeight / (maxDepth + 2)) }; assign(nodes[id].leftChild, depth + 1, x -
+spread, spread / 2); assign(nodes[id].rightChild, depth + 1, x + spread, spread
+/ 2); } assign(0, 0, canvasWidth / 2, canvasWidth / 4); // Center visually let
+minX = Infinity, maxX = -Infinity; positions.forEach(p => { if (p) { minX =
+Math.min(minX, p.x); maxX = Math.max(maxX, p.x); } }); const shift =
+(canvasWidth / 2) - ((minX + maxX) / 2); positions.forEach(p => { if (p) p.x +=
+shift; }); return positions; } ``` #### Edge Style - **Lines**: From parent
+center to child center, `colors.accent` or `colors.border`, `1.5px` --- ### 6.
+Intuition Section with Animated Walkthrough **[CRITICAL]** > **The intuition
+section MUST include 4-5 animated, auto-looping phases that teach the concept
+step-by-step.** #### Animation Architecture Animations are **NOT** pre-rendered
+GIFs or videos. They are **frame-by-frame canvas renders** driven by a
+`requestAnimationFrame` loop. Each phase has: - A `frame` counter that
 increments each tick - A `maxFrames` value after which it loops back to 0 - A
 dedicated `drawPhaseN(phase)` function that reads `phase.frame` and renders the
 current state This approach allows: - Instant theme reactivity (calls

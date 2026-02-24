@@ -147,6 +147,8 @@
             </div>
           </header>
 
+          <div class="divider"></div>
+          
           <div class="terminal-card">
             <div class="terminal-row">
               <span class="terminal-label">PROB:</span>
@@ -197,6 +199,30 @@
               At each step you can climb either 1 or 2 stairs. This is a classic introduction to
               Dynamic Programming and is intimately connected to the Fibonacci sequence.
             </p>
+
+            <div class="phase-section">
+              <h3 class="phase-title">Visualizing the Problem</h3>
+              <p class="phase-description">
+                Watch all the distinct paths to climb <code>n = 4</code> stairs —
+                each path is a different combination of 1-step and 2-step moves.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="question-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-q" onclick="togglePhase('q')">❚❚</button>
+                  <button onclick="restartPhase('q')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('q', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('q', 1)">1x</button>
+                    <button onclick="setSpeed('q', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('q', -1)">❮</button>
+                    <button onclick="stepPhase('q', 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           <div class="section-divider" aria-hidden="true"></div>
@@ -476,6 +502,7 @@
       // ===============================================
 
       const phases = {
+        'q': { frame: 0, playing: true, speed: 1, maxFrames: 500 },
         0: { frame: 0, playing: true, speed: 1, maxFrames: 400 },
         1: { frame: 0, playing: true, speed: 1, maxFrames: 300 },
         2: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
@@ -484,7 +511,8 @@
 
       function initPhases() {
         Object.keys(phases).forEach((n) => {
-          phases[n].canvas = document.getElementById(`phase${n}-canvas`);
+          const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+          phases[n].canvas = document.getElementById(canvasId);
           if (phases[n].canvas) phases[n].ctx = phases[n].canvas.getContext("2d");
         });
       }
@@ -492,8 +520,10 @@
       function togglePhase(n) {
         const phase = phases[n];
         phase.playing = !phase.playing;
-        document.getElementById(`play-btn-${n}`).textContent = phase.playing ? "❚❚" : "▶";
-        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        const btnId = n === 'q' ? 'play-btn-q' : `play-btn-${n}`;
+        document.getElementById(btnId).textContent = phase.playing ? "❚❚" : "▶";
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
         if (canvasEl) {
           const controls = canvasEl.nextElementSibling;
           if (controls) controls.classList.toggle("is-paused", !phase.playing);
@@ -508,7 +538,8 @@
 
       function setSpeed(n, speed) {
         phases[n].speed = speed;
-        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
         if (!canvasEl) return;
         const controls = canvasEl.nextElementSibling;
         const btns = controls.querySelectorAll(".speed-controls button");
@@ -521,9 +552,11 @@
 
       function stepPhase(n, dir) {
         phases[n].playing = false;
-        document.getElementById(`play-btn-${n}`).textContent = "▶";
+        const btnId = n === 'q' ? 'play-btn-q' : `play-btn-${n}`;
+        document.getElementById(btnId).textContent = "▶";
         phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + dir * 20));
-        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
         if (canvasEl) {
           const controls = canvasEl.nextElementSibling;
           if (controls) controls.classList.add("is-paused");
@@ -533,7 +566,8 @@
 
       function updateNavState(n) {
         const phase = phases[n];
-        const canvasEl = document.getElementById(`phase${n}-canvas`);
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
         if (!canvasEl) return;
         const wrapper = canvasEl.parentElement;
         if (wrapper && wrapper.classList.contains("phase-canvas-wrapper")) {
@@ -1193,6 +1227,133 @@
       // MAIN RENDER LOOP
       // ===============================================
 
+      // ===============================================
+      // QUESTION GIF: STAIRCASE VISUALIZATION
+      // ===============================================
+
+      function drawQuestionGif(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(12, canvas.width * 0.025);
+        const n = 4;
+
+        // 5 paths: [1,1,1,1], [1,1,2], [1,2,1], [2,1,1], [2,2]
+        const paths = [
+          [1, 1, 1, 1],
+          [1, 1, 2],
+          [1, 2, 1],
+          [2, 1, 1],
+          [2, 2],
+        ];
+
+        const pathIdx = Math.min(paths.length - 1, Math.floor(progress * paths.length));
+        const pathProgress = (progress * paths.length) % 1;
+
+        // Draw staircase
+        const stepW = Math.min(canvas.width * 0.12, 80 * dpr);
+        const stepH = Math.min(canvas.height * 0.12, 50 * dpr);
+        const baseX = canvas.width * 0.15;
+        const baseY = canvas.height * 0.85;
+
+        ctx.strokeStyle = colors.accent;
+        ctx.lineWidth = 2 * dpr;
+        for (let i = 0; i <= n; i++) {
+          const sx = baseX + i * stepW;
+          const sy = baseY - i * stepH;
+          // Horizontal
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + stepW, sy);
+          ctx.stroke();
+          // Vertical (except last)
+          if (i < n) {
+            ctx.beginPath();
+            ctx.moveTo(sx + stepW, sy);
+            ctx.lineTo(sx + stepW, sy - stepH);
+            ctx.stroke();
+          }
+
+          // Step label
+          if (i < n) {
+            ctx.fillStyle = colors.dim;
+            ctx.font = `${fontSize * 0.7}px Share Tech Mono`;
+            ctx.textAlign = "center";
+            ctx.fillText(`${i + 1}`, sx + stepW + stepW * 0.5, sy - stepH * 0.3);
+          }
+        }
+
+        // Show path being walked
+        const path = paths[pathIdx];
+        let currentStair = 0;
+        let stepsDone = Math.floor(pathProgress * (path.length + 1));
+        const trail = [];
+
+        for (let i = 0; i < Math.min(stepsDone, path.length); i++) {
+          const from = currentStair;
+          currentStair += path[i];
+          trail.push({ from, to: currentStair, step: path[i] });
+        }
+
+        // Draw trail markers
+        trail.forEach((t, i) => {
+          const fx = baseX + t.from * stepW + stepW * 0.5;
+          const fy = baseY - t.from * stepH - 15 * dpr;
+          const tx = baseX + t.to * stepW + stepW * 0.5;
+          const ty = baseY - t.to * stepH - 15 * dpr;
+
+          // Arc from → to
+          ctx.beginPath();
+          ctx.moveTo(fx, fy);
+          const cp = (fx + tx) / 2;
+          const cpy = Math.min(fy, ty) - 30 * dpr;
+          ctx.quadraticCurveTo(cp, cpy, tx, ty);
+          ctx.strokeStyle = t.step === 1 ? colors.match : colors.highlight;
+          ctx.lineWidth = 2.5 * dpr;
+          ctx.stroke();
+
+          // Step label on arc
+          ctx.fillStyle = t.step === 1 ? colors.match : colors.highlight;
+          ctx.font = `bold ${fontSize * 0.8}px Share Tech Mono`;
+          ctx.textAlign = "center";
+          ctx.fillText(`+${t.step}`, cp, cpy - 6 * dpr);
+        });
+
+        // Position marker
+        const markerX = baseX + currentStair * stepW + stepW * 0.5;
+        const markerY = baseY - currentStair * stepH - 15 * dpr;
+        ctx.beginPath();
+        ctx.arc(markerX, markerY, 8 * dpr, 0, Math.PI * 2);
+        ctx.fillStyle = currentStair >= n ? colors.match : colors.accent;
+        ctx.fill();
+
+        // Path list on the right side
+        const listX = canvas.width * 0.72;
+        ctx.fillStyle = colors.accent;
+        ctx.font = `bold ${fontSize}px Share Tech Mono`;
+        ctx.textAlign = "left";
+        ctx.fillText("ALL PATHS:", listX, canvas.height * 0.12);
+
+        paths.forEach((p, i) => {
+          const y = canvas.height * 0.2 + i * (fontSize * 2.2);
+          const label = p.map(s => `+${s}`).join(' → ');
+          const isActive = i === pathIdx;
+          const isDone = i < pathIdx;
+          ctx.fillStyle = isActive ? colors.highlight : (isDone ? colors.match : colors.dim);
+          ctx.font = `${isActive ? 'bold ' : ''}${fontSize * 0.85}px Share Tech Mono`;
+          ctx.fillText(`${isDone ? '✓' : (isActive ? '►' : '○')} ${label}`, listX, y);
+        });
+
+        // Counter
+        ctx.fillStyle = colors.match;
+        ctx.font = `bold ${fontSize * 1.2}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText(`ANSWER: ${paths.length} WAYS`, canvas.width / 2, canvas.height - 18 * dpr);
+      }
+
       function drawAll() {
         Object.keys(phases).forEach((n) => {
           const phase = phases[n];
@@ -1201,6 +1362,7 @@
           if (phase.playing) {
             phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
           }
+          if (n === 'q') drawQuestionGif(phase);
           if (n == 0) drawPhase0(phase);
           if (n == 1) drawPhase1(phase);
           if (n == 2) drawPhase2(phase);

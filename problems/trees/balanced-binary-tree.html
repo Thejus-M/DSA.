@@ -1,109 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="../../assets/css/variables.css">
-    <link rel="stylesheet" href="../../assets/css/problems.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/problems.css" />
+    <link rel="stylesheet" href="../../assets/css/responsive.css" />
+    <link rel="stylesheet" href="../../assets/css/visualization.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Balanced Binary Tree | DSA</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-        rel="stylesheet">
-    <!-- Prism.js for Syntax Highlighting -->
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Share+Tech+Mono&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-</head>
 
-<body>
+    <style>
+      .article-container {
+        padding-top: 60px;
+      }
+      @media (max-width: 600px) {
+        .phase-title { font-size: 20px !important; margin-bottom: 12px; }
+        .phase-description { font-size: 18px !important; line-height: 1.4; }
+        .phase-canvas { height: auto !important; min-height: 250px !important; aspect-ratio: 1 / 1; }
+      }
+    </style>
+  </head>
+  <body>
     <div id="header-mount"></div>
-
     <div class="ruler-scale" id="ruler-scale"></div>
-
     <div class="page-wrapper">
-        <aside class="sidebar" id="sidebar-mount">
-            <!-- Sidebar injected by layout.js -->
-        </aside>
+      <aside class="sidebar" id="sidebar-mount"></aside>
+      <main class="main-content">
+        <div class="article-container">
+          <header class="article-header">
+            <div class="article-meta">DSA LEARNING</div>
+            <h1 class="article-title">Balanced Binary Tree</h1>
+            <div class="tags">
+              <span class="tag">EASY</span>
+              <span class="tag">TREE</span>
+              <span class="tag">DFS</span>
+              <span class="tag">RECURSION</span>
+            </div>
+          </header>
 
-        <main class="main-content">
-            <div class="article-container">
-                <header class="article-header">
-                    <div class="article-meta">DSA LEARNING</div>
-                    <h1 class="article-title">Balanced Binary Tree.</h1>
-                    <div class="tags">
-                        <span class="tag">Easy</span>
-                        <span class="tag">Tree</span>
-                        <span class="tag">DFS</span>
-                        <span class="tag">Recursion</span>
-                    </div>
-                </header>
+          <div class="divider"></div>
 
-                <div class="divider"></div>
+          <!-- Problem Statement -->
+          <div class="terminal-card">
+            <div class="terminal-row">
+              <span class="terminal-label">PROB:</span>
+              <div class="terminal-content serif">
+                <p style="margin-top: 0;">Given a binary tree, determine if it is height-balanced.</p>
+                <p style="margin-bottom: 0;">A height-balanced binary tree is defined as a binary tree in which
+                  the left and right subtrees of <strong>every</strong> node differ in height by no more than 1.</p>
+              </div>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-label">CONST:</span>
+              <div class="terminal-content mono">
+                <ul class="terminal-constraints-list">
+                  <li>The number of nodes in the tree is in the range [0, 5000].</li>
+                  <li>-10<sup>4</sup> &lt;= Node.val &lt;= 10<sup>4</sup></li>
+                </ul>
+              </div>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-label">EXAMPLE:</span>
+              <div class="terminal-content mono">
+                <ul class="terminal-examples-list">
+                  <li class="terminal-example-item">
+                    <span class="terminal-example-bullet">•</span>
+                    <div class="terminal-example-label">INPUT</div>
+                    <div class="terminal-example-value">root = [3, 9, 20, null, null, 15, 7]</div>
+                    <div class="terminal-example-label">OUTPUT</div>
+                    <div class="terminal-example-value">true</div>
+                  </li>
+                  <li class="terminal-example-item">
+                    <span class="terminal-example-bullet">•</span>
+                    <div class="terminal-example-label">INPUT</div>
+                    <div class="terminal-example-value">root = [1, 2, 2, 3, 3, null, null, 4, 4]</div>
+                    <div class="terminal-example-label">OUTPUT</div>
+                    <div class="terminal-example-value">false</div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-                <div class="terminal-card">
-                    <div class="terminal-row">
-                        <span class="terminal-label">PROB:</span>
-                        <div class="terminal-content serif">
-                            <p style="margin-top: 0;">Given a binary tree, determine if it is height-balanced.</p>
-                            <p style="margin-bottom: 0;">For this problem, a height-balanced binary tree is defined as a
-                                binary tree in which the left and right subtrees of every node differ in height by no
-                                more than 1.</p>
-                        </div>
-                    </div>
-                    <div class="terminal-row">
-                        <span class="terminal-label">CONST:</span>
-                        <div class="terminal-content mono">
-                            <ul class="terminal-constraints-list">
-                                <li>The number of nodes in the tree is in the range [0, 5000].</li>
-                                <li>-10^4 <= Node.val <=10^4</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="terminal-row">
-                        <span class="terminal-label">EXAMPLE:</span>
-                        <div class="terminal-content mono">
-                            <ul class="terminal-examples-list">
-                                <li class="terminal-example-item">
-                                    <span class="terminal-example-bullet">•</span>
-                                    <div class="terminal-example-label">INPUT</div>
-                                    <div class="terminal-example-value">root = [3,9,20,null,null,15,7]</div>
-                                    <div class="terminal-example-label">OUTPUT</div>
-                                    <div class="terminal-example-value">true</div>
-                                </li>
-                                <li class="terminal-example-item">
-                                    <span class="terminal-example-bullet">•</span>
-                                    <div class="terminal-example-label">INPUT</div>
-                                    <div class="terminal-example-value">root = [1,2,2,3,3,null,null,4,4]</div>
-                                    <div class="terminal-example-label">OUTPUT</div>
-                                    <div class="terminal-example-value">false</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+          <!-- The Question + GIF -->
+          <section class="content-section">
+            <h2>The Question</h2>
+            <p style="margin-bottom: 40px;">
+              Given the root of a binary tree, determine if it is height-balanced. This means
+              <strong>every</strong> node's left and right subtrees must have heights differing by at most 1.
+            </p>
+
+            <div class="phase-section">
+              <h3 class="phase-title">Visualizing the Problem</h3>
+              <p class="phase-description">
+                Watch how a balanced tree (left/right heights differ by ≤ 1) compares to an
+                unbalanced tree (left side grows much deeper).
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="question-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-q" onclick="togglePhase('q')">❚❚</button>
+                  <button onclick="restartPhase('q')">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed('q', 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed('q', 1)">1x</button>
+                    <button onclick="setSpeed('q', 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase('q', -1)">❮</button>
+                    <button onclick="stepPhase('q', 1)">❯</button>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </section>
 
-                <section class="content-section">
-                    <h2>Intuition</h2>
-                    <p>A binary tree is balanced if the height of its left and right subtrees differ by at most 1, AND
-                        both the left and right subtrees are themselves balanced.</p>
-                    <p>This naturally suggests a recursive approach (Depth First Search).</p>
-                    <p>We can write a helper function that returns two values: the height of the tree, and a boolean
-                        indicating if it is balanced. We compute this bottom-up.</p>
-                </section>
+          <div class="section-divider" aria-hidden="true"></div>
 
-                <div class="section-divider" aria-hidden="true"></div>
+          <!-- Intuition with 4 Animated Phases -->
+          <section class="content-section">
+            <h2>Intuition</h2>
+            <p>Let's build the solution step by step.</p>
 
-                <section class="content-section">
-                    <h2>Solution: Bottom-Up Recursive DFS</h2>
-                    <div class="code-block-wrapper">
-                        <span class="code-label">Python Solution</span>
-                        <button class="copy-btn" onclick="copyCode(this)">COPY</button>
-                        <pre><code class="language-python">from typing import Optional
+            <!-- Phase 0: DFS Height Calculation -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 1: DFS Height Calculation</h3>
+              <p class="phase-description">
+                We use Depth-First Search to calculate the height of each subtree from the
+                bottom up. A leaf node has height 1, an empty child has height 0, and each
+                parent's height is <code>max(left, right) + 1</code>.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase0-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-0" onclick="togglePhase(0)">❚❚</button>
+                  <button onclick="restartPhase(0)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(0, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(0, 1)">1x</button>
+                    <button onclick="setSpeed(0, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(0, -1)">❮</button>
+                    <button onclick="stepPhase(0, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-# Definition for a binary tree node.
+            <!-- Phase 1: Bottom-Up Balance Check -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 2: Bottom-Up Balance Check</h3>
+              <p class="phase-description">
+                At every node, we check: is <code>|leftHeight - rightHeight| &lt;= 1</code>?
+                If yes, it's balanced at this node. We return both the height and the balanced
+                status back up the tree. Green ✓ = balanced, Red ✗ = unbalanced.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase1-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-1" onclick="togglePhase(1)">❚❚</button>
+                  <button onclick="restartPhase(1)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(1, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(1, 1)">1x</button>
+                    <button onclick="setSpeed(1, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(1, -1)">❮</button>
+                    <button onclick="stepPhase(1, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 2: Unbalanced Detection -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 3: Detecting Imbalance</h3>
+              <p class="phase-description">
+                On an unbalanced tree, at least one node has <code>|L-R| > 1</code>.
+                Watch DFS detect the imbalance and propagate the failure upward.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase2-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-2" onclick="togglePhase(2)">❚❚</button>
+                  <button onclick="restartPhase(2)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(2, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(2, 1)">1x</button>
+                    <button onclick="setSpeed(2, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(2, -1)">❮</button>
+                    <button onclick="stepPhase(2, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 3: Early Termination -->
+            <div class="phase-section">
+              <h3 class="phase-title">Phase 4: Early Termination with -1</h3>
+              <p class="phase-description">
+                Optimization: return <code>-1</code> as soon as imbalance is detected.
+                This lets DFS skip unnecessary subtree checks entirely.
+              </p>
+              <div class="phase-canvas-wrapper">
+                <canvas id="phase3-canvas" class="phase-canvas" width="800" height="400"></canvas>
+                <div class="phase-controls playing">
+                  <button id="play-btn-3" onclick="togglePhase(3)">❚❚</button>
+                  <button onclick="restartPhase(3)">↻</button>
+                  <div class="control-group speed-controls">
+                    <button onclick="setSpeed(3, 0.5)">0.5x</button>
+                    <button class="active" onclick="setSpeed(3, 1)">1x</button>
+                    <button onclick="setSpeed(3, 2)">2x</button>
+                  </div>
+                  <div class="control-group nav-controls">
+                    <button onclick="stepPhase(3, -1)">❮</button>
+                    <button onclick="stepPhase(3, 1)">❯</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p>
+              The bottom-up DFS approach visits each node exactly once, giving us <code>O(n)</code> time.
+            </p>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Solution -->
+          <section class="content-section">
+            <h2>Solution</h2>
+            <div class="code-block-wrapper">
+              <span class="code-label">Python Solution</span>
+              <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+              <pre><code class="language-python">from typing import Optional
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -112,488 +256,828 @@ class TreeNode:
 
 class Solution:
     def isBalanced(self, root: Optional[TreeNode]) -> bool:
-        def fun(root):
+        def dfs(root):
             if not root:
                 return 0, True
-            
-            l, l_bool = fun(root.left)
-            r, r_bool = fun(root.right)
-            
-            # Height is max of left/right + 1
-            # Balanced if difference <= 1 AND subtrees are balanced
-            return max(l, r) + 1, (abs(r - l) <= 1) and l_bool and r_bool
-            
-        return fun(root)[1]</code></pre>
-                    </div>
-                </section>
 
-                <div class="complexity-card">
-                    <h3>Complexity Analysis</h3>
-                    <div class="complexity-grid">
-                        <div class="complexity-item">
-                            <div class="complexity-label">Time Complexity</div>
-                            <div class="complexity-value">O(n)</div>
-                            <div class="complexity-note">We visit every node once.</div>
-                        </div>
-                        <div class="complexity-item">
-                            <div class="complexity-label">Space Complexity</div>
-                            <div class="complexity-value">O(n)</div>
-                            <div class="complexity-note">In the worst case (skewed tree), the recursion stack depth is
-                                O(n).</div>
-                        </div>
-                    </div>
-                </div>
+            l_h, l_bal = dfs(root.left)
+            r_h, r_bal = dfs(root.right)
 
-                <div class="section-divider" aria-hidden="true"></div>
+            height = max(l_h, r_h) + 1
+            balanced = abs(l_h - r_h) <= 1 and l_bal and r_bal
 
-                <section class="content-section" style="margin-top: 60px;">
-                    <h2>Interactive Visualization</h2>
-                    <p style="margin-bottom: 20px;">Watch the recursive DFS check the height of each node from the
-                        bottom up.</p>
+            return height, balanced
 
-                    <div class="blueprint-container"
-                        style="border: 1px solid var(--accent); background-color: var(--bg-body); background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 20px 20px; box-shadow: 4px 4px 0 rgba(42, 93, 156, 0.1);">
-
-                        <!-- Top Control Bar -->
-                        <div class="tree-controls-bar"
-                            style="padding: 16px; border-bottom: 1px solid var(--accent); background: var(--bg-card); display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
-                            <!-- Input Group -->
-                            <div class="tree-input-group"
-                                style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 250px;">
-                                <label class="terminal-label" style="width: auto; margin:0; padding:0;">TREE:</label>
-                                <input type="text" id="tree-input" value="3,9,20,null,null,15,7"
-                                    style="flex: 1; padding: 6px; font-family: var(--font-mono-code); font-size: 13px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); outline: none;">
-                                <button class="demo-btn" id="build-btn"
-                                    style="border-color: var(--border);">BUILD</button>
-                            </div>
-                            <!-- Play Controls -->
-                            <div class="tree-play-controls" style="display: flex; gap: 8px;">
-                                <button class="demo-btn" id="btn-play">PLAY</button>
-                                <button class="demo-btn" id="btn-pause" style="display: none;">PAUSE</button>
-                                <button class="demo-btn" id="btn-prev">PREV</button>
-                                <button class="demo-btn" id="btn-next">NEXT</button>
-                                <button class="demo-btn" id="btn-reset">RESET</button>
-                            </div>
-                        </div>
-
-                        <!-- Status Bar -->
-                        <div
-                            style="padding: 8px 16px; border-bottom: 1px dashed var(--accent); background: var(--bg-card); display: flex; justify-content: space-between; font-family: var(--font-mono-sys); font-size: 11px;">
-                            <div style="display:flex; gap: 8px; align-items: center;">
-                                <span style="color: var(--text-sub);">STATUS:</span>
-                                <span id="status-text" style="color: var(--accent); font-weight: bold;">Ready to start
-                                    DFS...</span>
-                            </div>
-                            <div style="display:flex; gap: 8px; align-items: center;">
-                                <span style="color: var(--text-sub);">STEP:</span>
-                                <span id="step-count">0</span>
-                            </div>
-                        </div>
-
-                        <!-- Canvas -->
-                        <div class="tree-container" id="tree-viz"
-                            style="border: none; background: transparent; height: 380px;">
-                        </div>
-                    </div>
-                </section>
-                <div
-                    style="text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-sub); margin: 60px 0;">
-                    — END —
-                </div>
-
-
-                <footer id="footer-mount"></footer>
+        return dfs(root)[1]</code></pre>
             </div>
-        </main>
+
+            <div class="complexity-card">
+              <h3>Complexity Analysis</h3>
+              <div class="complexity-grid">
+                <div class="complexity-item">
+                  <div class="complexity-label">Time Complexity</div>
+                  <div class="complexity-value">O(n)</div>
+                  <div class="complexity-note">We visit every node once.</div>
+                </div>
+                <div class="complexity-item">
+                  <div class="complexity-label">Space Complexity</div>
+                  <div class="complexity-value">O(n)</div>
+                  <div class="complexity-note">Worst case: skewed tree → recursion stack depth is O(n).</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider" aria-hidden="true"></div>
+
+          <!-- Interactive Visualization -->
+          <section class="content-section" style="margin-top: 60px;">
+            <h2>Interactive Visualization</h2>
+            <p style="margin-bottom: 30px;">
+              Enter a tree as a comma-separated level-order list (use <code>null</code> for empty nodes).
+              Step through the DFS traversal to see how height and balance are computed bottom-up.
+            </p>
+
+            <div class="demo-container">
+              <div class="interactive-controls-bar">
+                <div class="demo-input-group" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="tree-input" class="demo-label">TREE:</label>
+                    <input type="text" id="tree-input" class="demo-input" value="3,9,20,null,null,15,7" style="width: 220px;" />
+                  </div>
+                  <button class="demo-btn" onclick="initDemo()">BUILD</button>
+                </div>
+                <div class="demo-controls demo-step-controls">
+                  <button class="demo-btn" onclick="stepDemo(-1)" id="prev-step-btn">❮</button>
+                  <div class="step-info" id="step-counter">STEP: 0</div>
+                  <button class="demo-btn" onclick="stepDemo(1)" id="next-step-btn">❯</button>
+                </div>
+              </div>
+
+              <div class="demo-result" id="demo-status">
+                <span class="result-label">STATUS:</span>
+                <span class="result-value" id="status-text" style="font-size: 14px;">Ready to start DFS...</span>
+              </div>
+
+              <canvas id="demo-canvas" style="width: 100%; height: 400px; display: block; background: var(--bg-body); border: 1px solid var(--border-sub); border-radius: 4px;"></canvas>
+            </div>
+          </section>
+
+          <footer id="footer-mount"></footer>
+        </div>
+      </main>
     </div>
 
-    <script>
-
-
-        // Ruler Script
-        const scaleContainer = document.getElementById('ruler-scale');
-        for (let i = 0; i < 60; i++) {
-            const tick = document.createElement('div');
-            tick.className = 'ruler-tick';
-            if (i % 5 === 0) tick.classList.add('major');
-            scaleContainer.appendChild(tick);
-        }
-
-        window.addEventListener('scroll', () => {
-            const progress = document.documentElement.scrollHeight - window.innerHeight > 0
-                ? window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)
-                : 0;
-            document.getElementById('progress-number').textContent = progress.toFixed(2);
-            const activeIndex = Math.floor(progress * 60);
-            document.querySelectorAll('.ruler-tick').forEach((tick, i) => tick.classList.toggle('active', i <= activeIndex));
-        });
-
-        // --- TREE VIZ LOGIC (Step-by-Step) ---
-        class TreeNode {
-            constructor(val, id) {
-                this.val = val;
-                this.id = id;
-                this.left = null;
-                this.right = null;
-                this.x = 0;
-                this.y = 0;
-                this.height = -1; // Unknown
-                this.isBalanced = null; // Unknown
-                this.state = 'idle'; // idle, visiting, recursing, returning, checked
-            }
-        }
-
-        class BalancedBinaryTreeDemo {
-            constructor() {
-                this.root = null;
-                this.steps = [];
-                this.currentStep = 0;
-                this.isPlaying = false;
-                this.playInterval = null;
-                this.nodeMap = new Map();
-
-                // UI Elements
-                this.container = document.getElementById('tree-viz');
-                this.statusText = document.getElementById('status-text');
-                this.stepCount = document.getElementById('step-count');
-
-                // Resize listener
-                window.addEventListener('resize', () => {
-                    this.render();
-                });
-
-                this.attachEventListeners();
-                this.buildFromInput();
-            }
-
-            attachEventListeners() {
-                document.getElementById('build-btn').addEventListener('click', () => {
-                    this.pause();
-                    this.buildFromInput();
-                });
-                document.getElementById('btn-play').addEventListener('click', () => this.play());
-                document.getElementById('btn-pause').addEventListener('click', () => this.pause());
-                document.getElementById('btn-next').addEventListener('click', () => {
-                    this.pause();
-                    this.nextStep();
-                });
-                document.getElementById('btn-prev').addEventListener('click', () => {
-                    this.pause();
-                    this.prevStep();
-                });
-                document.getElementById('btn-reset').addEventListener('click', () => {
-                    this.pause();
-                    this.reset();
-                });
-            }
-
-            buildFromInput() {
-                const inputEl = document.getElementById('tree-input');
-                const input = inputEl.value;
-                let arr = input.split(',').map(x => {
-                    const t = x.trim();
-                    if (t === 'null' || t === 'None' || t === '') return null;
-                    const val = parseInt(t);
-                    return isNaN(val) ? 0 : val;
-                });
-
-                // Limit node count to 31 (5 levels) for visualization stability
-                if (arr.length > 31) {
-                    arr = arr.slice(0, 31);
-                    inputEl.value = arr.map(x => x === null ? 'null' : x).join(',');
-                }
-
-                this.nodeMap.clear();
-                this.root = this.buildTree(arr);
-                this.calculateLayout();
-                this.generateSteps();
-                this.reset();
-            }
-
-            buildTree(arr) {
-                if (!arr.length || arr[0] === null) return null;
-                let idCounter = 0;
-                const root = new TreeNode(arr[0], idCounter++);
-                this.nodeMap.set(root.id, root);
-                const queue = [root];
-                let i = 1;
-
-                while (i < arr.length) {
-                    const curr = queue.shift();
-
-                    if (i < arr.length && arr[i] !== null) {
-                        curr.left = new TreeNode(arr[i], idCounter++);
-                        this.nodeMap.set(curr.left.id, curr.left);
-                        queue.push(curr.left);
-                    }
-                    i++;
-
-                    if (i < arr.length && arr[i] !== null) {
-                        curr.right = new TreeNode(arr[i], idCounter++);
-                        this.nodeMap.set(curr.right.id, curr.right);
-                        queue.push(curr.right);
-                    }
-                    i++;
-                }
-                return root;
-            }
-
-            calculateLayout() {
-                if (!this.root) return;
-                const w = this.container.offsetWidth;
-
-                const setCoords = (n, d, x, s) => {
-                    if (!n) return;
-                    n.x = x;
-                    n.y = d * 60 + 50;
-                    setCoords(n.left, d + 1, x - s, s / 2);
-                    setCoords(n.right, d + 1, x + s, s / 2);
-                };
-                setCoords(this.root, 0, w / 2, w / 4);
-            }
-
-            generateSteps() {
-                this.steps = [];
-                // Initial State
-                this.steps.push({
-                    type: 'INIT',
-                    msg: 'Tree built. Ready to run DFS.',
-                    highlights: [],
-                    heights: {} // Map id -> height
-                });
-
-                const dfs = (node) => {
-                    if (!node) {
-                        return { h: 0, bal: true };
-                    }
-
-                    // Visit Node
-                    this.steps.push({
-                        type: 'VISIT',
-                        msg: `Visiting Node ${node.val}. Checking Left Subtree...`,
-                        highlights: [node.id],
-                        focusId: node.id
-                    });
-
-                    // Left
-                    const left = dfs(node.left);
-
-                    this.steps.push({
-                        type: 'VISIT_RIGHT',
-                        msg: `Node ${node.val}: Left height is ${left.h}. Checking Right Subtree...`,
-                        highlights: [node.id],
-                        focusId: node.id
-                    });
-
-                    // Right
-                    const right = dfs(node.right);
-
-                    // Check
-                    const height = Math.max(left.h, right.h) + 1;
-                    const isBal = (Math.abs(left.h - right.h) <= 1) && left.bal && right.bal;
-
-                    this.steps.push({
-                        type: 'CALC',
-                        msg: `Node ${node.val}: Left H=${left.h}, Right H=${right.h}. Diff=${Math.abs(left.h - right.h)}. ${isBal ? 'Balanced' : 'Unbalanced'}.`,
-                        highlights: [node.id],
-                        focusId: node.id,
-                        updateNode: { id: node.id, h: height, bal: isBal }
-                    });
-
-                    return { h: height, bal: isBal };
-                };
-
-                dfs(this.root);
-
-                this.steps.push({
-                    type: 'DONE',
-                    msg: 'DFS Complete.',
-                    highlights: []
-                });
-            }
-
-            reset() {
-                this.currentStep = 0;
-                this.nodeMap.forEach(n => {
-                    n.height = -1;
-                    n.isBalanced = null;
-                    n.state = 'idle';
-                });
-                this.render();
-                this.updateUI();
-            }
-
-            play() {
-                if (this.isPlaying) return;
-                this.isPlaying = true;
-                document.getElementById('btn-play').style.display = 'none';
-                document.getElementById('btn-pause').style.display = 'inline-block';
-                this.playInterval = setInterval(() => {
-                    if (this.currentStep < this.steps.length - 1) {
-                        this.nextStep();
-                    } else {
-                        this.pause();
-                    }
-                }, 1000); // 1 second per step
-            }
-
-            pause() {
-                this.isPlaying = false;
-                clearInterval(this.playInterval);
-                document.getElementById('btn-play').style.display = 'inline-block';
-                document.getElementById('btn-pause').style.display = 'none';
-            }
-
-            nextStep() {
-                if (this.currentStep < this.steps.length - 1) {
-                    this.currentStep++;
-                    this.applyStep(this.currentStep);
-                }
-            }
-
-            prevStep() {
-                if (this.currentStep > 0) {
-                    this.currentStep--;
-                    // Re-apply logic requires re-simulation or snap shot. 
-                    // For simplicity, we reset and fast-forward
-                    const target = this.currentStep;
-                    this.reset(); // Resets currentStep to 0
-                    this.currentStep = 0;
-                    while (this.currentStep < target) {
-                        this.currentStep++;
-                        this.applyStep(this.currentStep, false); // Don't render every intermediate frame
-                    }
-                    this.render();
-                    this.updateUI();
-                }
-            }
-
-            applyStep(index, doRender = true) {
-                const step = this.steps[index];
-
-                // Update Node State if needed
-                if (step.updateNode) {
-                    const n = this.nodeMap.get(step.updateNode.id);
-                    if (n) {
-                        n.height = step.updateNode.h;
-                        n.isBalanced = step.updateNode.bal;
-                    }
-                }
-
-                if (doRender) {
-                    this.render();
-                    this.updateUI();
-                }
-            }
-
-            updateUI() {
-                const step = this.steps[this.currentStep];
-                this.statusText.textContent = step ? step.msg : '';
-                this.stepCount.textContent = this.currentStep;
-            }
-
-            render() {
-                // Dynamic Layout Update
-                this.calculateLayout();
-
-                this.container.innerHTML = '';
-                if (!this.root) return;
-
-                const step = this.steps[this.currentStep];
-                const activeIds = step ? (step.highlights || []) : [];
-
-                // Draw Links
-                const drawLink = (n) => {
-                    if (!n) return;
-                    if (n.left) {
-                        this.renderLink(n, n.left);
-                        drawLink(n.left);
-                    }
-                    if (n.right) {
-                        this.renderLink(n, n.right);
-                        drawLink(n.right);
-                    }
-                };
-                drawLink(this.root);
-
-                // Draw Nodes
-                this.nodeMap.forEach(n => {
-                    const el = document.createElement('div');
-                    let className = 'tree-node';
-
-                    // Determine Style based on state
-                    if (activeIds.includes(n.id)) {
-                        el.style.borderColor = 'var(--accent)';
-                        el.style.backgroundColor = '#dbeafe'; // Blue highlight
-                        el.style.boxShadow = '0 0 0 3px rgba(42, 93, 156, 0.3)';
-                    } else if (n.isBalanced === true) {
-                        el.classList.add('balanced');
-                    } else if (n.isBalanced === false) {
-                        el.classList.add('unbalanced');
-                    }
-
-                    el.className = className + (n.isBalanced === true ? ' balanced' : '') + (n.isBalanced === false ? ' unbalanced' : '');
-
-                    // Override colors if active
-                    if (activeIds.includes(n.id)) {
-                        el.style.borderColor = 'var(--accent)';
-                        el.style.color = 'var(--accent)';
-                    }
-
-                    el.style.left = (n.x - 20) + 'px';
-                    el.style.top = (n.y - 20) + 'px';
-                    el.textContent = n.val;
-
-                    // Decoration: Vector Anchors
-                    const anchors = ['tl', 'tr', 'bl', 'br'];
-                    anchors.forEach(pos => {
-                        const anc = document.createElement('div');
-                        anc.className = `vector-anchor ${pos}`; // Reusing CSS from other page if possible, else define inline
-                        // Basic anchor style override
-                        anc.style.position = 'absolute';
-                        anc.style.width = '4px';
-                        anc.style.height = '4px';
-                        anc.style.background = 'var(--bg-card)';
-                        anc.style.border = '1px solid var(--accent)';
-                        if (pos.includes('t')) anc.style.top = '-2px'; else anc.style.bottom = '-2px';
-                        if (pos.includes('l')) anc.style.left = '-2px'; else anc.style.right = '-2px';
-                        el.appendChild(anc);
-                    });
-
-                    // Height Label
-                    if (n.height !== -1) {
-                        const lbl = document.createElement('div');
-                        lbl.className = 'node-label';
-                        lbl.style.left = (n.x + 24) + 'px';
-                        lbl.style.top = (n.y - 12) + 'px';
-                        lbl.innerHTML = `H:${n.height}`;
-                        this.container.appendChild(lbl);
-                    }
-
-                    this.container.appendChild(el);
-                });
-            }
-
-            renderLink(p, c) {
-                const line = document.createElement('div');
-                line.className = 'tree-link';
-                const len = Math.sqrt((c.x - p.x) ** 2 + (c.y - p.y) ** 2);
-                const angle = Math.atan2(c.y - p.y, c.x - p.x) * 180 / Math.PI;
-                line.style.width = len + 'px';
-                line.style.left = p.x + 'px';
-                line.style.top = p.y + 'px';
-                line.style.transform = `rotate(${angle}deg)`;
-                this.container.appendChild(line);
-            }
-        }
-
-        // Init
-        new BalancedBinaryTreeDemo();
-
-    </script>
     <script src="../../assets/js/copy-code.js"></script>
+    <script src="../../assets/js/problems.js"></script>
     <script src="../../assets/js/data.js"></script>
     <script src="../../assets/js/layout.js"></script>
-</body>
 
+    <script>
+      // ===============================================
+      // THEME & CANVAS UTILITIES
+      // ===============================================
+
+      function getTheme() {
+        return document.documentElement.getAttribute("data-theme") || "dark";
+      }
+
+      function getColors() {
+        const isDark = getTheme() === "dark";
+        const style = getComputedStyle(document.documentElement);
+        return {
+          bg: isDark ? "#000" : style.getPropertyValue('--bg-body').trim(),
+          text: isDark ? "#6BA4D9" : style.getPropertyValue('--text-main').trim(),
+          accent: style.getPropertyValue('--accent').trim(),
+          border: style.getPropertyValue('--border').trim(),
+          gridLine: isDark ? "rgba(107, 164, 217, 0.08)" : "rgba(30, 58, 95, 0.06)",
+          cellBg: isDark ? "#111" : style.getPropertyValue('--bg-card-elevated').trim(),
+          highlight: "#f0932b",
+          match: "#6ab04c",
+          warning: isDark ? "#ff6b81" : "#e74c3c",
+          dim: isDark ? "#555" : "#999"
+        };
+      }
+
+      function syncCanvasSize(canvas) {
+        if (!canvas) return;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+          canvas.width = Math.floor(rect.width * dpr);
+          canvas.height = Math.floor(rect.height * dpr);
+          return true;
+        }
+        return false;
+      }
+
+      // ===============================================
+      // BLUEPRINT-STYLE TREE DRAWING
+      // ===============================================
+
+      function drawBlueprintGrid(ctx, canvas, colors) {
+        const dpr = window.devicePixelRatio || 1;
+        const gridSize = 25 * dpr;
+        ctx.strokeStyle = colors.gridLine;
+        ctx.lineWidth = 0.5 * dpr;
+        for (let x = 0; x < canvas.width; x += gridSize) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += gridSize) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+      }
+
+      function drawVectorAnchors(ctx, x, y, nodeR, colors, dpr) {
+        const sz = 4 * dpr;
+        const positions = [
+          [x - nodeR - sz/2, y - nodeR - sz/2],
+          [x + nodeR - sz/2, y - nodeR - sz/2],
+          [x - nodeR - sz/2, y + nodeR - sz/2],
+          [x + nodeR - sz/2, y + nodeR - sz/2],
+        ];
+        positions.forEach(([ax, ay]) => {
+          ctx.fillStyle = colors.bg;
+          ctx.fillRect(ax, ay, sz, sz);
+          ctx.strokeStyle = colors.accent;
+          ctx.lineWidth = 1 * dpr;
+          ctx.strokeRect(ax, ay, sz, sz);
+        });
+      }
+
+      // Draw a tree on canvas with blueprint style
+      // treeData: { nodes: [{val, left, right}], positions: [{x,y}] }
+      // options: { activeIdx, computed: Set, heights: {}, balBadge: {}, highlightColor }
+      function drawBlueprintTree(ctx, canvas, treeData, options = {}) {
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        const nodeR = Math.max(16, Math.min(canvas.width, canvas.height) * 0.05);
+        const fontSize = Math.max(11, nodeR * 0.75);
+
+        // Background grid
+        drawBlueprintGrid(ctx, canvas, colors);
+
+        const { nodes, positions } = treeData;
+        if (!nodes || !positions) return;
+
+        const activeIdx = options.activeIdx;
+        const computed = options.computed || new Set();
+        const heights = options.heights || {};
+        const balBadge = options.balBadge || {};
+
+        // Draw edges
+        nodes.forEach((n, i) => {
+          const pos = positions[i];
+          if (!pos) return;
+
+          if (n.left >= 0 && positions[n.left]) {
+            const child = positions[n.left];
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y + nodeR);
+            ctx.lineTo(child.x, child.y - nodeR);
+            ctx.strokeStyle = colors.accent;
+            ctx.lineWidth = 1.5 * dpr;
+            ctx.stroke();
+          }
+          if (n.right >= 0 && positions[n.right]) {
+            const child = positions[n.right];
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y + nodeR);
+            ctx.lineTo(child.x, child.y - nodeR);
+            ctx.strokeStyle = colors.accent;
+            ctx.lineWidth = 1.5 * dpr;
+            ctx.stroke();
+          }
+        });
+
+        // Draw nodes
+        nodes.forEach((n, i) => {
+          const pos = positions[i];
+          if (!pos) return;
+
+          const isActive = i === activeIdx;
+          const isComputed = computed.has(i);
+          const isBal = balBadge[i];
+          const isUnbal = balBadge[i] === false;
+
+          // Circle
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, nodeR, 0, Math.PI * 2);
+
+          if (isActive) {
+            ctx.fillStyle = "transparent";
+            ctx.fill();
+            ctx.strokeStyle = colors.highlight;
+            ctx.lineWidth = 3 * dpr;
+          } else if (isUnbal) {
+            ctx.fillStyle = "transparent";
+            ctx.fill();
+            ctx.strokeStyle = colors.warning;
+            ctx.lineWidth = 2.5 * dpr;
+          } else if (isComputed) {
+            ctx.fillStyle = "transparent";
+            ctx.fill();
+            ctx.strokeStyle = colors.match;
+            ctx.lineWidth = 2.5 * dpr;
+          } else {
+            ctx.fillStyle = "transparent";
+            ctx.fill();
+            ctx.strokeStyle = colors.accent;
+            ctx.lineWidth = 2 * dpr;
+          }
+          ctx.stroke();
+
+          // Vector anchors
+          drawVectorAnchors(ctx, pos.x, pos.y, nodeR, colors, dpr);
+
+          // Label
+          ctx.fillStyle = isActive ? colors.highlight : (isUnbal ? colors.warning : (isComputed ? colors.match : colors.text));
+          ctx.font = `bold ${fontSize}px JetBrains Mono`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(n.val, pos.x, pos.y);
+
+          // Height badge
+          if (heights[i] !== undefined) {
+            ctx.fillStyle = colors.accent;
+            ctx.font = `${fontSize * 0.75}px Share Tech Mono`;
+            ctx.textAlign = "left";
+            ctx.fillText(`H:${heights[i]}`, pos.x + nodeR + 10 * dpr, pos.y - 2 * dpr);
+          }
+
+          // Balance badge
+          if (isBal !== undefined && isBal !== null) {
+            ctx.fillStyle = isBal ? colors.match : colors.warning;
+            ctx.font = `bold ${fontSize * 0.7}px Share Tech Mono`;
+            ctx.textAlign = "center";
+            ctx.fillText(isBal ? "✓" : "✗", pos.x, pos.y + nodeR + 14 * dpr);
+          }
+        });
+      }
+
+      // Layout binary tree recursively: left children go LEFT, right go RIGHT
+      function layoutTree(nodes, canvasW, canvasH) {
+        if (!nodes.length) return [];
+        const positions = new Array(nodes.length).fill(null);
+        const maxDepth = Math.max(...nodes.map(n => n.depth), 0);
+
+        function assign(id, depth, x, spread) {
+          if (id < 0 || id >= nodes.length || positions[id]) return;
+          const yStep = canvasH / (maxDepth + 2);
+          positions[id] = { x, y: (depth + 0.8) * yStep };
+          if (nodes[id].left >= 0) assign(nodes[id].left, depth + 1, x - spread, spread / 2);
+          if (nodes[id].right >= 0) assign(nodes[id].right, depth + 1, x + spread, spread / 2);
+        }
+        assign(0, 0, canvasW / 2, canvasW / 4);
+
+        // Center the tree visually by shifting its bounding box to the center of the canvas
+        let minX = Infinity, maxX = -Infinity;
+        positions.forEach(pos => {
+          if (pos) {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.x > maxX) maxX = pos.x;
+          }
+        });
+        const shiftX = (canvasW / 2) - ((minX + maxX) / 2);
+        positions.forEach(pos => {
+          if (pos) pos.x += shiftX;
+        });
+
+        return positions;
+      }
+
+      // ===============================================
+      // PHASE ANIMATION SYSTEM
+      // ===============================================
+
+      const phases = {
+        'q': { frame: 0, playing: true, speed: 1, maxFrames: 400 },
+        0: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
+        1: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
+        2: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
+        3: { frame: 0, playing: true, speed: 1, maxFrames: 500 },
+      };
+
+      function initPhases() {
+        Object.keys(phases).forEach((n) => {
+          const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+          phases[n].canvas = document.getElementById(canvasId);
+          if (phases[n].canvas) phases[n].ctx = phases[n].canvas.getContext("2d");
+        });
+      }
+
+      function togglePhase(n) {
+        const phase = phases[n];
+        phase.playing = !phase.playing;
+        const btnId = n === 'q' ? 'play-btn-q' : `play-btn-${n}`;
+        document.getElementById(btnId).textContent = phase.playing ? "❚❚" : "▶";
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls) controls.classList.toggle("is-paused", !phase.playing);
+        }
+        updateNavState(n);
+      }
+
+      function restartPhase(n) { phases[n].frame = 0; updateNavState(n); }
+
+      function setSpeed(n, speed) {
+        phases[n].speed = speed;
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
+        if (!canvasEl) return;
+        const controls = canvasEl.nextElementSibling;
+        const btns = controls.querySelectorAll(".speed-controls button");
+        btns.forEach(b => {
+          b.classList.remove("active");
+          if (b.textContent.trim() === `${speed}x`) b.classList.add("active");
+        });
+        updateNavState(n);
+      }
+
+      function stepPhase(n, dir) {
+        phases[n].playing = false;
+        const btnId = n === 'q' ? 'play-btn-q' : `play-btn-${n}`;
+        document.getElementById(btnId).textContent = "▶";
+        phases[n].frame = Math.max(0, Math.min(phases[n].maxFrames, phases[n].frame + dir * 20));
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
+        if (canvasEl) {
+          const controls = canvasEl.nextElementSibling;
+          if (controls) controls.classList.add("is-paused");
+        }
+        updateNavState(n);
+      }
+
+      function updateNavState(n) {
+        const phase = phases[n];
+        const canvasId = n === 'q' ? 'question-canvas' : `phase${n}-canvas`;
+        const canvasEl = document.getElementById(canvasId);
+        if (!canvasEl) return;
+        const wrapper = canvasEl.parentElement;
+        if (wrapper && wrapper.classList.contains("phase-canvas-wrapper")) {
+          if (phase.frame <= 0 && !phase.playing) wrapper.classList.add("at-start");
+          else wrapper.classList.remove("at-start");
+          if (phase.frame >= phase.maxFrames && !phase.playing) wrapper.classList.add("at-end");
+          else wrapper.classList.remove("at-end");
+        }
+        const controls = canvasEl.nextElementSibling;
+        if (controls) {
+          const prevBtn = controls.querySelector('button[onclick*="-1"]');
+          const nextBtn = controls.querySelector('button[onclick*=" 1)"]');
+          if (prevBtn) prevBtn.disabled = phase.frame <= 0;
+          if (nextBtn) nextBtn.disabled = phase.frame >= phase.maxFrames;
+        }
+      }
+
+      // ===============================================
+      // STATIC TREE DATA (shared across phases)
+      // ===============================================
+
+      // Balanced tree: [3, 9, 20, null, null, 15, 7]
+      const balancedTree = [
+        { val: "3", depth: 0, left: 1, right: 2 },
+        { val: "9", depth: 1, left: -1, right: -1 },
+        { val: "20", depth: 1, left: 3, right: 4 },
+        { val: "15", depth: 2, left: -1, right: -1 },
+        { val: "7", depth: 2, left: -1, right: -1 },
+      ];
+      // Heights: 9→1, 15→1, 7→1, 20→2, 3→3
+      const balHeights = { 0: 3, 1: 1, 2: 2, 3: 1, 4: 1 };
+      // DFS order: 9, 15, 7, 20, 3
+      const balDfsOrder = [1, 3, 4, 2, 0];
+      const balCheckAt = [0.12, 0.3, 0.45, 0.65, 0.85];
+
+      // Unbalanced tree: [1, 2, 2, 3, 3, null, null, 4, 4]
+      const unbalancedTree = [
+        { val: "1", depth: 0, left: 1, right: 2 },
+        { val: "2", depth: 1, left: 3, right: 4 },
+        { val: "2", depth: 1, left: -1, right: -1 },
+        { val: "3", depth: 2, left: 5, right: 6 },
+        { val: "3", depth: 2, left: -1, right: -1 },
+        { val: "4", depth: 3, left: -1, right: -1 },
+        { val: "4", depth: 3, left: -1, right: -1 },
+      ];
+
+      // ===============================================
+      // QUESTION GIF: Balanced vs Unbalanced
+      // ===============================================
+
+      function drawQuestionGif(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(12, canvas.width * 0.025);
+
+        if (progress < 0.55) {
+          // Balanced tree
+          const t = Math.min(1, progress / 0.5);
+          ctx.fillStyle = colors.match;
+          ctx.font = `bold ${fontSize}px Share Tech Mono`;
+          ctx.textAlign = "center";
+          ctx.fillText("✓ BALANCED TREE — |L-R| ≤ 1 EVERYWHERE", canvas.width / 2, 25 * dpr);
+
+          const shown = Math.min(balancedTree.length, Math.floor(t * (balancedTree.length + 1)));
+          const visibleNodes = balancedTree.slice(0, shown);
+          const positions = layoutTree(balancedTree, canvas.width, canvas.height);
+
+          drawBlueprintTree(ctx, canvas, {
+            nodes: visibleNodes,
+            positions: positions.slice(0, shown)
+          }, { computed: new Set(visibleNodes.map((_, i) => i)) });
+        } else {
+          // Unbalanced tree
+          const t = Math.min(1, (progress - 0.55) / 0.4);
+          ctx.fillStyle = colors.warning;
+          ctx.font = `bold ${fontSize}px Share Tech Mono`;
+          ctx.textAlign = "center";
+          ctx.fillText("✗ UNBALANCED TREE — LEFT SIDE TOO DEEP", canvas.width / 2, 25 * dpr);
+
+          const shown = Math.min(unbalancedTree.length, Math.floor(t * (unbalancedTree.length + 1)));
+          const visibleNodes = unbalancedTree.slice(0, shown);
+          const positions = layoutTree(unbalancedTree, canvas.width, canvas.height);
+
+          const warnSet = new Set();
+          if (t > 0.8) { warnSet.add(3); warnSet.add(5); warnSet.add(6); }
+
+          drawBlueprintTree(ctx, canvas, {
+            nodes: visibleNodes,
+            positions: positions.slice(0, shown)
+          }, {
+            computed: warnSet.size > 0 ? warnSet : undefined,
+            balBadge: t > 0.8 ? { 0: false } : {}
+          });
+
+          if (t > 0.85) {
+            ctx.fillStyle = colors.warning;
+            ctx.font = `bold ${fontSize * 0.85}px Share Tech Mono`;
+            ctx.textAlign = "center";
+            ctx.fillText("ROOT: L=3, R=1 → |3-1| = 2 > 1", canvas.width / 2, canvas.height - 20 * dpr);
+          }
+        }
+      }
+
+      // ===============================================
+      // PHASE 0: DFS HEIGHT CALCULATION
+      // ===============================================
+
+      function drawPhase0(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(11, canvas.width * 0.022);
+
+        const positions = layoutTree(balancedTree, canvas.width, canvas.height);
+
+        const computed = new Set();
+        let activeIdx = undefined;
+
+        balDfsOrder.forEach((idx, i) => {
+          if (progress >= balCheckAt[i]) computed.add(idx);
+          if (progress >= balCheckAt[i] - 0.06 && progress < balCheckAt[i] + 0.06) activeIdx = idx;
+        });
+
+        const visHeights = {};
+        computed.forEach(id => { visHeights[id] = balHeights[id]; });
+
+        drawBlueprintTree(ctx, canvas, {
+          nodes: balancedTree,
+          positions
+        }, { activeIdx, computed, heights: visHeights });
+
+        // Title
+        ctx.fillStyle = colors.accent;
+        ctx.font = `bold ${fontSize}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText("DFS: HEIGHT = MAX(LEFT, RIGHT) + 1", canvas.width / 2, 22 * dpr);
+
+        if (progress > 0.9) {
+          ctx.fillStyle = colors.match;
+          ctx.font = `bold ${fontSize}px Share Tech Mono`;
+          ctx.fillText("ALL HEIGHTS COMPUTED BOTTOM-UP IN O(N)", canvas.width / 2, canvas.height - 18 * dpr);
+        }
+      }
+
+      // ===============================================
+      // PHASE 1: BALANCE CHECK (BALANCED)
+      // ===============================================
+
+      function drawPhase1(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(11, canvas.width * 0.022);
+        const positions = layoutTree(balancedTree, canvas.width, canvas.height);
+
+        const computed = new Set();
+        let activeIdx = undefined;
+        const balBadges = {};
+        const visHeights = {};
+
+        balDfsOrder.forEach((idx, i) => {
+          if (progress >= balCheckAt[i]) {
+            computed.add(idx);
+            balBadges[idx] = true; // all balanced
+            visHeights[idx] = balHeights[idx];
+          }
+          if (progress >= balCheckAt[i] - 0.06 && progress < balCheckAt[i] + 0.06) activeIdx = idx;
+        });
+
+        drawBlueprintTree(ctx, canvas, {
+          nodes: balancedTree, positions
+        }, { activeIdx, computed, heights: visHeights, balBadge: balBadges });
+
+        ctx.fillStyle = colors.accent;
+        ctx.font = `bold ${fontSize}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText("CHECK: |LEFT_H - RIGHT_H| ≤ 1", canvas.width / 2, 22 * dpr);
+
+        // Show diff for active node
+        if (activeIdx !== undefined) {
+          const n = balancedTree[activeIdx];
+          const lh = n.left >= 0 ? balHeights[n.left] : 0;
+          const rh = n.right >= 0 ? balHeights[n.right] : 0;
+          ctx.fillStyle = colors.highlight;
+          ctx.font = `${fontSize}px Share Tech Mono`;
+          ctx.fillText(`Node ${n.val}: |${lh} - ${rh}| = ${Math.abs(lh - rh)} ≤ 1  →  ✓`, canvas.width / 2, canvas.height - 18 * dpr);
+        }
+
+        if (progress > 0.92) {
+          ctx.fillStyle = colors.match;
+          ctx.font = `bold ${fontSize * 1.1}px Share Tech Mono`;
+          ctx.textAlign = "center";
+          ctx.fillText("ALL NODES BALANCED → TREE IS BALANCED ✓", canvas.width / 2, canvas.height - 18 * dpr);
+        }
+      }
+
+      // ===============================================
+      // PHASE 2: DETECTING IMBALANCE
+      // ===============================================
+
+      function drawPhase2(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(11, canvas.width * 0.022);
+        const positions = layoutTree(unbalancedTree, canvas.width, canvas.height);
+
+        // DFS visit order: 4(left), 4(right), 3(left), 3(right), 2(left) → IMBALANCE at node 0
+        const unbalDfs = [5, 6, 3, 4, 1, 2, 0];
+        const unbalAt = [0.08, 0.18, 0.28, 0.38, 0.50, 0.62, 0.78];
+        const unbalHeights = { 5: 1, 6: 1, 3: 2, 4: 1, 1: 3, 2: 1, 0: 4 };
+        const unbalBal = { 5: true, 6: true, 3: true, 4: true, 1: true, 2: true, 0: false };
+
+        const computed = new Set();
+        let activeIdx = undefined;
+        const balBadges = {};
+        const visHeights = {};
+
+        unbalDfs.forEach((idx, i) => {
+          if (progress >= unbalAt[i]) {
+            computed.add(idx);
+            balBadges[idx] = unbalBal[idx];
+            visHeights[idx] = unbalHeights[idx];
+          }
+          if (progress >= unbalAt[i] - 0.05 && progress < unbalAt[i] + 0.05) activeIdx = idx;
+        });
+
+        drawBlueprintTree(ctx, canvas, {
+          nodes: unbalancedTree, positions
+        }, { activeIdx, computed, heights: visHeights, balBadge: balBadges });
+
+        ctx.fillStyle = colors.accent;
+        ctx.font = `bold ${fontSize}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText("UNBALANCED TREE — DFS FULL TRAVERSAL", canvas.width / 2, 22 * dpr);
+
+        if (progress > 0.82) {
+          ctx.fillStyle = colors.warning;
+          ctx.font = `bold ${fontSize}px Share Tech Mono`;
+          ctx.fillText("ROOT: |3 - 1| = 2 > 1 → UNBALANCED ✗", canvas.width / 2, canvas.height - 18 * dpr);
+        }
+      }
+
+      // ===============================================
+      // PHASE 3: EARLY TERMINATION
+      // ===============================================
+
+      function drawPhase3(p) {
+        const { ctx, canvas, frame } = p;
+        const colors = getColors();
+        const dpr = window.devicePixelRatio || 1;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / p.maxFrames;
+        const fontSize = Math.max(11, canvas.width * 0.022);
+        const positions = layoutTree(unbalancedTree, canvas.width, canvas.height);
+
+        // DFS with early exit: visit left subtree, detect at node 1 (L=2, R=1 is fine actually)
+        // Actually: root L-subtree has height 3, R-subtree height 1 → fail at root
+        // With -1 method: go all the way left, then compare. When left subtree returns 3 and right 1, |3-1|=2 → return -1
+        // But we can also show: after computing left subtree height =3 at node 1, and seeing right subtree node 2 height=1
+        // → root gets |3-1|=2 → RETURN -1
+
+        const earlyDfs = [5, 6, 3, 4, 1]; // left subtree fully, then node 1
+        const earlyAt = [0.1, 0.22, 0.34, 0.46, 0.60];
+        const earlyHeights = { 5: 1, 6: 1, 3: 2, 4: 1, 1: 3 };
+        const earlyBal = { 5: true, 6: true, 3: true, 4: true, 1: true };
+
+        const computed = new Set();
+        let activeIdx = undefined;
+        const balBadges = {};
+        const visHeights = {};
+
+        earlyDfs.forEach((idx, i) => {
+          if (progress >= earlyAt[i]) {
+            computed.add(idx);
+            balBadges[idx] = earlyBal[idx];
+            visHeights[idx] = earlyHeights[idx];
+          }
+          if (progress >= earlyAt[i] - 0.05 && progress < earlyAt[i] + 0.05) activeIdx = idx;
+        });
+
+        // After computing node 1 (height 3), show right side is only 1 → fail at root
+        if (progress > 0.70) {
+          computed.add(2); visHeights[2] = 1; balBadges[2] = true;
+        }
+        if (progress > 0.78) {
+          activeIdx = 0;
+          balBadges[0] = false; visHeights[0] = -1;
+        }
+
+        // Skipped nodes: none are drawn differently, but right subtree gets "SKIPPED" marker
+        const pulse = (Math.sin(progress * Math.PI * 8) + 1) / 2;
+
+        drawBlueprintTree(ctx, canvas, {
+          nodes: unbalancedTree, positions
+        }, { activeIdx, computed, heights: visHeights, balBadge: balBadges });
+
+        ctx.fillStyle = colors.accent;
+        ctx.font = `bold ${fontSize}px Share Tech Mono`;
+        ctx.textAlign = "center";
+        ctx.fillText("EARLY EXIT: RETURN -1 ON IMBALANCE", canvas.width / 2, 22 * dpr);
+
+        if (progress > 0.82) {
+          ctx.fillStyle = colors.warning;
+          ctx.font = `bold ${fontSize}px Share Tech Mono`;
+          ctx.fillText("ROOT: |3 - 1| = 2 → RETURN -1 — SKIP REST!", canvas.width / 2, canvas.height - 18 * dpr);
+        }
+      }
+
+      // ===============================================
+      // INTERACTIVE DEMO
+      // ===============================================
+
+      let demoState = {
+        step: 0, maxSteps: 0, tree: [], steps: []
+      };
+
+      function parseTreeInput(str) {
+        return str.split(',').map(x => {
+          const t = x.trim();
+          if (t === 'null' || t === 'None' || t === '') return null;
+          const val = parseInt(t);
+          return isNaN(val) ? 0 : val;
+        }).slice(0, 15);
+      }
+
+      function buildDemoTree(arr) {
+        if (!arr.length || arr[0] === null) return [];
+        const nodes = [];
+        let id = 0;
+
+        function build(arrIdx, depth) {
+          if (arrIdx >= arr.length || arr[arrIdx] === null) return -1;
+          const myId = id++;
+          nodes.push({ val: String(arr[arrIdx]), depth, left: -1, right: -1 });
+          nodes[myId].left = build(2 * arrIdx + 1, depth + 1);
+          nodes[myId].right = build(2 * arrIdx + 2, depth + 1);
+          return myId;
+        }
+        build(0, 0);
+        return nodes;
+      }
+
+      function generateDemoSteps(nodes) {
+        const steps = [];
+        const heights = {};
+        const balanced = {};
+
+        steps.push({ msg: "Tree built. Ready to run DFS.", active: -1, heights: {}, balanced: {} });
+
+        function dfs(id) {
+          if (id < 0 || id >= nodes.length) return 0;
+          const node = nodes[id];
+          steps.push({ msg: `Visiting Node ${node.val}...`, active: id, heights: { ...heights }, balanced: { ...balanced } });
+          const lh = dfs(node.left);
+          const rh = dfs(node.right);
+          const h = Math.max(lh, rh) + 1;
+          const bal = Math.abs(lh - rh) <= 1;
+          heights[id] = h;
+          balanced[id] = bal;
+          steps.push({
+            msg: `Node ${node.val}: L=${lh}, R=${rh}, H=${h}, |diff|=${Math.abs(lh - rh)} → ${bal ? '✓' : '✗'}`,
+            active: id, heights: { ...heights }, balanced: { ...balanced }
+          });
+          return h;
+        }
+
+        if (nodes.length > 0) dfs(0);
+        const allBal = Object.values(balanced).every(v => v);
+        steps.push({
+          msg: `DFS Complete. Tree is ${allBal ? 'BALANCED ✓' : 'UNBALANCED ✗'}`,
+          active: -1, heights: { ...heights }, balanced: { ...balanced }
+        });
+        return steps;
+      }
+
+      function initDemo() {
+        const arr = parseTreeInput(document.getElementById("tree-input").value);
+        const nodes = buildDemoTree(arr);
+        const steps = generateDemoSteps(nodes);
+        demoState = { step: 0, maxSteps: steps.length - 1, tree: nodes, steps };
+        updateDemoUI();
+        drawDemoCanvas();
+      }
+
+      function stepDemo(dir) {
+        demoState.step = Math.max(0, Math.min(demoState.maxSteps, demoState.step + dir));
+        updateDemoUI();
+        drawDemoCanvas();
+      }
+
+      function updateDemoUI() {
+        document.getElementById("step-counter").textContent = `STEP: ${demoState.step}`;
+        document.getElementById("prev-step-btn").disabled = demoState.step === 0;
+        document.getElementById("next-step-btn").disabled = demoState.step === demoState.maxSteps;
+        const s = demoState.steps[demoState.step];
+        document.getElementById("status-text").textContent = s ? s.msg : "";
+      }
+
+      function drawDemoCanvas() {
+        const canvas = document.getElementById("demo-canvas");
+        if (!canvas) return;
+        syncCanvasSize(canvas);
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (demoState.tree.length === 0) return;
+
+        const s = demoState.steps[demoState.step];
+        if (!s) return;
+
+        const positions = layoutTree(demoState.tree, canvas.width, canvas.height);
+        const computed = new Set(Object.keys(s.heights).map(Number));
+
+        drawBlueprintTree(ctx, canvas, {
+          nodes: demoState.tree, positions
+        }, {
+          activeIdx: s.active >= 0 ? s.active : undefined,
+          computed,
+          heights: s.heights,
+          balBadge: s.balanced
+        });
+      }
+
+      // ===============================================
+      // MAIN RENDER LOOP
+      // ===============================================
+
+      function drawAll() {
+        Object.keys(phases).forEach((n) => {
+          const phase = phases[n];
+          if (!phase.ctx) return;
+          syncCanvasSize(phase.canvas);
+          if (phase.playing) {
+            phase.frame = (phase.frame + phase.speed) % phase.maxFrames;
+          }
+          if (n === 'q') drawQuestionGif(phase);
+          if (n == 0) drawPhase0(phase);
+          if (n == 1) drawPhase1(phase);
+          if (n == 2) drawPhase2(phase);
+          if (n == 3) drawPhase3(phase);
+          updateNavState(n);
+        });
+        requestAnimationFrame(drawAll);
+      }
+
+      window.addEventListener("load", () => {
+        initPhases();
+        initDemo();
+        requestAnimationFrame(drawAll);
+      });
+    </script>
+  </body>
 </html>
