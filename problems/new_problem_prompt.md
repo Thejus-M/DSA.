@@ -7,7 +7,12 @@ Create a new DSA problem page with the following specifications:
 - **Style**: Cyberpunk/tech-inspired minimalist design with monospace typography
 - **Color Scheme**: Uses CSS variables from `variables.css` - steel blue accents (`--accent`), clean backgrounds, subtle borders.
   - **Light Mode Aesthetics**: Strict adherence to a "Paper-Like" feel. **NEVER use pure white (`#FFF`, `#FFFFFF`, `white`) anywhere — not in CSS, not in JavaScript canvas fills, not in inline styles.** Use `--bg-body` (#E2DFD6) for large surfaces and `--bg-card-elevated` (#EBE8DF) for interactive elements like buttons, inputs, player trays, and canvas cell backgrounds.
-- **Theme Synchronization**: JavaScript `getColors()` functions MUST NOT use hardcoded hex values. Instead, use `getComputedStyle(document.documentElement).getPropertyValue('--var-name')` to ensure canvas elements perfectly match the CSS theme.
+- **Theme Synchronization**: JavaScript `getColors()` functions MUST NOT use hardcoded hex values. instead, use CSS variables for everything.
+- **Premium Canvas Elements**: All canvas drawings MUST use a themed "Blueprint System". This includes:
+  - **Blueprint Grid**: A subtle background grid using `colors.gridLine`.
+  - **Premium Cells**: Rounded rectangles (`roundRect`) with `colors.cellBg` and theme-appropriate strokes.
+  - **Dynamic Shadows**: Subtle shadows for active/highlighted elements to create depth.
+  - **No Hardcoded Hex**: Only use values from the `getColors()` object.
 - **Typography**:
   - Headers: 'Share Tech Mono' (monospace, uppercase, tech-style)
   - Body: 'EB Garamond' (serif, highly readable)
@@ -245,50 +250,32 @@ _Note: Close divs at end of file._
   </div>
 </div>
 
-### 5. The Question Header & GIF Animation **[MANDATORY]** The "Question"
-section MUST always include a canvas-based animated visualization that shows the
-problem visually. This helps the reader immediately understand the problem
-before reading the intuition. ```html
-<section class="content-section">
-  <h2>The Question</h2>
-  <p style="margin-bottom: 40px;">[Top-level summary of the problem goal]</p>
-
-  <!-- MANDATORY: Question GIF — visual animation of the problem -->
-  <div class="phase-section">
-    <h3 class="phase-title">Visualizing the Problem</h3>
-    <p class="phase-description">[What we are seeing in the animation]</p>
-    <div class="phase-canvas-wrapper">
-      <canvas
-        id="question-canvas"
-        class="phase-canvas"
-        width="800"
-        height="400"
-      ></canvas>
-      <div class="phase-controls playing">
-        <button id="play-btn-q" onclick="togglePhase('q')">❚❚</button>
-        <button onclick="restartPhase('q')">↻</button>
-        <div class="control-group speed-controls">
-          <button onclick="setSpeed('q', 0.5)">0.5x</button>
-          <button class="active" onclick="setSpeed('q', 1)">1x</button>
-          <button onclick="setSpeed('q', 2)">2x</button>
-        </div>
-        <div class="control-group nav-controls">
-          <button onclick="stepPhase('q', -1)">❮</button>
-          <button onclick="stepPhase('q', 1)">❯</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-```
-
-<div class="section-divider" aria-hidden="true"></div>
-
-### 5b. Tree / Graph Rendering Style **[MANDATORY for Tree/Graph Problems]**
-When rendering binary trees, graphs, or any node-based structures on canvas, you
-MUST follow this blueprint-style rendering: #### Canvas Blueprint Background
-Draw a subtle grid on the canvas background matching the blueprint aesthetic:
-```javascript function drawBlueprintGrid(ctx, canvas, colors) { const dpr =
+### 5b. Premium Canvas Drawing Style **[MANDATORY]** When rendering elements on
+canvas, you MUST follow this blueprint-style rendering: #### Canvas Blueprint
+Background Draw a subtle grid on the canvas background matching the blueprint
+aesthetic: ```javascript function drawBlueprintGrid(ctx, canvas, colors) { const
+dpr = window.devicePixelRatio || 1; const gridSize = 30 * dpr; ctx.save();
+ctx.strokeStyle = colors.gridLine; ctx.lineWidth = 0.5 * dpr; for (let x = 0; x
+< canvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0);
+ctx.lineTo(x, canvas.height); ctx.stroke(); } for (let y = 0; y < canvas.height;
+y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+ctx.stroke(); } ctx.restore(); } ``` #### Premium Cell System Use a standardized
+`drawCell` function for elements (arrays, bits, nodes): ```javascript function
+drawCell(ctx, x, y, size, val, state, colors, label = "") { const dpr =
+window.devicePixelRatio || 1; ctx.save(); if (state === 'active' || state ===
+'highlight') { ctx.shadowColor = "rgba(0,0,0,0.2)"; ctx.shadowBlur = 10 * dpr;
+ctx.shadowOffsetY = 4 * dpr; } ctx.beginPath(); ctx.roundRect(x, y, size, size,
+8 * dpr); ctx.fillStyle = (state === 'active') ? colors.accent + '15' : (state
+=== 'highlight' ? colors.highlight + '15' : colors.cellBg); if (state === 'dim')
+ctx.globalAlpha = 0.3; ctx.fill(); ctx.strokeStyle = (state === 'active') ?
+colors.accent : (state === 'highlight' ? colors.highlight : colors.border);
+ctx.lineWidth = (state === 'active' || state === 'highlight') ? 2 * dpr : 1 *
+dpr; ctx.stroke(); // ... (add text rendering) ctx.restore(); } ``` ### 5b. Tree
+/ Graph Rendering Style **[MANDATORY for Tree/Graph Problems]** When rendering
+binary trees, graphs, or any node-based structures on canvas, you MUST follow
+this blueprint-style rendering: #### Canvas Blueprint Background Draw a subtle
+grid on the canvas background matching the blueprint aesthetic: ```javascript
+function drawBlueprintGrid(ctx, canvas, colors) { const dpr =
 window.devicePixelRatio || 1; const gridSize = 25 * dpr; ctx.strokeStyle =
 colors.gridLine; ctx.lineWidth = 0.5 * dpr; for (let x = 0; x < canvas.width; x
 += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);

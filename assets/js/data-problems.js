@@ -86,5 +86,13 @@ const problems = [
     difficulty: "medium",
     tags: ["math", "binary-search"],
     summary: "Implement pow(x, n), which calculates x raised to the power n."
+  },
+  {
+    id: 136,
+    title: "Single Number",
+    slug: "single-number",
+    difficulty: "easy",
+    tags: ["bit-manipulation", "array"],
+    summary: "Find the single element in an array where every other element appears twice using XOR."
   }
 ];

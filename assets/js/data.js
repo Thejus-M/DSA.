@@ -101,6 +101,17 @@ const DSA_DATA = {
                     difficultyClass: "medium"
                 }
             ]
+        },
+        {
+            title: "6. BIT MANIPULATION",
+            problems: [
+                {
+                    title: "Single Number",
+                    url: "problems/bit-manipulation/single-number.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                }
+            ]
         }
     ]
 };
