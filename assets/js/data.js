@@ -110,6 +110,42 @@ const DSA_DATA = {
                     url: "problems/bit-manipulation/single-number.html",
                     difficulty: "EASY",
                     difficultyClass: "easy"
+                },
+                {
+                    title: "Number of 1 Bits",
+                    url: "problems/bit-manipulation/number-of-1-bits.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                },
+                {
+                    title: "Counting Bits",
+                    url: "problems/bit-manipulation/counting-bits.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                },
+                {
+                    title: "Reverse Bits",
+                    url: "problems/bit-manipulation/reverse-bits.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                },
+                {
+                    title: "Missing Number",
+                    url: "problems/bit-manipulation/missing-number.html",
+                    difficulty: "EASY",
+                    difficultyClass: "easy"
+                },
+                {
+                    title: "Sum of Two Integers",
+                    url: "problems/bit-manipulation/sum-of-two-integers.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
+                },
+                {
+                    title: "Reverse Integer",
+                    url: "problems/bit-manipulation/reverse-integer.html",
+                    difficulty: "MEDIUM",
+                    difficultyClass: "medium"
                 }
             ]
         }

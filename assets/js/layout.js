@@ -213,21 +213,11 @@ class LayoutManager {
         // Current style in index.html
         // New Modern Footer - Minimalist
         mount.innerHTML = `
-             <footer class="site-footer">
-
-                <div class="section-divider" aria-hidden="true"></div>
-                
-                <div class="footer-tagline">| DSA LEARNING |</div>
-                
-                <div class="footer-description">
-                    UNDERSTAND DATA STRUCTURES,<br>ONE PROBLEM AT A TIME.
+             <footer class="site-footer" style="padding-top: 40px; padding-bottom: 60px; border-top: 1px solid var(--border-sub);">
+                <a href="https://thejus-m.is-a.dev/" class="footer-brand-minimal" style="display: block; margin-top: 0; margin-bottom: 20px; color: var(--text-main); text-decoration: none; cursor: pointer;">T.</a>
+                <div class="footer-copyright" style="text-transform: uppercase; letter-spacing: 3px; color: var(--text-sub);">
+                    DSA. &bull; 2026
                 </div>
-                
-                <div class="footer-copyright">
-                    &copy; 2025 DSA
-                </div>
-
-                <div class="footer-brand-minimal">T.</div>
              </footer>
         `;
 
